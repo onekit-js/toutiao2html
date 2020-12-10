@@ -1,6 +1,6 @@
 {
   "name": "toutiao2html",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/onekit-js/toutiao2html/issues"
   },
+  
   "homepage": "https://github.com/onekit-js/toutiao2html#readme"
 }
