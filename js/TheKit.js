@@ -1,4 +1,6 @@
-import { URL, PATH, STRING } from 'oneutil'
+import URL from 'oneutil/URL'
+import PATH from 'oneutil/PATH'
+import STRING from 'oneutil/STRING'
 const storeFiles = {};
 const tempFiles = {};
 export default class TheKit{

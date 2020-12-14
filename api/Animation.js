@@ -1,4 +1,4 @@
-import { COLOR } from 'oneutil'
+import COLOR from 'oneutil/COLOR'
 
 export default class Animation{
      constructor() {

@@ -8,7 +8,8 @@ import UpdateManager from "./api/UpdateManager"
 import TheKit from './js/TheKit'
 import DownloadTask from './api/DownloadTask'
 import UploadTask from './api/UploadTask'
-import { PROMISE, TASK } from 'oneutil'
+import PROMISE from 'oneutil/PROMISE'
+import TASK from 'oneutil/PROMISE'
 import axios from 'axios'
 
 import 'jquery-confirm'
@@ -837,54 +838,7 @@ this.fn_global = fn_global;
     }, wx_success, wx_fail, wx_complete)
   }
 
-   previewMedia(wx_object) {
-    const wx_sources = wx_object.sources
-    const wx_current = wx_object.current || 0
-    const wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-
-    PROMISE((SUCCESS) => {
-      const vue_sources = wx_sources
-      const vue_current = wx_current
-      const obj = {
-        urls: vue_sources,
-        current: vue_current,
-      }
-      // eslint-disable-next-line no-undef
-      _preview_.start(obj)
-      const res = {
-        errMsg: 'previewMedia: ok',
-      }
-      SUCCESS(res)
-    }, wx_success, wx_fail, wx_complete)
-
-  }
-
-   previewImage(wx_object) {
-    const wx_urls = wx_object.urls
-    const wx_current = wx_object.current
-    const wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-
-    PROMISE((SUCCESS) => {
-      const vue_urls = wx_urls
-      const vue_current = wx_current
-      const obj = {
-        urls: vue_urls,
-        current: vue_current
-      };
-      // eslint-disable-next-line no-undef
-      _preview_.start(obj)
-      const res = {
-        errMsg: 'previewImage: ok'
-      }
-      SUCCESS(res)
-    }, wx_success, wx_complete, wx_fail)
-
-
-  }
+   
 
    getImageInfo(wx_object) {
     const wx_src = wx_object.src
