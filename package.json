@@ -1,6 +1,6 @@
 {
   "name": "toutiao2html",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,11 @@
     "url": "https://github.com/onekit-js/toutiao2html/issues"
   },
   "dependencies": {
+    "axios": "^0.21.0",
+    "html2canvas": "^1.0.0-rc.7",
+    "jszip": "latest",
+    "mobile-detect": "^1.4.4",
+    "vconsole": "^3.3.4",
     "oneutil": "^2.0.2"
   },
   "homepage": "https://github.com/onekit-js/toutiao2html#readme"

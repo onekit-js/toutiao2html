@@ -12,10 +12,6 @@ import PROMISE from 'oneutil/PROMISE'
 import TASK from 'oneutil/PROMISE'
 import axios from 'axios'
 
-import 'jquery-confirm'
-import 'jquery-confirm/css/jquery-confirm.css'
-
-
 
 
 // import JSZip from 'jszip'
