@@ -520,12 +520,12 @@ export default class TT {
     let name = wx_object.name;
     let header = wx_object.header;
     let formData = wx_object.formData;
-    let timeout = wx_object.timeout
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
     let wx_complete = wx_object.complete;
     wx_object = null
     ///////////////////
+
     let blob
     if (filePath.startsWith("wxfile://store/onekit_")) {
       blob = null //sessionStorage.getItem(filePath)
@@ -548,8 +548,7 @@ export default class TT {
 
 
     const axios_instance = axios.create({
-      headers: header,
-      timeout,
+      headers: header
     })
 
     const uploadTask = new UploadTask(axios_instance)
