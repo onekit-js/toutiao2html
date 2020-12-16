@@ -11,6 +11,7 @@ import UploadTask from './api/UploadTask'
 import PROMISE from 'oneutil/PROMISE'
 import TASK from 'oneutil/PROMISE'
 import axios from 'axios'
+import $ from 'jquery'
 
 import 'jquery-confirm'
 import 'jquery-confirm/css/jquery-confirm.css'
@@ -292,6 +293,18 @@ export default class TT {
   offAppHide() {
     this.fn_global().onAppHide = null
   }
+  /** 环境变量 */
+
+  get env() {
+    const VERSION = 'production'
+    const USER_DATA_PATH = 'ttfile://user'
+    const obj = {
+      VERSION,
+      USER_DATA_PATH
+    }
+    return Object(obj)
+  }
+
   /**调试 */
   setEnableDebug(wx_object) {
     const wx_enableDebug = wx_object.enableDebug
@@ -918,11 +931,10 @@ export default class TT {
 
     PROMISE((SUCCESS) => {
       let vue_src = wx_src
-      // vue_src = require('../src/kiko_20200309184916.jpg')
       const eImage = document.createElement('img')
       eImage.setAttribute('src', vue_src)
       eImage.setAttribute("crossOrigin", "Anonymous");
-      // document.body.append(eImage)
+      document.body.append(eImage)
       let pic_res = new Image()
 
       pic_res.onload = () => {
@@ -1135,7 +1147,7 @@ export default class TT {
       _video.setAttribute('src', wx_src)
       _video.setAttribute('crossorigin', 'Anonymous')
       _video.src = src
-      document.body.append(_video)
+      // document.body.append(_video)
       _video.load()
 
       console.log('ok')
@@ -1312,14 +1324,16 @@ export default class TT {
 
 
               eChooseImage.addEventListener('change', e => {
-                let fileFactory;
+                let fileFactory 
                 if (COUNT) {
                   let dosth = [...e.target.files]
                   fileFactory = [...dosth.slice(0, COUNT)]
                 } else {
                   fileFactory = e.target.files
                 }
+                console.log(fileFactory)
                 TASK(fileFactory, (file, itemCallback) => {
+                  console.log('in')
                   if (COMPRESSPED == 'origin') {
                     let reader = new FileReader();
                     reader.onload = function (e) {
@@ -1361,14 +1375,10 @@ export default class TT {
                           }
                         })
                       }
-
-
-
                       async function upload(file) {
                         const eImg = await readImg(file)
                         const blob = await TheKit.compressImg(eImg, file.type, 500, 500)
                         const path = TheKit.createTempPath(file.name)
-
                         const size = blob.size
                         itemCallback({
                           path,
@@ -1381,7 +1391,6 @@ export default class TT {
                   }
                   // reader.readAsArrayBuffer(file);
                 }, (tempFiles) => {
-
                   const tempFilePaths = tempFiles.map(tempFile => tempFile.path)
                   const wx_res = {
                     errMsg: 'chooseImage:ok',

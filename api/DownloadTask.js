@@ -57,6 +57,5 @@ export default class DownloadTask {
 
   offProgressUpdate() {
     this.offProgressUpdate = null
-   
   }
 }
