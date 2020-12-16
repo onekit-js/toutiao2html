@@ -9,7 +9,7 @@ import TheKit from './js/TheKit'
 import DownloadTask from './api/DownloadTask'
 import UploadTask from './api/UploadTask'
 import PROMISE from 'oneutil/PROMISE'
-import TASK from 'oneutil/PROMISE'
+import TASK from 'oneutil/TASK'
 import axios from 'axios'
 import $ from 'jquery'
 
@@ -212,7 +212,7 @@ export default class TT {
             btnClass: 'btn-primary',
             keys: ['enter'],
             action: () => {
-              window.location.href="about:blank";
+              window.location.href = "about:blank";
               window.close();
               const res = {
                 errMsg: 'exitMiniProgram:ok'
@@ -1324,16 +1324,15 @@ export default class TT {
 
 
               eChooseImage.addEventListener('change', e => {
-                let fileFactory 
+                let fileFactory
                 if (COUNT) {
                   let dosth = [...e.target.files]
                   fileFactory = [...dosth.slice(0, COUNT)]
                 } else {
                   fileFactory = e.target.files
                 }
-                console.log(fileFactory)
+
                 TASK(fileFactory, (file, itemCallback) => {
-                  console.log('in')
                   if (COMPRESSPED == 'origin') {
                     let reader = new FileReader();
                     reader.onload = function (e) {
@@ -3899,11 +3898,11 @@ export default class TT {
     if (document.hidden) {
       wx_res = {
         errMsg: 'onAppHide:ok',
-        path: location.href, 
-        query: {}, 
-        referrerInfo: {}, 
-        scene: 0, 
-        shareTicket: undefined 
+        path: location.href,
+        query: {},
+        referrerInfo: {},
+        scene: 0,
+        shareTicket: undefined
       };
       if (Event.callback) {
         Event.callback(wx_res);

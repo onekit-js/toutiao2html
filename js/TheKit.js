@@ -1,8 +1,6 @@
 import URL from 'oneutil/URL'
 import PATH from 'oneutil/PATH'
 import STRING from 'oneutil/STRING'
-const storeFiles = {};
-const tempFiles = {};
 export default class TheKit {
   static isWeixin() {
     const ua = window.navigator.userAgent.toLowerCase();
@@ -62,13 +60,13 @@ export default class TheKit {
   }
 
   static createUUIDfileName(fileName) {
-    let uuid = createUUID();
+    let uuid = TheKit.createUUID();
     let ext = fileName.substring(fileName.lastIndexOf("."), fileName.length);
     return uuid + ext;
   }
 
   static createTempPath(fileName) {
-    let uuid = createUUIDfileName(fileName);
+    let uuid = TheKit.createUUIDfileName(fileName);
     return `wxfile://tmp_onekit_${uuid}`;
   }
 
