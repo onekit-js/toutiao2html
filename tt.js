@@ -1,13 +1,3 @@
-/*
- * @Autor: YeWei Wang
- * @Date: 2020-12-15 14:29:48
- * @WeChat: wj826036
- * @Motto: 求知若渴，虚心若愚
- * @Description: 
- * @LastEditTime: 2020-12-16 12:06:51
- * @Version: 1.0
- * @FilePath: \toutiao2html\tt.js
- */
 import html2canvas from "html2canvas"
 import vconsole from 'vconsole'
 import Animation from "./api/Animation"
@@ -67,7 +57,7 @@ export default class TT {
   }
   /**基础 */
   canIUse() {
-    return true;
+    return true
   }
 
   base64ToArrayBuffer(base64) {
@@ -191,9 +181,7 @@ export default class TT {
   }
 
   getUpdateManager() {
-    // return new UpdateManagerClass();
     return new UpdateManager()
-    // return true;
   }
 
   UpdateManager() {
@@ -237,15 +225,16 @@ export default class TT {
     }, success, complete, fail)
   }
 
+  canIPutStuffOverComponent() {
+    return true
+  }
   /**应用级事件 */
   onUnhandledRejection(wx_callback) {
     this.fn_global().onUnhandledRejection = wx_callback
   }
 
   onThemeChange(wx_callback) {
-
     this.fn_global().onThemeChange = wx_callback
-
   }
 
   onPageNotFound(wx_callback) {
@@ -3901,11 +3890,11 @@ export default class TT {
     if (document.hidden) {
       wx_res = {
         errMsg: 'onAppHide:ok',
-        path: location.href, // 小程序切前台的路径
-        query: {}, // 小程序切前台的 query 参数
-        referrerInfo: {}, // 来源信息。从另一个小程序、公众号或 App 进入小程序时返回。否则返回 {}。
-        scene: 0, // 小程序切前台的场景值
-        shareTicket: undefined // shareTicket
+        path: location.href, 
+        query: {}, 
+        referrerInfo: {}, 
+        scene: 0, 
+        shareTicket: undefined 
       };
       if (Event.callback) {
         Event.callback(wx_res);

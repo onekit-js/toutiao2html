@@ -18,10 +18,11 @@
   "dependencies": {
     "axios": "^0.21.0",
     "html2canvas": "^1.0.0-rc.7",
+    "jquery-confirm": "^3.3.4",
     "jszip": "latest",
     "mobile-detect": "^1.4.4",
-    "vconsole": "^3.3.4",
-    "oneutil": "^2.0.2"
+    "oneutil": "^2.0.2",
+    "vconsole": "^3.3.4"
   },
   "homepage": "https://github.com/onekit-js/toutiao2html#readme"
 }
