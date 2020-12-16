@@ -1,3 +1,13 @@
+/*
+ * @Autor: YeWei Wang
+ * @Date: 2020-12-15 14:29:48
+ * @WeChat: wj826036
+ * @Motto: 求知若渴，虚心若愚
+ * @Description: 
+ * @LastEditTime: 2020-12-16 12:06:51
+ * @Version: 1.0
+ * @FilePath: \toutiao2html\tt.js
+ */
 import html2canvas from "html2canvas"
 import vconsole from 'vconsole'
 import Animation from "./api/Animation"
@@ -11,6 +21,9 @@ import UploadTask from './api/UploadTask'
 import PROMISE from 'oneutil/PROMISE'
 import TASK from 'oneutil/PROMISE'
 import axios from 'axios'
+
+import 'jquery-confirm'
+import 'jquery-confirm/css/jquery-confirm.css'
 
 
 
@@ -49,21 +62,21 @@ import axios from 'axios'
 const MobileDetect = require('mobile-detect')
 
 export default class TT {
-constructor(fn_global){
-this.fn_global = fn_global;
-}
+  constructor(fn_global) {
+    this.fn_global = fn_global;
+  }
   /**基础 */
-   canIUse() {
+  canIUse() {
     return true;
   }
 
-   base64ToArrayBuffer(base64) {
+  base64ToArrayBuffer(base64) {
     base64 = base64.replace(/\s/g, '+');
     let commonContent = Buffer.from(base64, 'base64');
     return commonContent;
   }
 
-   arrayBufferToBase64(arrayBuffer) {
+  arrayBufferToBase64(arrayBuffer) {
     let binary = '';
     let len = arrayBuffer.byteLength;
     for (let i = 0; i < len; i++) {
@@ -74,7 +87,7 @@ this.fn_global = fn_global;
   }
 
   /**系统 */
-   getSystemInfoSync() {
+  getSystemInfoSync() {
     try {
       const device_type = navigator.userAgent
       const md = new MobileDetect(device_type)
@@ -117,7 +130,7 @@ this.fn_global = fn_global;
     }
   }
 
-   getSystemInfo(wx_object) {
+  getSystemInfo(wx_object) {
     let wx_success = wx_object ? wx_object.success : null;
     let wx_fail = wx_object ? wx_object.fail : null
     let wx_complete = wx_object ? wx_object.complete : null
@@ -127,25 +140,6 @@ this.fn_global = fn_global;
     let wx_res;
     try {
       wx_res = this.getSystemInfoSync();
-      if (wx_success) { wx_success(wx_res); }
-      if (wx_complete) { wx_complete(wx_res); }
-    } catch (e) {
-
-      wx_res = { errMsg: e.message };
-      if (wx_fail) { wx_fail(wx_res); }
-      if (wx_complete) { wx_complete(wx_res); }
-    }
-  }
-
-  /**更新 */
-   updateWeChatApp(wx_object) {
-    const wx_success = wx_object.success || ''
-    const wx_fail = wx_object.fail || ''
-    const wx_complete = wx_object.complete || ''
-    // window.open("https://support.weixin.qq.com/update/", '_blank')
-
-    try {
-      const wx_res = { errMsg: "private_openUrl:ok" }
       if (wx_success) {
         wx_success(wx_res);
       }
@@ -153,7 +147,10 @@ this.fn_global = fn_global;
         wx_complete(wx_res);
       }
     } catch (e) {
-      const wx_res = { errMsg: e.message };
+
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -163,92 +160,151 @@ this.fn_global = fn_global;
     }
   }
 
-   getUpdateManager() {
+  /**更新 */
+  updateWeChatApp(wx_object) {
+    const wx_success = wx_object.success || ''
+    const wx_fail = wx_object.fail || ''
+    const wx_complete = wx_object.complete || ''
+    // window.open("https://support.weixin.qq.com/update/", '_blank')
+
+    try {
+      const wx_res = {
+        errMsg: "private_openUrl:ok"
+      }
+      if (wx_success) {
+        wx_success(wx_res);
+      }
+      if (wx_complete) {
+        wx_complete(wx_res);
+      }
+    } catch (e) {
+      const wx_res = {
+        errMsg: e.message
+      };
+      if (wx_fail) {
+        wx_fail(wx_res);
+      }
+      if (wx_complete) {
+        wx_complete(wx_res);
+      }
+    }
+  }
+
+  getUpdateManager() {
     // return new UpdateManagerClass();
     return new UpdateManager()
     // return true;
   }
 
-   UpdateManager() {
+  UpdateManager() {
 
   }
   /**生命周期 */
-   getLaunchOptionsSync() {
+  getLaunchOptionsSync() {
     return this.fn_global().OPTION
   }
 
-   getEnterOptionsSync() {
+  getEnterOptionsSync() {
     return this.fn_global().OPTION
+  }
+
+  exitMiniProgram(options) {
+    const success = options.success
+    const complete = options.complete
+    const fail = options.fail
+    PROMISE((SUCCESS) => {
+      $.confirm({
+        title: '是否退出?',
+        content: '',
+        type: 'green',
+        buttons: {
+          ok: {
+            text: "ok!",
+            btnClass: 'btn-primary',
+            keys: ['enter'],
+            action: () => {
+              window.location.href="about:blank";
+              window.close();
+              const res = {
+                errMsg: 'exitMiniProgram:ok'
+              }
+              SUCCESS(res)
+            }
+          },
+          cancel: function () {}
+        }
+      })
+    }, success, complete, fail)
   }
 
   /**应用级事件 */
-   onUnhandledRejection(wx_callback) {
+  onUnhandledRejection(wx_callback) {
     this.fn_global().onUnhandledRejection = wx_callback
   }
 
-   onThemeChange(wx_callback) {
+  onThemeChange(wx_callback) {
 
     this.fn_global().onThemeChange = wx_callback
 
   }
 
-   onPageNotFound(wx_callback) {
+  onPageNotFound(wx_callback) {
     this.fn_global().onPageNotFound = wx_callback
   }
 
-   onError(wx_callback) {
+  onError(wx_callback) {
     this.fn_global().onError = wx_callback
   }
 
-   onAudioInterruptionEnd(wx_callback) {
+  onAudioInterruptionEnd(wx_callback) {
     this.fn_global().onAudioInterruptionEnd = wx_callback
   }
 
-   onAudioInterruptionBegin(wx_callback) {
+  onAudioInterruptionBegin(wx_callback) {
     this.fn_global().onAudioInterruptionBegin = wx_callback
   }
 
-   onAppShow(wx_callback) {
+  onAppShow(wx_callback) {
     this.fn_global().onAppShow = wx_callback
   }
 
-   onAppHide(wx_callback) {
+  onAppHide(wx_callback) {
     this.fn_global().onAppHide = wx_callback
   }
 
-   offUnhandledRejection() {
+  offUnhandledRejection() {
     this.fn_global().onUnhandledRejection = NaN
   }
 
-   offThemeChange() {
+  offThemeChange() {
     this.fn_global().onThemeChange = null
   }
 
-   offPageNotFound() {
+  offPageNotFound() {
     this.fn_global().onPageNotFound = null
   }
 
-   offError() {
+  offError() {
     this.fn_global().onError = null
   }
 
-   offAudioInterruptionEnd() {
+  offAudioInterruptionEnd() {
     this.fn_global().onAudioInterruptionBegin = null
   }
 
-   offAudioInterruptionBegin() {
+  offAudioInterruptionBegin() {
     this.fn_global().offAudioInterruptionBegin = null
   }
 
-   offAppShow() {
+  offAppShow() {
     this.fn_global().onAppShow = null
   }
 
-   offAppHide() {
+  offAppHide() {
     this.fn_global().onAppHide = null
   }
   /**调试 */
-   setEnableDebug(wx_object) {
+  setEnableDebug(wx_object) {
     const wx_enableDebug = wx_object.enableDebug
     const wx_success = wx_object.success
     const wx_fail = wx_object.fail
@@ -264,17 +320,23 @@ this.fn_global = fn_global;
         }
       }
     } catch (e) {
-      const wx_res = { errMsg: e.message };
-      if (wx_fail) { wx_fail(wx_res); }
-      if (wx_complete) { wx_complete(wx_res); }
+      const wx_res = {
+        errMsg: e.message
+      };
+      if (wx_fail) {
+        wx_fail(wx_res);
+      }
+      if (wx_complete) {
+        wx_complete(wx_res);
+      }
     }
   }
 
-   getRealtimeLogManager() {
+  getRealtimeLogManager() {
     return new LogManager()
   }
 
-   getLogManager(wx_object) {
+  getLogManager(wx_object) {
     const wx_level = wx_object.level ? wx_object.level : 0
     const reg = /[0-1]/;
     if (wx_level.natch(reg)) {
@@ -285,24 +347,24 @@ this.fn_global = fn_global;
 
   }
 
-   LogManager() {
+  LogManager() {
     return new LogManager()
   }
 
-   RealtimeLogManager() {
+  RealtimeLogManager() {
     return new LogManager()
   }
 
 
-   enableAlertBeforeUnload() {
+  enableAlertBeforeUnload() {
 
   }
 
-   disableAlertBeforeUnload() {
+  disableAlertBeforeUnload() {
 
   }
 
-   createAnimation(OBJECT) {
+  createAnimation(OBJECT) {
     let animation = new Animation();
     if (OBJECT) {
       if (OBJECT["duration"] != null) {
@@ -321,7 +383,7 @@ this.fn_global = fn_global;
     return animation;
   }
   /** 网络 */
-   request(wx_object) {
+  request(wx_object) {
     let url = wx_object.url;
     let data = wx_object.data;
     let header = wx_object.header;
@@ -400,7 +462,7 @@ this.fn_global = fn_global;
   }
 
 
-   downloadFile(wx_object) {
+  downloadFile(wx_object) {
     let wx_url = wx_object.url;
     let wx_timeout = wx_object.timeout
     // let wx_filePath = wx_object.filePath || '';
@@ -435,7 +497,9 @@ this.fn_global = fn_global;
         }
       }).catch(err => {
         if (wx_fail) {
-          wx_fail({ errMsg: err.message })
+          wx_fail({
+            errMsg: err.message
+          })
         }
         if (wx_complete) {
           wx_complete()
@@ -448,7 +512,7 @@ this.fn_global = fn_global;
   }
 
 
-   uploadFile(wx_object) {
+  uploadFile(wx_object) {
     let url = wx_object.url;
     let filePath = wx_object.filePath;
     let name = wx_object.name;
@@ -517,7 +581,7 @@ this.fn_global = fn_global;
     return uploadTask
   }
 
-   connectSocket(wx_object) {
+  connectSocket(wx_object) {
 
     const wx_url = wx_object.url
     const wx_protocols = wx_object.protocols
@@ -547,7 +611,7 @@ this.fn_global = fn_global;
 
   }
 
-   onSocketOpen(callback) {
+  onSocketOpen(callback) {
 
     if (!this.fn_global()._socket) {
       return false
@@ -560,7 +624,7 @@ this.fn_global = fn_global;
     })
   }
 
-   sendSocketMessage(wx_object) {
+  sendSocketMessage(wx_object) {
     const wx_data = wx_object.data
     const wx_success = wx_object.success
     const wx_fail = wx_object.fail
@@ -579,7 +643,7 @@ this.fn_global = fn_global;
 
   }
 
-   onSocketMessage(callback) {
+  onSocketMessage(callback) {
 
     if (!this.fn_global()._socket) {
       return null;
@@ -593,7 +657,7 @@ this.fn_global = fn_global;
 
   }
 
-   onSocketError(callback) {
+  onSocketError(callback) {
     if (!this.fn_global()._socket) {
       return null
     }
@@ -605,7 +669,7 @@ this.fn_global = fn_global;
 
   }
 
-   onSocketClose(callback) {
+  onSocketClose(callback) {
     if (!this.fn_global()._socket.close) {
       return null
     }
@@ -625,47 +689,47 @@ this.fn_global = fn_global;
     })
   }
 
-   closeSocket() {
+  closeSocket() {
     this.fn_global()._socketTask.close();
   }
 
-   offLocalServiceResolveFail() {
+  offLocalServiceResolveFail() {
     console.error('HTML5 is not support mDNS!!');
   }
-   onLocalServiceResolveFail() {
+  onLocalServiceResolveFail() {
     console.error('HTML5 is not support mDNS!!');
   }
-   offLocalServiceDiscoveryStop() {
+  offLocalServiceDiscoveryStop() {
     console.error('HTML5 is not support mDNS!!');
   }
-   onLocalServiceDiscoveryStop() {
+  onLocalServiceDiscoveryStop() {
     console.error('HTML5 is not support mDNS!!');
   }
-   offLocalServiceLost() {
+  offLocalServiceLost() {
     console.error('HTML5 is not support mDNS!!');
   }
-   onLocalServiceLost() {
+  onLocalServiceLost() {
     console.error('HTML5 is not support mDNS!!');
   }
-   offLocalServiceFound() {
+  offLocalServiceFound() {
     console.error('HTML5 is not support mDNS!!');
   }
-   onLocalServiceFound() {
+  onLocalServiceFound() {
     console.error('HTML5 is not support mDNS!!');
   }
-   stopLocalServiceDiscovery() {
+  stopLocalServiceDiscovery() {
     console.error('HTML5 is not support mDNS!!');
   }
-   startLocalServiceDiscovery() {
+  startLocalServiceDiscovery() {
     console.error('HTML5 is not support mDNS!!');
   }
 
-   createUDPSocket() {
+  createUDPSocket() {
     console.error('HTML5 is not support UDP!!');
   }
 
 
-   setStorageSync(key, value) {
+  setStorageSync(key, value) {
 
     try {
       localStorage.setItem(key, value);
@@ -674,7 +738,7 @@ this.fn_global = fn_global;
       throw wx_e
     }
   }
-   setStorage(wx_object) {
+  setStorage(wx_object) {
     if (!wx_object) {
       return
     }
@@ -699,11 +763,11 @@ this.fn_global = fn_global;
     }, wx_success, wx_fail, wx_complete)
   }
 
-   getStorageSync(key) {
+  getStorageSync(key) {
     return localStorage.getItem(key);
   }
 
-   getStorage(wx_object) {
+  getStorage(wx_object) {
     let key = wx_object.key;
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
@@ -731,11 +795,11 @@ this.fn_global = fn_global;
     }, wx_success, wx_fail, wx_complete)
   }
 
-   removeStorageSync(key) {
+  removeStorageSync(key) {
     localStorage.removeItem(key);
   }
 
-   removeStorage(wx_object) {
+  removeStorage(wx_object) {
     const key = wx_object.key;
     const wx_success = wx_object.success;
     const wx_fail = wx_object.fail;
@@ -754,11 +818,11 @@ this.fn_global = fn_global;
   }
 
 
-   clearStorageSync() {
+  clearStorageSync() {
     localStorage.clear();
   }
 
-   clearStorage(wx_object) {
+  clearStorage(wx_object) {
     const wx_success = wx_object.success
     const wx_fail = wx_object.fail
     const wx_complete = wx_object.complete
@@ -771,7 +835,7 @@ this.fn_global = fn_global;
     }, wx_success, wx_fail, wx_complete)
   }
 
-   getStorageInfo(wx_object) {
+  getStorageInfo(wx_object) {
     const wx_success = wx_object.success;
     const wx_fail = wx_object.fail;
     const wx_complete = wx_object.complete;
@@ -784,7 +848,7 @@ this.fn_global = fn_global;
     }, wx_success, wx_fail, wx_complete)
   }
 
-   getStorageInfoSync() {
+  getStorageInfoSync() {
     let wx_res;
     try {
       let keysArray = new Array();
@@ -809,15 +873,9 @@ this.fn_global = fn_global;
     }
   }
 
-   createMapContext() {}
+  createMapContext() {}
 
-   eFile_change(e) {
-    const file = e.files
-    console.log('xxxxxxxx', file)
-  }
-
-
-   saveImageToPhotosAlbum(wx_object) {
+  saveImageToPhotosAlbum(wx_object) {
     const wx_filePath = wx_object.filePath
     const wx_success = wx_object.success
     const wx_fail = wx_object.fail
@@ -834,9 +892,9 @@ this.fn_global = fn_global;
     }, wx_success, wx_fail, wx_complete)
   }
 
-   
 
-   getImageInfo(wx_object) {
+
+  getImageInfo(wx_object) {
     const wx_src = wx_object.src
     const wx_success = wx_object.success
     const wx_fail = wx_object.fail
@@ -890,7 +948,7 @@ this.fn_global = fn_global;
         /////////////////////
         function functiongetOrientation(file, callback) {
           var reader = new window.FileReader();
-          reader.onload = function(e) {
+          reader.onload = function (e) {
 
             var view = new window.DataView(e.target.result);
             if (view.getUint16(0, false) != 0xFFD8) {
@@ -951,7 +1009,7 @@ this.fn_global = fn_global;
     }, wx_success, wx_fail, wx_complete)
   }
 
-   compressImage(wx_object) {
+  compressImage(wx_object) {
     const wx_src = wx_object.src
     // const wx_quality = wx_object.wx_quality
     const wx_success = wx_object.success
@@ -968,9 +1026,8 @@ this.fn_global = fn_global;
     }, wx_success, wx_fail, wx_complete)
   }
 
-   chooseMessageFile(wx_object) {
-     console.error("[x2x] chooseMessageFile is not surport!!")
-     /*
+  chooseMessageFile(wx_object) {
+    // console.error("[x2x] chooseMessageFile is not surport!!")
     const wx_conunt = wx_object.count
     const wx_type = wx_object.type || 'all'
     const wx_extensions = wx_object.extensions
@@ -983,10 +1040,10 @@ this.fn_global = fn_global;
       const vue_type = wx_type
       const vue_extensions = wx_extensions
       this._chooseMessage(SUCCESS, vue_count, vue_type, vue_extensions)
-    }, wx_success, wx_complete, wx_fail)*/
+    }, wx_success, wx_complete, wx_fail)
   }
-/*
-   _chooseMessage(SUCCESS, COUNT, TYPE, EXTENSION) {
+
+  _chooseMessage(SUCCESS, COUNT, TYPE, EXTENSION) {
     $.confirm({
       title: '是否允许打开文件夹?',
       content: '',
@@ -1031,7 +1088,13 @@ this.fn_global = fn_global;
                   const name = file.name
                   const time = Math.round(file.lastModifiedDate / 1000)
                   const type = file.type
-                  itemCallback({ name, path, size, time, type })
+                  itemCallback({
+                    name,
+                    path,
+                    size,
+                    time,
+                    type
+                  })
                 }
                 reader.readAsArrayBuffer(file)
               }, tempFiles => {
@@ -1047,12 +1110,12 @@ this.fn_global = fn_global;
 
           }
         },
-        cancel: function() {}
+        cancel: function () {}
       }
-    });
+    })
   }
-*/
-   chooseImage(wx_object) {
+
+  chooseImage(wx_object) {
     const wx_count = wx_object.count || 9
     const wx_sizeType = wx_object.sizeType || ['original', 'compressed']
     const wx_sourceType = wx_object.sourceType || ['album', 'camera']
@@ -1070,7 +1133,7 @@ this.fn_global = fn_global;
     }, wx_success, wx_fail, wx_complete)
   }
 
-   getVideoInfo(wx_object) {
+  getVideoInfo(wx_object) {
     const wx_src = wx_object.src
     const wx_success = wx_object.success
     const wx_fail = wx_object.fail
@@ -1087,7 +1150,7 @@ this.fn_global = fn_global;
       _video.load()
 
       console.log('ok')
-      _video.onloadeddata = function() {
+      _video.onloadeddata = function () {
         const height = _video.videoHeight
         const width = _video.videoWidth
         const duration = _video.duration
@@ -1099,7 +1162,7 @@ this.fn_global = fn_global;
           audioSampleRate: '',
           bitrate: '',
           duration,
-          fps:'',
+          fps: '',
           height,
           orientation: '',
           size: '',
@@ -1108,7 +1171,7 @@ this.fn_global = fn_global;
         }
         SUCCESS(res)
       }
-      
+
       document.remove(_video)
     }, wx_success, wx_fail, wx_complete)
 
@@ -1117,7 +1180,7 @@ this.fn_global = fn_global;
 
   }
 
-   createVideoContext() {
+  createVideoContext() {
     /*  try {
 
         return new VC(id);
@@ -1126,10 +1189,10 @@ this.fn_global = fn_global;
       }*/
   }
 
-   compressVideo() {} // HTML5 is not support
+  compressVideo() {} // HTML5 is not support
 
 
-   chooseVideo(wx_object) {
+  chooseVideo(wx_object) {
     const wx_sourceType = wx_object.sourceType || ['album', 'camara']
     // const wx_compressed = wx_Object.compressed || true  // HTML5 is not support
     // const wx_maxDuration = wx_object.maxDuration || 60  // HTML5 is not support
@@ -1147,7 +1210,7 @@ this.fn_global = fn_global;
   }
 
 
-   chooseMedia(wx_object) {
+  chooseMedia(wx_object) {
     // const wx_count = wx_object.count || 9                                   //
     const wx_mediaType = wx_object.mediaType || ['image', 'video'] //
     const wx_sourceType = wx_object.sourceType || ['album', 'camera'] //
@@ -1170,7 +1233,7 @@ this.fn_global = fn_global;
 
 
 
-   _chooseMedia(SUCCESS, TYPE, SORTS, CAMERA, COUNT, COMPRESSPED) {
+  _chooseMedia(SUCCESS, TYPE, SORTS, CAMERA, COUNT, COMPRESSPED) {
     $.confirm({
       title: '是否允许打开摄像头或相册?',
       content: '',
@@ -1214,7 +1277,9 @@ this.fn_global = fn_global;
                 const file = e.target.files[0]
                 let _url = URL.createObjectURL(file)
                 let eVideo = document.createElement('video')
-                eVideo.addEventListener('loadedmetadata', ({ target }) => {
+                eVideo.addEventListener('loadedmetadata', ({
+                  target
+                }) => {
                   const tempFiles = [{
                     duration: target.duration,
                     fileType: file.type,
@@ -1268,7 +1333,7 @@ this.fn_global = fn_global;
                 TASK(fileFactory, (file, itemCallback) => {
                   if (COMPRESSPED == 'origin') {
                     let reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                       let blob
                       if (typeof e.target.result === 'object') {
                         blob = new Blob([e.target.result])
@@ -1277,29 +1342,32 @@ this.fn_global = fn_global;
                       }
                       const path = TheKit.createTempPath(file.name)
                       const size = blob.size
-                      itemCallback({ path, size })
+                      itemCallback({
+                        path,
+                        size
+                      })
                     }
                     reader.readAsArrayBuffer(file);
                   } else {
 
                     let reader = new FileReader();
                     reader.readAsDataURL(file)
-                    reader.onload = function() {
+                    reader.onload = function () {
                       function readImg(file) {
                         return new Promise((resolve, reject) => {
                           const img = new Image()
                           const reader = new FileReader()
-                          reader.onload = function(e) {
+                          reader.onload = function (e) {
                             img.src = e.target.result
                           }
-                          reader.onerror = function(e) {
+                          reader.onerror = function (e) {
                             reject(e)
                           }
                           reader.readAsDataURL(file)
-                          img.onload = function() {
+                          img.onload = function () {
                             resolve(img)
                           }
-                          img.onerror = function(e) {
+                          img.onerror = function (e) {
                             reject(e)
                           }
                         })
@@ -1313,7 +1381,10 @@ this.fn_global = fn_global;
                         const path = TheKit.createTempPath(file.name)
 
                         const size = blob.size
-                        itemCallback({ path, size })
+                        itemCallback({
+                          path,
+                          size
+                        })
                       }
 
                       upload(file).catch(e => console.log(e))
@@ -1337,13 +1408,13 @@ this.fn_global = fn_global;
             eChooseImage.click()
           }
         },
-        cancel: function() {}
+        cancel: function () {}
       }
     });
   }
 
 
-   saveVideoToPhotosAlbum(wx_object) {
+  saveVideoToPhotosAlbum(wx_object) {
     let filePath = wx_object.filePath;
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
@@ -1359,28 +1430,40 @@ this.fn_global = fn_global;
       document.body.insertBefore(xsw_A, firstA);
       let xswAH = document.getElementById('xswAH');
       xswAH.setAttribute('href', filePath);
-      wx_res = { errMsg: 'saveVideoToPhotosAlbum:ok' };
-      if (wx_success) { wx_success(wx_res); }
-      if (wx_complete) { wx_complete(wx_res); }
+      wx_res = {
+        errMsg: 'saveVideoToPhotosAlbum:ok'
+      };
+      if (wx_success) {
+        wx_success(wx_res);
+      }
+      if (wx_complete) {
+        wx_complete(wx_res);
+      }
     } catch (e) {
-      wx_res = { errMsg: 'saveVideoToPhotosAlbum:fail' };
-      if (wx_fail) { wx_fail(wx_res); }
-      if (wx_complete) { wx_complete(wx_res); }
+      wx_res = {
+        errMsg: 'saveVideoToPhotosAlbum:fail'
+      };
+      if (wx_fail) {
+        wx_fail(wx_res);
+      }
+      if (wx_complete) {
+        wx_complete(wx_res);
+      }
     }
   }
 
 
-   setInnerAudioOption() {}
-   getAvailableAudioSources() {}
+  setInnerAudioOption() {}
+  getAvailableAudioSources() {}
   // AudioContext
-   createAudioContext(id) {
+  createAudioContext(id) {
     let ac = document.getElementById(id);
 
-    ac.setSrc = function(src) {
+    ac.setSrc = function (src) {
       ac.src = src;
     };
 
-    ac.seek = function(position) {
+    ac.seek = function (position) {
       ac.currentTime = position;
     };
 
@@ -1390,11 +1473,11 @@ this.fn_global = fn_global;
   }
 
   // InnerAudioContext
-   createInnerAudioContext() {
+  createInnerAudioContext() {
     return {}; //new IAC();
   }
 
-   getBackgroundAudioPlayerState(wx_object) {
+  getBackgroundAudioPlayerState(wx_object) {
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
     let wx_complete = wx_object.complete;
@@ -1403,13 +1486,13 @@ this.fn_global = fn_global;
     try {
       if (xsw_audio) {
         let audioStatus = '2';
-        xsw_audio.addEventListener('playing', function() {
+        xsw_audio.addEventListener('playing', function () {
           audioStatus = '1';
         });
-        xsw_audio.addEventListener('pause', function() {
+        xsw_audio.addEventListener('pause', function () {
           audioStatus = '0';
         });
-        setTimeout(function() {
+        setTimeout(function () {
           let duration = xsw_audio.duration;
           let currentPosition = xsw_audio.currentTime;
           let status = audioStatus;
@@ -1434,7 +1517,9 @@ this.fn_global = fn_global;
         throw new Error('请先播放音乐！');
       }
     } catch (e) {
-      wx_res = { errMsg: e.message };
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -1444,7 +1529,7 @@ this.fn_global = fn_global;
     }
   }
 
-   playBackgroundAudio(wx_object) {
+  playBackgroundAudio(wx_object) {
     let dataUrl = wx_object.dataUrl;
     let title = wx_object.title;
     let coverImgUrl = wx_object.coverImgUrl;
@@ -1476,7 +1561,9 @@ this.fn_global = fn_global;
       xsw_audio.src = dataUrl;
       //xsw_audio.controls=true
       xsw_audio.autoplay = true;
-      wx_res = { playBackgroundAudio: 'ok' };
+      wx_res = {
+        playBackgroundAudio: 'ok'
+      };
       if (wx_success) {
         wx_success(wx_res);
       }
@@ -1484,7 +1571,9 @@ this.fn_global = fn_global;
         wx_complete(wx_res);
       }
     } catch (e) {
-      wx_res = { errMsg: e.message };
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -1494,7 +1583,7 @@ this.fn_global = fn_global;
     }
   }
 
-   pauseBackgroundAudio(wx_object) {
+  pauseBackgroundAudio(wx_object) {
     let xsw_audio = document.getElementById('xsw_autoplayId');
     if (!wx_object) {
       if (xsw_audio) {
@@ -1510,7 +1599,9 @@ this.fn_global = fn_global;
       try {
         if (xsw_audio) {
           xsw_audio.pause();
-          wx_res = { pauseBackgroundAudio: 'ok' };
+          wx_res = {
+            pauseBackgroundAudio: 'ok'
+          };
           if (wx_success) {
             wx_success(wx_res);
           }
@@ -1521,7 +1612,9 @@ this.fn_global = fn_global;
           throw new Error('请先播放音乐！');
         }
       } catch (e) {
-        wx_res = { errMsg: e.message };
+        wx_res = {
+          errMsg: e.message
+        };
         if (wx_fail) {
           wx_fail(wx_res);
         }
@@ -1532,7 +1625,7 @@ this.fn_global = fn_global;
     }
   }
 
-   stopBackgroundAudio(wx_object) {
+  stopBackgroundAudio(wx_object) {
     let xsw_audio = document.getElementById('xsw_autoplayId');
     if (!wx_object) {
       if (xsw_audio) {
@@ -1549,7 +1642,9 @@ this.fn_global = fn_global;
       try {
         if (xsw_audio) {
           xsw_audio.pause();
-          wx_res = { pauseBackgroundAudio: 'ok' };
+          wx_res = {
+            pauseBackgroundAudio: 'ok'
+          };
           if (wx_success) {
             wx_success(wx_res);
           }
@@ -1560,7 +1655,9 @@ this.fn_global = fn_global;
           throw new Error('请先播放音乐！');
         }
       } catch (e) {
-        wx_res = { errMsg: e.message };
+        wx_res = {
+          errMsg: e.message
+        };
         if (wx_fail) {
           wx_fail(wx_res);
         }
@@ -1571,7 +1668,7 @@ this.fn_global = fn_global;
     }
   }
 
-   seekBackgroundAudio(wx_object) {
+  seekBackgroundAudio(wx_object) {
     let position = wx_object.position;
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
@@ -1581,7 +1678,9 @@ this.fn_global = fn_global;
     try {
       if (xsw_audio) {
         xsw_audio.currentTime = position;
-        wx_res = { seekBackgroundAudio: 'ok' };
+        wx_res = {
+          seekBackgroundAudio: 'ok'
+        };
         if (wx_success) {
           wx_success(wx_res);
         }
@@ -1592,7 +1691,9 @@ this.fn_global = fn_global;
         throw new Error('请先播放音乐！');
       }
     } catch (e) {
-      wx_res = { errMsg: e.message };
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -1602,11 +1703,11 @@ this.fn_global = fn_global;
     }
   }
 
-   onBackgroundAudioPlay(callback) {
-    setTimeout(function() {
+  onBackgroundAudioPlay(callback) {
+    setTimeout(function () {
       let xsw_audio = document.getElementById('xsw_autoplayId');
       if (xsw_audio) {
-        xsw_audio.addEventListener('playing', function() {
+        xsw_audio.addEventListener('playing', function () {
           let audioStatus = '1';
           callback(audioStatus);
         });
@@ -1614,12 +1715,12 @@ this.fn_global = fn_global;
     });
   }
 
-   onBackgroundAudioPause(callback) {
+  onBackgroundAudioPause(callback) {
     let audioStatus;
-    let zzz = setInterval(function() {
+    let zzz = setInterval(function () {
       let xsw_audio = document.getElementById('xsw_autoplayId');
       if (xsw_audio) {
-        xsw_audio.addEventListener('pause', function() {
+        xsw_audio.addEventListener('pause', function () {
           if (xsw_audio.currentTime == 0) {
             audioStatus = '2';
           } else {
@@ -1636,12 +1737,12 @@ this.fn_global = fn_global;
     }, 1000);
   }
 
-   onBackgroundAudioStop(callback) {
+  onBackgroundAudioStop(callback) {
     let audioStatus;
-    let zzz = setInterval(function() {
+    let zzz = setInterval(function () {
       let xsw_audio = document.getElementById('xsw_autoplayId');
       if (xsw_audio) {
-        xsw_audio.addEventListener('pause', function() {
+        xsw_audio.addEventListener('pause', function () {
           if (xsw_audio.currentTime == 0) {
             audioStatus = '2';
           } else {
@@ -1797,7 +1898,7 @@ this.fn_global = fn_global;
   //     return xsw_audio;
   //   }
 
-   getBackgroundAudioManager() {
+  getBackgroundAudioManager() {
 
     let audio = document.createElement('audio');
     audio.setAttribute('id', 'backgroundAudio');
@@ -1819,13 +1920,13 @@ this.fn_global = fn_global;
     //   bgm.currentTime = seek;
     // };
 
-    bgm.stop = function() {
+    bgm.stop = function () {
       bgm.pause();
       bgm.currentTime = 0;
     };
 
-    bgm.onCanPlay = function(callback) {
-      bgm.oncanplay = function() {
+    bgm.onCanPlay = function (callback) {
+      bgm.oncanplay = function () {
         console.log(bgm.duration);
         if (callback) {
           callback();
@@ -1837,48 +1938,48 @@ this.fn_global = fn_global;
       };
     };
 
-    bgm.onWaiting = function(callback) {
-      bgm.onwaiting = function() {
+    bgm.onWaiting = function (callback) {
+      bgm.onwaiting = function () {
         if (callback) {
           callback();
         }
       };
     };
 
-    bgm.onPlay = function(callback) {
-      bgm.onplay = function() {
+    bgm.onPlay = function (callback) {
+      bgm.onplay = function () {
         if (callback) {
           callback();
         }
       };
     };
 
-    bgm.onPause = function(callback) {
-      bgm.onpause = function() {
+    bgm.onPause = function (callback) {
+      bgm.onpause = function () {
         if (callback) {
           callback();
         }
       };
     };
 
-    bgm.onSeeking = function(callback) {
-      bgm.onseeking = function() {
+    bgm.onSeeking = function (callback) {
+      bgm.onseeking = function () {
         if (callback) {
           callback();
         }
       };
     };
 
-    bgm.onSeeked = function(callback) {
-      bgm.onseeked = function() {
+    bgm.onSeeked = function (callback) {
+      bgm.onseeked = function () {
         if (callback) {
           callback();
         }
       };
     };
 
-    bgm.onEnded = function(callback) {
-      bgm.onended = function() {
+    bgm.onEnded = function (callback) {
+      bgm.onended = function () {
         if (callback) {
           callback();
         }
@@ -1886,24 +1987,24 @@ this.fn_global = fn_global;
     };
 
     // INFO: 停止播放时调用，在小程序中播放背景音乐时通知栏有控制器，但是HTML5无法实现，所以这里也调用onended事件
-    bgm.onStop = function(callback) {
-      bgm.onended = function() {
+    bgm.onStop = function (callback) {
+      bgm.onended = function () {
         if (callback) {
           callback();
         }
       };
     };
 
-    bgm.onTimeUpdate = function(callback) {
-      bgm.ontimeupdate = function() {
+    bgm.onTimeUpdate = function (callback) {
+      bgm.ontimeupdate = function () {
         if (callback) {
           callback();
         }
       };
     };
 
-    bgm.onNext = function() {};
-    bgm.onPrev = function() {};
+    bgm.onNext = function () {};
+    bgm.onPrev = function () {};
 
     return bgm;
   }
@@ -1912,7 +2013,7 @@ this.fn_global = fn_global;
 
   //LivePusher
 
-   startRecord() {
+  startRecord() {
     //  let wx_success = wx_object.success;
     // let wx_fail = wx_object.success;
     //  let wx_complete = wx_object.success;
@@ -1926,7 +2027,7 @@ this.fn_global = fn_global;
     }
   }
 
-   stopRecord(wx_object) {
+  stopRecord(wx_object) {
     let wx_success = wx_object.success;
     let wx_fail = wx_object.success;
     let wx_complete = wx_object.success;
@@ -1934,17 +2035,17 @@ this.fn_global = fn_global;
     let wx_res = {};
     //let localId;
     this.stopRecord({
-      success: function(res) {
+      success: function (res) {
         if (wx_success) {
           wx_res.errMsg = 'startRecord:ok';
           wx_res.tempFilePath = res.localId; // 小程序中会返回录音文件的临时存放路径 tempFilePath ，JS-SDK中会返回录音文件的 localId ，所以这里直接将 localId 赋值给 tempFilePath，让用户获取 tempFilePath 来播放录音。
           wx_success(wx_res);
         }
       },
-      fail: function(wx_res) {
+      fail: function (wx_res) {
         wx_fail(wx_res);
       },
-      complete: function(wx_res) {
+      complete: function (wx_res) {
         if (wx_complete) {
           wx_complete(wx_res);
         }
@@ -1956,7 +2057,7 @@ this.fn_global = fn_global;
 
   //EditorContext
 
-   getLocation() { //wx_object) {
+  getLocation() { //wx_object) {
     // let type = wx_object.type || 'wgs84'; // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入 'gcj02'
     // let altitude = wx_object.altitude || 'false'; //【小程序传入 true 会返回高度信息，由于获取高度需要较高精确度，会减慢接口返回速度】
     //let wx_success = wx_object.success;
@@ -1966,7 +2067,7 @@ this.fn_global = fn_global;
     // TODO: getLocation:模拟器无法返回speed、accuracy（手机上好像可以返回，还没试）
     // HACK: getLocation:JS-SDK无法返回{ altitude高度，verticalAccuracy垂直精度（Android 无法获取，返回 0）, horizontalAccuracy水平精度 }
     if (navigator.geolocation) {
-      let n = navigator.geolocation.getCurrentPosition(function(res) {
+      let n = navigator.geolocation.getCurrentPosition(function (res) {
         console.log(res); // 需要的坐标地址就在res中
         console.log(n.verticalAccuracy);
       });
@@ -1996,7 +2097,7 @@ this.fn_global = fn_global;
     });*/
   }
 
-   openLocation(wx_object) {
+  openLocation(wx_object) {
     let latitude = wx_object.latitude; //（必填） 纬度，浮点数，范围为90 ~ -90
     let longitude = wx_object.longitude; //（必填）经度，浮点数，范围为180 ~ -180
     // TODO: 5~18 转换为 1~28
@@ -2037,15 +2138,15 @@ this.fn_global = fn_global;
       address: address,
       scale: scale,
       infoUrl: infoUrl,
-      success: function(res) {
+      success: function (res) {
         if (wx_success) {
           wx_success(res);
         }
       },
-      fail: function() {
+      fail: function () {
         wx_fail();
       },
-      complete: function() {
+      complete: function () {
         if (wx_complete) {
           wx_complete();
         }
@@ -2053,11 +2154,11 @@ this.fn_global = fn_global;
     });
   }
 
-   chooseLocation() {}
+  chooseLocation() {}
 
   //share
 
-   drawCanvas(wx_object) {
+  drawCanvas(wx_object) {
     let canvasId = wx_object.canvasId;
     let actions = wx_object.actions;
     let reserve = wx_object.reserve;
@@ -2065,7 +2166,7 @@ this.fn_global = fn_global;
     let eCanvas = $("[canvasid='" + canvasId + "']")[0];
     this._draw(eCanvas, actions, reserve);
   }
-   _draw() { //eCanvas, actions, reserve) {
+  _draw() { //eCanvas, actions, reserve) {
     /*
         window.requestAnimationFrame(function() {
 
@@ -2410,21 +2511,21 @@ this.fn_global = fn_global;
         });*/
   }
 
-   saveFile() {}
+  saveFile() {}
 
-   getFileInfo() {}
+  getFileInfo() {}
 
-   getSavedFileList() {}
+  getSavedFileList() {}
 
-   getSavedFileInfo() {}
+  getSavedFileInfo() {}
 
-   removeSavedFile() {}
+  removeSavedFile() {}
 
-   openDocument() {}
+  openDocument() {}
 
-   createCameraContext() {}
+  createCameraContext() {}
 
-   login() {
+  login() {
     let weiXdeng = document.createElement('button');
     weiXdeng.setAttribute('id', 'weiXingDeng');
     weiXdeng.setAttribute('style', 'width:80%;margin:20px 0 0 10%');
@@ -2451,36 +2552,36 @@ this.fn_global = fn_global;
     QQdeng.innerText = 'QQ登录';
     document.body.appendChild(QQdeng);
   }
-   weixinDian() {
+  weixinDian() {
     location.href =
       'https://open.weixin.qq.com/connect/qrconnect?appid=wx240ff52c65528fbb&scope=snsapi_login&redirect_uri=https%3A%2F%2Fwww.onekit.com%2Fpassport0%2Flogin%2FPlogin.php&state=' +
       Math.ceil(Math.random() * 1000) +
       '&login_type=jssdk&self_redirect=default';
   }
-   zhiFBDian() {
+  zhiFBDian() {
     location.href =
       'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2018030502321064&scope=auth_user&redirect_uri=https://www.onekit.com/passport/login/ZFlogin.php&state=' +
       Math.ceil(Math.random() * 1000);
   }
-   weiBoDian() {
+  weiBoDian() {
     location.href =
       'https://api.weibo.com/oauth2/authorize?client_id=1741134067&redirect_uri=https%3A%2F%2Fwww.onekit.cn%2Fpassport0%2Flogin%2FWBlogin%2FWlogin.php&response_type=code';
   }
-   QQDian() {
+  QQDian() {
     location.href =
       'https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101475870&redirect_uri=https://www.onekit.cn/passport0/login/QQlogin.php&state=' +
       Math.ceil(Math.random() * 1000);
   }
 
-   checkSession() {}
+  checkSession() {}
 
-   reportMonitor() {}
+  reportMonitor() {}
 
-   reportAnalytics() {
+  reportAnalytics() {
 
   }
 
-   requestPayment(wx_object) {
+  requestPayment(wx_object) {
     // 小程序参数
     let timestamp = wx_object.timestamp; // 时间戳，从 1970 年 1 月 1 日 00:00:00 至今的秒数，即当前的时间
     let nonceStr = wx_object.nonceStr; // 随机字符串，长度为32个字符以下
@@ -2506,13 +2607,13 @@ this.fn_global = fn_global;
   }
 
 
-   openSetting() {}
+  openSetting() {}
 
-   getSetting() {}
+  getSetting() {}
 
   //Address
 
-   addCard(wx_object) {
+  addCard(wx_object) {
     let cardList = wx_object.cardList;
     let wx_success = wx_object.success || '';
     let wx_fail = wx_object.fail || '';
@@ -2526,7 +2627,7 @@ this.fn_global = fn_global;
     });
   }
 
-   openCard(wx_object) {
+  openCard(wx_object) {
     let cardList = wx_object.cardList;
     let wx_success = wx_object.success || '';
     let wx_fail = wx_object.fail || '';
@@ -2540,16 +2641,16 @@ this.fn_global = fn_global;
     });
   }
 
-   checkIsSupportSoterAuthentication() {}
+  checkIsSupportSoterAuthentication() {}
 
-   startSoterAuthentication() {}
+  startSoterAuthentication() {}
 
-   checkIsSoterEnrolledInDevice() {}
+  checkIsSoterEnrolledInDevice() {}
 
-   getWeRunData() {}
+  getWeRunData() {}
 
   // 小程序和 JS-SDK 都有 iBeacon 的实现，但是貌似不一样
-   startBeaconDiscovery() {
+  startBeaconDiscovery() {
     // let uuids = wx_object.uuids;
     // let ignoreBluetoothAvailable = wx_object.ignoreBluetoothAvailable;
     // let wx_success = wx_object.success;
@@ -2564,77 +2665,77 @@ this.fn_global = fn_global;
     // });
   }
 
-   stopBeaconDiscovery() {}
+  stopBeaconDiscovery() {}
 
-   getBeacons() {}
+  getBeacons() {}
 
-   onBeaconUpdate() {}
+  onBeaconUpdate() {}
 
-   onBeaconServiceChange() {}
+  onBeaconServiceChange() {}
 
-   getHCEState() {}
+  getHCEState() {}
 
-   startHCE() {}
+  startHCE() {}
 
-   stopHCE() {}
+  stopHCE() {}
 
-   onHCEMessage() {}
+  onHCEMessage() {}
 
-   sendHCEMessage() {}
+  sendHCEMessage() {}
 
-   startWiFi() {}
+  startWiFi() {}
 
-   stopWiFi() {}
+  stopWiFi() {}
 
-   connectWiFi() {}
+  connectWiFi() {}
 
-   getWiFiList() {}
+  getWiFiList() {}
 
-   onGetWiFiList() {}
+  onGetWiFiList() {}
 
-   setWiFiList() {}
+  setWiFiList() {}
 
-   onWiFiConnected() {}
+  onWiFiConnected() {}
 
-   getConnectedWiFi() {}
+  getConnectedWiFi() {}
 
-   openBluetoothAdapter() {}
+  openBluetoothAdapter() {}
 
-   closeBluetoothAdapter() {}
+  closeBluetoothAdapter() {}
 
-   getBluetoothAdapterState() {}
+  getBluetoothAdapterState() {}
 
-   onBluetoothAdapterStateChange() {}
+  onBluetoothAdapterStateChange() {}
 
-   startBluetoothDevicesDiscovery() {}
+  startBluetoothDevicesDiscovery() {}
 
-   stopBluetoothDevicesDiscovery() {}
+  stopBluetoothDevicesDiscovery() {}
 
-   getBluetoothDevices() {}
+  getBluetoothDevices() {}
 
-   getConnectedBluetoothDevices() {}
+  getConnectedBluetoothDevices() {}
 
-   onBluetoothDeviceFound() {}
+  onBluetoothDeviceFound() {}
 
-   createBLEConnection() {}
+  createBLEConnection() {}
 
-   closeBLEConnection() {}
+  closeBLEConnection() {}
 
-   getBLEDeviceServices() {}
+  getBLEDeviceServices() {}
 
-   getBLEDeviceCharacteristics() {}
+  getBLEDeviceCharacteristics() {}
 
-   readBLECharacteristicValue() {}
+  readBLECharacteristicValue() {}
 
-   writeBLECharacteristicValue() {}
+  writeBLECharacteristicValue() {}
 
-   notifyBLECharacteristicValueChange() {}
+  notifyBLECharacteristicValueChange() {}
 
-   onBLEConnectionStateChange() {}
+  onBLEConnectionStateChange() {}
 
-   onBLECharacteristicValueChange() {}
+  onBLECharacteristicValueChange() {}
 
-   makePhoneCall(wx_object) {
+  makePhoneCall(wx_object) {
     let phoneNumber = wx_object.phoneNumber;
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
@@ -2650,7 +2751,9 @@ this.fn_global = fn_global;
         wx_complete(wx_res);
       }
     } catch (e) {
-      wx_res = { errMsg: e.message };
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -2662,7 +2765,7 @@ this.fn_global = fn_global;
 
   // TODO: 未改未测试
   // HACK: 应该不能通过web方式实现
-   addPhoneContact(wx_object) {
+  addPhoneContact(wx_object) {
     let phoneNumber = wx_object.phoneNumber;
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
@@ -2683,7 +2786,9 @@ this.fn_global = fn_global;
         wx_complete(wx_res);
       }
     } catch (e) {
-      wx_res = { errMsg: e.message };
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -2693,14 +2798,14 @@ this.fn_global = fn_global;
     }
   }
 
-   getBatteryInfo(wx_object) {
+  getBatteryInfo(wx_object) {
     let wx_success = wx_object.success;
     let wx_fail = wx_object.success;
     let wx_complete = wx_object.success;
     //////////////////////////////
     try {
       let wx_res = {};
-      navigator.getBattery().then(function(battery) {
+      navigator.getBattery().then(function (battery) {
         wx_res.errMsg = 'getBatteryInfo:ok';
         wx_res.level = battery.level * 100;
         wx_res.isCharging = battery.charging;
@@ -2724,14 +2829,14 @@ this.fn_global = fn_global;
     }
   }
 
-   getBatteryInfoSync(wx_object) {
+  getBatteryInfoSync(wx_object) {
     let wx_success = wx_object.success;
     let wx_fail = wx_object.success;
     let wx_complete = wx_object.success;
     //////////////////////////////
     try {
       let wx_res = {};
-      navigator.getBattery().then(function(battery) {
+      navigator.getBattery().then(function (battery) {
         wx_res.errMsg = 'getBatteryInfoSync:ok';
         wx_res.level = battery.level * 100;
         wx_res.isCharging = battery.charging;
@@ -2755,7 +2860,7 @@ this.fn_global = fn_global;
     }
   }
 
-   setClipboardData(wx_object) {
+  setClipboardData(wx_object) {
     //  let data = wx_object.data; // 【必填】剪贴板的内容
     //  let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
@@ -2777,7 +2882,9 @@ this.fn_global = fn_global;
       //   wx_complete(wx_res);
       // }
     } catch (e) {
-      wx_res = { errMsg: e.message };
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -2787,7 +2894,7 @@ this.fn_global = fn_global;
     }
   }
 
-   getClipboardData(wx_object) {
+  getClipboardData(wx_object) {
     //let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
     let wx_complete = wx_object.complete;
@@ -2803,7 +2910,9 @@ this.fn_global = fn_global;
       //   wx_complete(wx_res);
       // }
     } catch (e) {
-      wx_res = { errMsg: e.message };
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -2812,37 +2921,39 @@ this.fn_global = fn_global;
       }
     }
   }
-   setScreenBrightness() {
+  setScreenBrightness() {
     // 设置屏幕亮度
     //plus.screen.setBrightness(0.5);
   }
 
-   getScreenBrightness() {
+  getScreenBrightness() {
     // plus.screen.getBrightness();
   }
 
-   setKeepScreenOn() {}
+  setKeepScreenOn() {}
 
-   captureScreen() {
-    html2canvas(document.body).then(function(canvas) {
+  captureScreen() {
+    html2canvas(document.body).then(function (canvas) {
       //let ctx = cas.getContext('2d');
       //canvas.width = 100, canvas.height = 100;
       let dataURL = canvas.toDataURL('image/png', 1);
       if (this.fn_global().Screen_callback) {
-        let wx_res = { image: dataURL };
+        let wx_res = {
+          image: dataURL
+        };
         this.fn_global().Screen_callback(wx_res);
       }
     });
   }
 
-   onUserCaptureScreen(callback) {
+  onUserCaptureScreen(callback) {
     this.fn_global().Screen_callback = callback;
   }
 
-   onAccelerometerChange(callback) {
+  onAccelerometerChange(callback) {
     this.fn_global().Accelerometer_callback = callback;
   }
-   _callback(event) {
+  _callback(event) {
     if (this.fn_global().Accelerometer_callback) {
       let acceleration = event.accelerationIncludingGravity;
       let wx_res = {
@@ -2853,7 +2964,7 @@ this.fn_global = fn_global;
       this.fn_global().Accelerometer_callback(wx_res);
     }
   }
-   startAccelerometer(wx_object) {
+  startAccelerometer(wx_object) {
     // let interval = wx_object.interval;
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
@@ -2884,7 +2995,9 @@ this.fn_global = fn_global;
         }
       }
     } catch (e) {
-      wx_res = { errMsg: e.message };
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -2894,7 +3007,7 @@ this.fn_global = fn_global;
     }
   }
 
-   stopAccelerometer(wx_object) {
+  stopAccelerometer(wx_object) {
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
     let wx_complete = wx_object.complete;
@@ -2923,7 +3036,9 @@ this.fn_global = fn_global;
         }
       }
     } catch (e) {
-      wx_res = { errMsg: e.message };
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -2933,7 +3048,7 @@ this.fn_global = fn_global;
     }
   }
 
-   _deviceorientation(event) {
+  _deviceorientation(event) {
     if (this.fn_global().Compass_callback) {
       let wx_res = {
         direction: event.alpha,
@@ -2942,13 +3057,13 @@ this.fn_global = fn_global;
       this.fn_global().Compass_callback(wx_res);
     }
   }
-   onCompassChange(callback) {
+  onCompassChange(callback) {
     this.fn_global().Compass_callback = callback;
   }
-   offCompassChange() {
+  offCompassChange() {
     this.fn_global().Compass_callback = null;
   }
-   startCompass(wx_object) {
+  startCompass(wx_object) {
     if (!wx_object) {
       wx_object = {};
     }
@@ -2966,23 +3081,37 @@ this.fn_global = fn_global;
         wx_res = {
           errMsg: 'startCompass:ok'
         };
-        if (wx_success) { wx_success(wx_res); }
-        if (wx_complete) { wx_complete(wx_res); }
+        if (wx_success) {
+          wx_success(wx_res);
+        }
+        if (wx_complete) {
+          wx_complete(wx_res);
+        }
       } else {
         wx_res = {
           errMsg: 'startDeviceMotionListening:fail'
         };
-        if (wx_success) { wx_success(wx_res); }
-        if (wx_complete) { wx_complete(wx_res); }
+        if (wx_success) {
+          wx_success(wx_res);
+        }
+        if (wx_complete) {
+          wx_complete(wx_res);
+        }
       }
     } catch (e) {
-      wx_res = { errMsg: e.message };
-      if (wx_fail) { wx_fail(wx_res); }
-      if (wx_complete) { wx_complete(wx_res); }
+      wx_res = {
+        errMsg: e.message
+      };
+      if (wx_fail) {
+        wx_fail(wx_res);
+      }
+      if (wx_complete) {
+        wx_complete(wx_res);
+      }
     }
   }
 
-   stopCompass(wx_object) {
+  stopCompass(wx_object) {
     if (!wx_object) {
       wx_object = {};
     }
@@ -2998,23 +3127,37 @@ this.fn_global = fn_global;
         wx_res = {
           errMsg: 'stopCompass:ok'
         };
-        if (wx_success) { wx_success(wx_res); }
-        if (wx_complete) { wx_complete(wx_res); }
+        if (wx_success) {
+          wx_success(wx_res);
+        }
+        if (wx_complete) {
+          wx_complete(wx_res);
+        }
       } else {
         wx_res = {
           errMsg: 'stopDeviceMotionListening:fail'
         };
-        if (wx_success) { wx_success(wx_res); }
-        if (wx_complete) { wx_complete(wx_res); }
+        if (wx_success) {
+          wx_success(wx_res);
+        }
+        if (wx_complete) {
+          wx_complete(wx_res);
+        }
       }
     } catch (e) {
-      wx_res = { errMsg: e.message };
-      if (wx_fail) { wx_fail(wx_res); }
-      if (wx_complete) { wx_complete(wx_res); }
+      wx_res = {
+        errMsg: e.message
+      };
+      if (wx_fail) {
+        wx_fail(wx_res);
+      }
+      if (wx_complete) {
+        wx_complete(wx_res);
+      }
     }
   }
 
-   startDeviceMotionListening(wx_object) {
+  startDeviceMotionListening(wx_object) {
     if (!wx_object) {
       wx_object = {};
     }
@@ -3030,23 +3173,37 @@ this.fn_global = fn_global;
         wx_res = {
           errMsg: 'startDeviceMotionListening:ok'
         };
-        if (wx_success) { wx_success(wx_res); }
-        if (wx_complete) { wx_complete(wx_res); }
+        if (wx_success) {
+          wx_success(wx_res);
+        }
+        if (wx_complete) {
+          wx_complete(wx_res);
+        }
       } else {
         wx_res = {
           errMsg: 'startDeviceMotionListening:fail'
         };
-        if (wx_success) { wx_success(wx_res); }
-        if (wx_complete) { wx_complete(wx_res); }
+        if (wx_success) {
+          wx_success(wx_res);
+        }
+        if (wx_complete) {
+          wx_complete(wx_res);
+        }
       }
     } catch (error) {
-      wx_res = { errMsg: error.message };
-      if (wx_fail) { wx_fail(wx_res); }
-      if (wx_complete) { wx_complete(wx_res); }
+      wx_res = {
+        errMsg: error.message
+      };
+      if (wx_fail) {
+        wx_fail(wx_res);
+      }
+      if (wx_complete) {
+        wx_complete(wx_res);
+      }
     }
   }
 
-   stopDeviceMotionListening(wx_object) {
+  stopDeviceMotionListening(wx_object) {
     if (!wx_object) {
       wx_object = {};
     }
@@ -3065,21 +3222,31 @@ this.fn_global = fn_global;
         wx_res = {
           errMsg: 'stopDeviceMotionListening:fail'
         };
-        if (wx_success) { wx_success(wx_res); }
-        if (wx_complete) { wx_complete(wx_res); }
+        if (wx_success) {
+          wx_success(wx_res);
+        }
+        if (wx_complete) {
+          wx_complete(wx_res);
+        }
       }
     } catch (error) {
-      wx_res = { errMsg: error.message };
-      if (wx_fail) { wx_fail(wx_res); }
-      if (wx_complete) { wx_complete(wx_res); }
+      wx_res = {
+        errMsg: error.message
+      };
+      if (wx_fail) {
+        wx_fail(wx_res);
+      }
+      if (wx_complete) {
+        wx_complete(wx_res);
+      }
     }
   }
 
-   onDeviceMotionChange(callback) {
+  onDeviceMotionChange(callback) {
     this.fn_global().DeviceMotioncallback = callback;
   }
 
-   startGyroscope(wx_object) {
+  startGyroscope(wx_object) {
     if (!wx_object) {
       wx_object = {};
     }
@@ -3095,23 +3262,37 @@ this.fn_global = fn_global;
         wx_res = {
           errMsg: 'startGyroscope:ok'
         };
-        if (wx_success) { wx_success(wx_res); }
-        if (wx_complete) { wx_complete(wx_res); }
+        if (wx_success) {
+          wx_success(wx_res);
+        }
+        if (wx_complete) {
+          wx_complete(wx_res);
+        }
       } else {
         wx_res = {
           errMsg: 'startGyroscope:fail'
         };
-        if (wx_success) { wx_success(wx_res); }
-        if (wx_complete) { wx_complete(wx_res); }
+        if (wx_success) {
+          wx_success(wx_res);
+        }
+        if (wx_complete) {
+          wx_complete(wx_res);
+        }
       }
     } catch (error) {
-      wx_res = { errMsg: error.message };
-      if (wx_fail) { wx_fail(wx_res); }
-      if (wx_complete) { wx_complete(wx_res); }
+      wx_res = {
+        errMsg: error.message
+      };
+      if (wx_fail) {
+        wx_fail(wx_res);
+      }
+      if (wx_complete) {
+        wx_complete(wx_res);
+      }
     }
   }
 
-   stopGyroscope(wx_object) {
+  stopGyroscope(wx_object) {
     if (!wx_object) {
       wx_object = {};
     }
@@ -3130,21 +3311,31 @@ this.fn_global = fn_global;
         wx_res = {
           errMsg: 'stopGyroscope:fail'
         };
-        if (wx_success) { wx_success(wx_res); }
-        if (wx_complete) { wx_complete(wx_res); }
+        if (wx_success) {
+          wx_success(wx_res);
+        }
+        if (wx_complete) {
+          wx_complete(wx_res);
+        }
       }
     } catch (error) {
-      wx_res = { errMsg: error.message };
-      if (wx_fail) { wx_fail(wx_res); }
-      if (wx_complete) { wx_complete(wx_res); }
+      wx_res = {
+        errMsg: error.message
+      };
+      if (wx_fail) {
+        wx_fail(wx_res);
+      }
+      if (wx_complete) {
+        wx_complete(wx_res);
+      }
     }
   }
 
-   onGyroscopeChange(callback) {
+  onGyroscopeChange(callback) {
     this.fn_global().Gyroscopecallback = callback;
   }
 
-   onMemoryWarning(callback) {
+  onMemoryWarning(callback) {
     let _callback = callback;
     //////////////////////////////
     let wx_res = {};
@@ -3177,8 +3368,8 @@ this.fn_global = fn_global;
     }
   }
 
-   scanItem() {}
-   scanCode() {
+  scanItem() {}
+  scanCode() {
     // let onlyFromCamera = wx_object.onlyFromCamera || false; // 是否只能从相机扫码，不允许从相册选择图片（JS-SDK不支持）
     //  let scanType = wx_object.scanType || ['barCode', 'qrCode']; // 扫码类型
     // let wx_success = wx_object.success;
@@ -3188,7 +3379,7 @@ this.fn_global = fn_global;
 
   }
 
-   vibrateLong(wx_object) {
+  vibrateLong(wx_object) {
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
     let wx_complete = wx_object.complete;
@@ -3211,7 +3402,9 @@ this.fn_global = fn_global;
         wx_complete(wx_res);
       }
     } catch (e) {
-      wx_res = { errMsg: e.message };
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -3221,7 +3414,7 @@ this.fn_global = fn_global;
     }
   }
 
-   vibrateShort(wx_object) {
+  vibrateShort(wx_object) {
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
     let wx_complete = wx_object.complete;
@@ -3245,7 +3438,9 @@ this.fn_global = fn_global;
       }
     } catch (e) {
       alert(JSON.stringify(e));
-      wx_res = { errMsg: e.message };
+      wx_res = {
+        errMsg: e.message
+      };
       if (wx_fail) {
         wx_fail(wx_res);
       }
@@ -3255,23 +3450,25 @@ this.fn_global = fn_global;
     }
   }
 
-   createWorker() {}
+  createWorker() {}
 
-   getExtConfig() {}
+  getExtConfig() {}
 
-   getExtConfigSync() {}
+  getExtConfigSync() {}
 
-   createSelectorQuery() {
+  createSelectorQuery() {
     let xsw_document = document;
-    xsw_document.select = function(wx_object) {
+    xsw_document.select = function (wx_object) {
       let ThatBox = xsw_document.querySelector(wx_object);
-      ThatBox.boundingClientRect = function(callback) {
+      ThatBox.boundingClientRect = function (callback) {
         let Html = ThatBox.innerHTML;
         let boundingClientRectArray = [];
         boundingClientRectArray['id'] = ThatBox.getAttribute('id');
         boundingClientRectArray['left'] = ThatBox.getBoundingClientRect().left;
         if (Html) {
-          boundingClientRectArray['dataset'] = { Html };
+          boundingClientRectArray['dataset'] = {
+            Html
+          };
         } else {
           boundingClientRectArray['dataset'] = {};
         }
@@ -3285,7 +3482,7 @@ this.fn_global = fn_global;
           for (let x in boundingClientRectArray) {
             objT[x] = boundingClientRectArray[x]
           }
-          callback.exec = function() {
+          callback.exec = function () {
             callback(objT);
           };
         }
@@ -3293,11 +3490,13 @@ this.fn_global = fn_global;
         return callback;
       };
       let Tarray = [];
-      ThatBox.scrollOffset = function(callback) {
+      ThatBox.scrollOffset = function (callback) {
         let Html = ThatBox.innerHTML;
         Tarray['id'] = ThatBox.getAttribute('id');
         if (Html) {
-          Tarray['dataset'] = { Html };
+          Tarray['dataset'] = {
+            Html
+          };
         } else {
           Tarray['dataset'] = {};
         }
@@ -3308,14 +3507,14 @@ this.fn_global = fn_global;
           for (let x in Tarray) {
             objT[x] = Tarray[x]
           }
-          callback.exec = function() {
+          callback.exec = function () {
             callback(objT);
           };
         }
         xsw_document.execPush(Tarray);
         return callback;
       };
-      ThatBox.fields = function(wx_object, callback) {
+      ThatBox.fields = function (wx_object, callback) {
         let id = wx_object.id;
         let dataset = wx_object.dataset;
         let rect = wx_object.rect;
@@ -3329,7 +3528,9 @@ this.fn_global = fn_global;
         if (dataset && dataset == true) {
           let Html = ThatBox.innerHTML;
           if (Html) {
-            fieldsArray['dataset'] = { Html };
+            fieldsArray['dataset'] = {
+              Html
+            };
           } else {
             fieldsArray['dataset'] = {};
           }
@@ -3357,7 +3558,7 @@ this.fn_global = fn_global;
         for (let x in fieldsArray) {
           objF[x] = fieldsArray[x]
         }
-        callback.exec = function() {
+        callback.exec = function () {
           callback(objF);
         };
         return callback;
@@ -3365,9 +3566,9 @@ this.fn_global = fn_global;
       return ThatBox;
     };
 
-    xsw_document.selectAll = function(wx_object) {
+    xsw_document.selectAll = function (wx_object) {
       let ThatBox = xsw_document.querySelectorAll(wx_object);
-      ThatBox.boundingClientRect = function(callback) {
+      ThatBox.boundingClientRect = function (callback) {
         let objArray = new Array();
         let boundingClientRectArray = [];
         for (let xd = 0; xd < ThatBox.length; xd++) {
@@ -3375,7 +3576,9 @@ this.fn_global = fn_global;
           boundingClientRectArray['id'] = ThatBox[xd].getAttribute('id');
           boundingClientRectArray['left'] = ThatBox[xd].getBoundingClientRect().left;
           if (Html) {
-            boundingClientRectArray['dataset'] = { Html };
+            boundingClientRectArray['dataset'] = {
+              Html
+            };
           } else {
             boundingClientRectArray['dataset'] = {};
           }
@@ -3391,21 +3594,23 @@ this.fn_global = fn_global;
           objArray.push(objT);
         }
         if (callback) {
-          callback.exec = function() {
+          callback.exec = function () {
             callback(objArray);
           };
         }
         xsw_document.execPush(objArray);
         return callback;
       };
-      ThatBox.scrollOffset = function(callback) {
+      ThatBox.scrollOffset = function (callback) {
         let objTArray = new Array();
         let Tarray = [];
         for (let xd = 0; xd < ThatBox.length; xd++) {
           let Html = ThatBox[xd].innerHTML;
           Tarray['id'] = ThatBox[xd].getAttribute('id');
           if (Html) {
-            Tarray['dataset'] = { Html };
+            Tarray['dataset'] = {
+              Html
+            };
           } else {
             Tarray['dataset'] = {};
           }
@@ -3418,14 +3623,14 @@ this.fn_global = fn_global;
           objTArray.push(objT);
         }
         if (callback) {
-          callback.exec = function() {
+          callback.exec = function () {
             callback(objTArray);
           };
         }
         xsw_document.execPush(objTArray);
         return callback;
       };
-      ThatBox.fields = function(wx_object, callback) {
+      ThatBox.fields = function (wx_object, callback) {
         let objTTArray = new Array();
         let fieldsArray = [];
         for (let xd = 0; xd < ThatBox.length; xd++) {
@@ -3441,7 +3646,9 @@ this.fn_global = fn_global;
           if (dataset && dataset == true) {
             let Html = ThatBox[xd].innerHTML;
             if (Html) {
-              fieldsArray['dataset'] = { Html };
+              fieldsArray['dataset'] = {
+                Html
+              };
             } else {
               fieldsArray['dataset'] = {};
             }
@@ -3472,7 +3679,7 @@ this.fn_global = fn_global;
           objTTArray.push(objF);
         }
         if (callback) {
-          callback.exec = function() {
+          callback.exec = function () {
             callback(objTTArray);
           };
         }
@@ -3482,14 +3689,16 @@ this.fn_global = fn_global;
       return ThatBox;
     };
 
-    xsw_document.selectViewport = function() {
+    xsw_document.selectViewport = function () {
       let selectBody = document.body;
-      selectBody.boundingClientRect = function(callback) {
+      selectBody.boundingClientRect = function (callback) {
         let boundingClientRectArrayA = [];
         let Html = selectBody.innerHTML;
         boundingClientRectArrayA['left'] = selectBody.getBoundingClientRect().left;
         if (Html) {
-          boundingClientRectArrayA['dataset'] = { Html };
+          boundingClientRectArrayA['dataset'] = {
+            Html
+          };
         } else {
           boundingClientRectArrayA['dataset'] = {};
         }
@@ -3503,7 +3712,7 @@ this.fn_global = fn_global;
           for (let x in boundingClientRectArrayA) {
             objT[x] = boundingClientRectArrayA[x]
           }
-          callback.exec = function() {
+          callback.exec = function () {
             callback(objT);
           };
         }
@@ -3511,11 +3720,13 @@ this.fn_global = fn_global;
         return callback;
       };
       let Sarray = [];
-      selectBody.scrollOffset = function(callback) {
+      selectBody.scrollOffset = function (callback) {
         let Html = selectBody.innerHTML;
         Sarray['id'] = selectBody.getAttribute('id');
         if (Html) {
-          Sarray['dataset'] = { Html };
+          Sarray['dataset'] = {
+            Html
+          };
         } else {
           Sarray['dataset'] = {};
         }
@@ -3526,14 +3737,14 @@ this.fn_global = fn_global;
           for (let x in Sarray) {
             objT[x] = Sarray[x]
           }
-          callback.exec = function() {
+          callback.exec = function () {
             callback(objT);
           };
         }
         xsw_document.execPush(Sarray);
         return callback;
       };
-      selectBody.fields = function(wx_object, callback) {
+      selectBody.fields = function (wx_object, callback) {
         let id = wx_object.id;
         let dataset = wx_object.dataset;
         let rect = wx_object.rect;
@@ -3547,7 +3758,9 @@ this.fn_global = fn_global;
         if (dataset && dataset == true) {
           let Html = selectBody.innerHTML;
           if (Html) {
-            fieldsArrayA['dataset'] = { Html };
+            fieldsArrayA['dataset'] = {
+              Html
+            };
           } else {
             fieldsArrayA['dataset'] = {};
           }
@@ -3575,7 +3788,7 @@ this.fn_global = fn_global;
         for (let x in fieldsArrayA) {
           objF[x] = fieldsArrayA[x]
         }
-        callback.exec = function() {
+        callback.exec = function () {
           callback(objF);
         };
         return callback;
@@ -3584,20 +3797,20 @@ this.fn_global = fn_global;
     };
 
     let execArray = [];
-    xsw_document.execPush = function(callback) {
+    xsw_document.execPush = function (callback) {
       let objT = new Object();
       for (let x in callback) {
         objT[x] = callback[x]
       }
       execArray.push(objT);
     };
-    xsw_document.exec = function(callback) {
+    xsw_document.exec = function (callback) {
       callback(execArray);
     };
     return xsw_document;
   }
 
-   getNetworkType() {
+  getNetworkType() {
     //  let wx_success = wx_object.success;
     //  let wx_fail = wx_object.fail;
     //  let wx_complete = wx_object.complete;
@@ -3608,12 +3821,12 @@ this.fn_global = fn_global;
 
   // TODO: 未测试
   // INFO: Network Information API 兼容性很差 (https://caniuse.com/#feat=netinfo) (https://developer.mozilla.org/zh-CN/docs/Web/API/Network_Information_API)
-   onNetworkStatusChange(callback) {
+  onNetworkStatusChange(callback) {
     let connection = navigator.connection;
     let connectionInfo = {};
     connectionInfo.isOnline = true;
     connectionInfo.networkType = connection.type || 'unknown';
-    connection.addEventListener('change', function() {
+    connection.addEventListener('change', function () {
       if (connection.type === 'cellular') {
         if (connection.rtt < 270) {
           connectionInfo.networkType = '4g';
@@ -3634,56 +3847,56 @@ this.fn_global = fn_global;
     });
   }
 
-   createIntersectionObserver() {}
+  createIntersectionObserver() {}
 
-   createRewardedVideoAd() {}
-   createInterstitialAd() {}
+  createRewardedVideoAd() {}
+  createInterstitialAd() {}
 
-   color() {} //canvas
-   ble() {}
-   fileSystem() {}
-   livePlayer() {}
-   livePusher() {}
-   mediaContainer() {}
-   accountInfo() {}
-   chooseAddress() {}
-   authorize() {}
-   chooseInvoiceTitle() {}
-   chooseInvoice() {}
-   navigateToMiniProgram() {}
-   navigateBackMiniProgram() {}
-   UserInfo() {}
-   getUserInfo() {}
+  color() {} //canvas
+  ble() {}
+  fileSystem() {}
+  livePlayer() {}
+  livePusher() {}
+  mediaContainer() {}
+  accountInfo() {}
+  chooseAddress() {}
+  authorize() {}
+  chooseInvoiceTitle() {}
+  chooseInvoice() {}
+  navigateToMiniProgram() {}
+  navigateBackMiniProgram() {}
+  UserInfo() {}
+  getUserInfo() {}
 
-   updateShareMenu() {}
-   showShareMenu() {}
-   hideShareMenu() {}
-   getShareInfo() {}
-   authPrivateMessage() {}
+  updateShareMenu() {}
+  showShareMenu() {}
+  hideShareMenu() {}
+  getShareInfo() {}
+  authPrivateMessage() {}
 
 
-   playVoice() {}
-   pauseVoice() {}
-   stopVoice() {}
+  playVoice() {}
+  pauseVoice() {}
+  stopVoice() {}
 
-   setBackgroundFetchToken() {}
-   onBackgroundFetchData() {}
-   getBackgroundFetchToken() {}
-   getBackgroundFetchData() {}
+  setBackgroundFetchToken() {}
+  onBackgroundFetchData() {}
+  getBackgroundFetchToken() {}
+  getBackgroundFetchData() {}
 
-   onKeyboardHeightChange() {}
-   offKeyboardHeightChange() {}
-   hideKeyboard() {}
-   getSelectedTextRange() {}
+  onKeyboardHeightChange() {}
+  offKeyboardHeightChange() {}
+  hideKeyboard() {}
+  getSelectedTextRange() {}
 
-   getMenuButtonBoundingClientRect() {}
+  getMenuButtonBoundingClientRect() {}
 
-   setTopBarText() {}
+  setTopBarText() {}
 
-   setWindowSize() {}
-   onWindowResize() {}
-   offWindowResize() {}
-   appHide_callback() {
+  setWindowSize() {}
+  onWindowResize() {}
+  offWindowResize() {}
+  appHide_callback() {
     let wx_res;
     if (document.hidden) {
       wx_res = {
@@ -3700,7 +3913,7 @@ this.fn_global = fn_global;
     }
   }
 
-   error_callback(e) {
+  error_callback(e) {
     if (e) {
       if (Event.callback) {
         Event.callback(e.error);
@@ -3709,10 +3922,10 @@ this.fn_global = fn_global;
   }
 
 
-   setRealtimeManager() {
+  setRealtimeManager() {
 
   }
-   setLogManager() {
+  setLogManager() {
 
   }
 }
