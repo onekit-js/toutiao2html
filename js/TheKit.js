@@ -213,13 +213,14 @@ export default class TheKit {
 
   static downloadPicture(file, name) {
     const _image = new Image()
-    _image.setAttribute('crossOrigin', 'anoymous')
+    _image.setAttribute("crossOrigin",'Anonymous')
     _image.onload = () => {
       let canvas = document.createElement('canvas')
       canvas.width = _image.width
       canvas.height = _image.height
       let context = canvas.getContext('2d')
       context.drawImage(_image, 0, 0, _image.width, _image.height)
+      
       const url = canvas.toDataURL('image/png')
 
       const $a = document.createElement('a')
@@ -232,6 +233,7 @@ export default class TheKit {
     }
     _image.src = file
 
+    console.log(file)
     /*
       @create by wangyewei 
     
