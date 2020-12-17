@@ -538,9 +538,9 @@ export default class TT {
     header['Content-Type'] = 'multipart/form-data'
     /////////////////
     let data = new FormData()
-    // console.log(new File([blob], filePath))
+ 
     const fData = new File([blob], filePath)
-    console.log(fData)
+
     data.append(name, fData, filePath)                            
 
   
