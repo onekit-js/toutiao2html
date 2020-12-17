@@ -220,23 +220,16 @@ export default class TheKit {
       canvas.height = _image.height
       let context = canvas.getContext('2d')
       context.drawImage(_image, 0, 0, _image.width, _image.height)
-      
       const url = canvas.toDataURL('image/png')
-
       const $a = document.createElement('a')
       const event = new MouseEvent('click')
-
       $a.download = name
       $a.href = url
       $a.dispatchEvent(event)
-
     }
     _image.src = file
-
-    console.log(file)
     /*
       @create by wangyewei 
-    
     */
 
   }

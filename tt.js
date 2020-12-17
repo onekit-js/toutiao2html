@@ -15,7 +15,7 @@ import $ from 'jquery'
 
 import 'jquery-confirm'
 import 'jquery-confirm/css/jquery-confirm.css'
-import { file } from "jszip"
+import './js/PrevewImage'
 
 
 
@@ -538,19 +538,19 @@ export default class TT {
     header['Content-Type'] = 'multipart/form-data'
     /////////////////
     let data = new FormData()
- 
+
     const fData = new File([blob], filePath)
 
-    data.append(name, fData, filePath)                            
+    data.append(name, fData, filePath)
 
-  
+
     // if(formData) {
-      // for (const key of Object.keys(formData)) {
-      //   data.append(key, formData[key])
-      // }
-      // console.log(data)
+    // for (const key of Object.keys(formData)) {
+    //   data.append(key, formData[key])
     // }
-   
+    // console.log(data)
+    // }
+
     const axios_instance = axios.create({
       headers: header
     })
@@ -1133,6 +1133,46 @@ export default class TT {
     }, wx_success, wx_fail, wx_complete)
   }
 
+  previewImage(wx_object) {
+    const wx_urls = wx_object.urls
+    const wx_current = wx_object.current
+    const wx_success = wx_object.success
+    const wx_fail = wx_object.fail
+    const wx_complete = wx_object.complete
+
+    const blobs = []
+    for (let i in wx_urls) {
+      blobs.push(this.fn_global().TEMP[wx_urls[i]])
+    }
+
+    function blobToBase64(blob, callback) {
+      let a = new FileReader();
+      a.onload = function (e) {
+        callback(e.target.result);
+      }
+      a.readAsDataURL(blob);
+    }
+
+    blobToBase64(blobs[0], res => {
+      const url = res
+      PROMISE((SUCCESS) => {
+        const vue_current = wx_current
+        const obj = {
+          urls: [url],
+          current: vue_current
+        };
+        // eslint-disable-next-line no-undef
+        _preview_.start(obj)
+        const res = {
+          errMsg: 'previewImage: ok'
+        }
+        SUCCESS(res)
+      }, wx_success, wx_complete, wx_fail)
+      
+    })
+
+  }
+
   getVideoInfo(wx_object) {
     const wx_src = wx_object.src
     const wx_success = wx_object.success
@@ -1342,8 +1382,8 @@ export default class TT {
                       } else {
                         blob = e.target.result
                       }
-                    const path = TheKit.createTempPath(file.name)
-                    that.fn_global().TEMP[path] = blob
+                      const path = TheKit.createTempPath(file.name)
+                      that.fn_global().TEMP[path] = blob
                       const size = blob.size
                       itemCallback({
                         path,
@@ -1356,7 +1396,7 @@ export default class TT {
                     let reader = new FileReader();
                     reader.readAsDataURL(file)
                     reader.onload = function () {
-                      const readImg =(file) =>{
+                      const readImg = (file) => {
                         return new Promise((resolve, reject) => {
                           const img = new Image()
                           const reader = new FileReader()
@@ -1379,9 +1419,9 @@ export default class TT {
                         const eImg = await readImg(file)
                         const blob = await TheKit.compressImg(eImg, file.type, 500, 500)
                         const size = blob.size
-                        
-                    const path = TheKit.createTempPath(file.name)
-                    that.fn_global().TEMP[path] = blob
+
+                        const path = TheKit.createTempPath(file.name)
+                        that.fn_global().TEMP[path] = blob
                         itemCallback({
                           path,
                           size
