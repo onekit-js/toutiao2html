@@ -1146,14 +1146,20 @@ export default class TT {
     }
 
     function blobToBase64(blob, callback) {
+
       let a = new FileReader();
-      a.onload = function (e) {
-        callback(e.target.result);
+      for (let i in blob) {
+        a.onload = function (e) {
+          callback(e.target.result)
+        }
+        for (let i in blob) {
+          a.readAsDataURL(blob[i])
+        }
       }
-      a.readAsDataURL(blob);
     }
 
-    blobToBase64(blobs[0], res => {
+
+    blobToBase64(blobs, res => {
       const url = res
       PROMISE((SUCCESS) => {
         const vue_current = wx_current
@@ -1168,8 +1174,9 @@ export default class TT {
         }
         SUCCESS(res)
       }, wx_success, wx_complete, wx_fail)
-      
+
     })
+
 
   }
 
