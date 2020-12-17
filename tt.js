@@ -15,6 +15,7 @@ import $ from 'jquery'
 
 import 'jquery-confirm'
 import 'jquery-confirm/css/jquery-confirm.css'
+import { file } from "jszip"
 
 
 
@@ -466,8 +467,6 @@ export default class TT {
 
   downloadFile(wx_object) {
     let wx_url = wx_object.url;
-    let wx_timeout = wx_object.timeout
-    // let wx_filePath = wx_object.filePath || '';
     let wx_success = wx_object.success;
     let wx_fail = wx_object.fail;
     let wx_complete = wx_object.complete;
@@ -477,7 +476,6 @@ export default class TT {
 
     const axios_instance = axios.create({
       headers: wx_header,
-      timeout: wx_timeout,
       responseType: "blob",
     })
 
@@ -527,9 +525,9 @@ export default class TT {
     ///////////////////
 
     let blob
-    if (filePath.startsWith("wxfile://store/onekit_")) {
+    if (filePath.startsWith("ttfile://store/onekit_")) {
       blob = null //sessionStorage.getItem(filePath)
-    } else if (filePath.startsWith("wxfile://tmp_onekit_")) {
+    } else if (filePath.startsWith("ttfile://tmp_onekit_")) {
       blob = this.fn_global().TEMP[filePath]
     } else {
       throw new Error(filePath)
@@ -540,13 +538,19 @@ export default class TT {
     header['Content-Type'] = 'multipart/form-data'
     /////////////////
     let data = new FormData()
-    data.append(name, new File([blob], filePath))
+    // console.log(new File([blob], filePath))
+    const fData = new File([blob], filePath)
+    console.log(fData)
+    data.append(name, fData, filePath)                            
 
-    for (const key of Object.keys(formData)) {
-      data.append(key, formData[key])
-    }
-
-
+  
+    // if(formData) {
+      // for (const key of Object.keys(formData)) {
+      //   data.append(key, formData[key])
+      // }
+      // console.log(data)
+    // }
+   
     const axios_instance = axios.create({
       headers: header
     })
@@ -560,21 +564,19 @@ export default class TT {
         data,
         method: "post",
         // ...config
-      }).then(() => {
-        const wx_ers = {}
+      }).then(res => {
         if (wx_success) {
-          wx_success(wx_ers)
+          wx_success(res)
         }
         if (wx_complete) {
-          wx_complete(wx_ers)
+          wx_complete(res)
         }
-      }).catch(() => {
-        const wx_ers = {}
+      }).catch(err => {
         if (wx_fail) {
-          wx_fail(wx_ers)
+          wx_fail(err)
         }
         if (wx_complete) {
-          wx_complete(wx_ers)
+          wx_complete(err)
         }
       })
     }, 0);
@@ -1234,6 +1236,7 @@ export default class TT {
 
 
   _chooseMedia(SUCCESS, TYPE, SORTS, CAMERA, COUNT, COMPRESSPED) {
+    const that = this
     $.confirm({
       title: '是否允许打开摄像头或相册?',
       content: '',
@@ -1341,7 +1344,8 @@ export default class TT {
                       } else {
                         blob = e.target.result
                       }
-                      const path = TheKit.createTempPath(file.name)
+                    const path = TheKit.createTempPath(file.name)
+                    that.fn_global().TEMP[path] = blob
                       const size = blob.size
                       itemCallback({
                         path,
@@ -1354,7 +1358,7 @@ export default class TT {
                     let reader = new FileReader();
                     reader.readAsDataURL(file)
                     reader.onload = function () {
-                      function readImg(file) {
+                      const readImg =(file) =>{
                         return new Promise((resolve, reject) => {
                           const img = new Image()
                           const reader = new FileReader()
@@ -1376,8 +1380,10 @@ export default class TT {
                       async function upload(file) {
                         const eImg = await readImg(file)
                         const blob = await TheKit.compressImg(eImg, file.type, 500, 500)
-                        const path = TheKit.createTempPath(file.name)
                         const size = blob.size
+                        
+                    const path = TheKit.createTempPath(file.name)
+                    that.fn_global().TEMP[path] = blob
                         itemCallback({
                           path,
                           size

@@ -25,14 +25,14 @@ export default class TheKit {
     if (uri.scheme == null) {
       type = "asset";
       result = url;
-    } else if (uri.scheme === "wxfile") {
+    } else if (uri.scheme === "ttfile") {
       type = "file";
-      if (url.startsWith("wxfile://tmp_")) {
+      if (url.startsWith("ttfile://tmp_")) {
         result = url;
-      } else if (url.startsWith("wxfile://store_")) {
+      } else if (url.startsWith("ttfile://store_")) {
         result = url;
       } else {
-        console.log("=======", "[wxfile] " + url);
+        console.log("=======", "[ttfile] " + url);
         result = null;
       }
     } else {
@@ -67,12 +67,12 @@ export default class TheKit {
 
   static createTempPath(fileName) {
     let uuid = TheKit.createUUIDfileName(fileName);
-    return `wxfile://tmp_onekit_${uuid}`;
+    return `ttfile://tmp_onekit_${uuid}`;
   }
 
   static createStorePath(fileName) {
     let uuid = createUUIDfileName(fileName);
-    return `wxfile://store/onekit_${uuid}`;
+    return `ttfile://store/onekit_${uuid}`;
   }
 
   /*
