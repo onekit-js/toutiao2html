@@ -592,7 +592,6 @@ export default class TT {
     const wx_fail = wx_object.fail
     const wx_complete = wx_object.complete
     wx_object = null
-    //
     return PROMISE((SUCCESS) => {
       const vue_socket = new WebSocket(wx_url, wx_protocols)
       let socketCount = this.socketCount || 0
@@ -605,7 +604,6 @@ export default class TT {
         errMsg: "connectSocket:ok",
         socketTaskId: this.socketCount
       }
-
       const wx_socket = new SocketTask(vue_socket)
       SUCCESS(wx_res)
       return wx_socket
