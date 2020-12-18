@@ -209,11 +209,14 @@ export default class TheKit {
         resolve(blob)
       }, type || 'image/png')
     })
+     /*
+      @create by wangyewei 
+    */
   }
 
   static downloadPicture(file, name) {
     const _image = new Image()
-    _image.setAttribute("crossOrigin",'Anonymous')
+    _image.setAttribute("crossOrigin", 'Anonymous')
     _image.onload = () => {
       let canvas = document.createElement('canvas')
       canvas.width = _image.width
@@ -232,5 +235,17 @@ export default class TheKit {
       @create by wangyewei 
     */
 
+  }
+
+  static blobToBase64(blob, callback) {
+    let a = new FileReader();
+    a.onload = function (e) {
+      callback(e.target.result)
+    }
+    a.readAsDataURL(blob)
+
+     /*
+      @create by wangyewei 
+    */
   }
 }

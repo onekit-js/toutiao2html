@@ -1139,39 +1139,32 @@ export default class TT {
     const wx_success = wx_object.success
     const wx_fail = wx_object.fail
     const wx_complete = wx_object.complete
-
-    const blobs = []
-    for (let i in wx_urls) {
-      blobs.push(this.fn_global().TEMP[wx_urls[i]])
-    }
-
-    function blobToBase64(blob, callback) {
-      let a = new FileReader();
-      a.onload = function (e) {
-        callback(e.target.result)
+    PROMISE((SUCCESS) => {
+      const blobs = []
+      for (let i in wx_urls) {
+        blobs.push(this.fn_global().TEMP[wx_urls[i]])
       }
-      a.readAsDataURL(blob)
-    }
-
-    let urls = []
-    for (let i in blobs) {
-      blobToBase64(blobs[i], res => {
-        urls.push(res)
-        PROMISE((SUCCESS) => {
-          const vue_current = wx_current
-          const obj = {
-            urls: urls,
-            current: vue_current
-          };
-          // eslint-disable-next-line no-undef
-          _preview_.start(obj)
-          const res = {
-            errMsg: 'previewImage: ok'
-          }
-          SUCCESS(res)
-        }, wx_success, wx_complete, wx_fail)
+      const vue_current = this.fn_global().TEMP[wx_current]
+      TheKit.blobToBase64(vue_current, res => {
+        const url = res
+        let urls = []
+        for (let i in blobs) {
+          TheKit.blobToBase64(blobs[i], res => {
+            urls.push(res)
+            const obj = {
+              urls: urls,
+              current: url
+            }
+            // eslint-disable-next-line no-undef
+            _preview_.start(obj)
+          })
+        }
       })
-    }
+      const res = {
+        errMsg: 'previewImage: ok'
+      }
+      SUCCESS(res)
+    }, wx_success, wx_complete, wx_fail)
   }
 
   getVideoInfo(wx_object) {
