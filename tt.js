@@ -901,109 +901,91 @@ export default class TT {
     const wx_fail = wx_object.fail
     const wx_complete = wx_object.complete
 
-    function btof(data, fileName) {
-      const dataArr = data.split(",");
-      const byteString = atob(dataArr[1]);
-
-      const options = {
-        type: "image/jpeg",
-        endings: "native"
-      };
-      const u8Arr = new Uint8Array(byteString.length);
-      for (let i = 0; i < byteString.length; i++) {
-        u8Arr[i] = byteString.charCodeAt(i);
-      }
-      return new File([u8Arr], fileName + ".jpg", options);
-    }
-
     PROMISE((SUCCESS) => {
       let vue_src = wx_src
+      function functiongetOrientation(file, callback) {
+        var reader = new window.FileReader();
+        reader.onload = function (e) {
+
+          var view = new window.DataView(e.target.result);
+          if (view.getUint16(0, false) != 0xFFD8) {
+            return callback(-2);
+          }
+          var length = view.byteLength,
+            offset = 2;
+          while (offset < length) {
+            var marker = view.getUint16(offset, false);
+            offset += 2;
+            if (marker == 0xFFE1) {
+              if (view.getUint32(offset += 2, false) != 0x45786966) {
+                return callback(-1);
+              }
+              var little = view.getUint16(offset += 6, false) == 0x4949;
+              offset += view.getUint32(offset + 4, little);
+              var tags = view.getUint16(offset, little);
+              offset += 2;
+              for (var i = 0; i < tags; i++) {
+                if (view.getUint16(offset + (i * 12), little) == 0x0112) {
+                  return callback(view.getUint16(offset + (i * 12) + 8, little));
+                }
+
+              }
+            } else if ((marker & 0xFF00) != 0xFF00) {
+              break;
+            } else {
+              offset += view.getUint16(offset, false);
+            }
+          }
+          return callback(-1);
+        };
+        reader.readAsArrayBuffer(file);
+      }
+      function own_fn() {
+        {
+          const base64 = TheKit.getBase64Image(pic_res)
+          eImage.src = base64
+          const formData = new FormData()
+          const file = TheKit.fileBtof(base64, 'text')
+          formData.append('filenaem', file)
+          functiongetOrientation(file, res => {
+            const orientation = res
+            const errMsg = "getImageInfo:ok"
+            const height = pic_res.naturalHeight
+            const width = pic_res.naturalWidth
+            const type = file.type
+            const _res = {
+              errMsg,
+              height,
+              orientation,
+              path: vue_src,
+              type,
+              width
+            }
+            SUCCESS(_res)
+          })
+        }
+      }
+
+      const eImage = document.createElement('img')
+      eImage.setAttribute("crossOrigin", "Anonymous")
+      let pic_res = new Image()
 
       if (vue_src.startsWith("ttfile://tmp_onekit_")) {
-
-        console.warn('临时路径')
         let blob = this.fn_global().TEMP[vue_src]
-        vue_src = TheKit.blobToBase64(blob, res => {
+        TheKit.blobToBase64(blob, res => {
           vue_src = res
-          const eImage = document.createElement('img')
-          eImage.setAttribute('src', vue_src)
-          eImage.setAttribute("crossOrigin", "Anonymous");
-          let pic_res = new Image()
-          pic_res.onload = () => {
-            const base64 = TheKit.getBase64Image(pic_res)
-            eImage.src = base64
-            const formData = new FormData()
-
-            const file = btof(base64, 'text')
-            formData.append('filenaem', file)
-
-            /////////////////////
-            function functiongetOrientation(file, callback) {
-              var reader = new window.FileReader();
-              reader.onload = function (e) {
-                var view = new window.DataView(e.target.result);
-                if (view.getUint16(0, false) != 0xFFD8) {
-                  return callback(-2);
-                }
-                var length = view.byteLength,
-                  offset = 2;
-                while (offset < length) {
-                  var marker = view.getUint16(offset, false);
-                  offset += 2;
-                  if (marker == 0xFFE1) {
-                    if (view.getUint32(offset += 2, false) != 0x45786966) {
-                      return callback(-1);
-                    }
-                    var little = view.getUint16(offset += 6, false) == 0x4949;
-                    offset += view.getUint32(offset + 4, little);
-                    var tags = view.getUint16(offset, little);
-                    offset += 2;
-                    for (var i = 0; i < tags; i++) {
-                      if (view.getUint16(offset + (i * 12), little) == 0x0112) {
-                        return callback(view.getUint16(offset + (i * 12) + 8, little));
-                      }
-
-                    }
-                  } else if ((marker & 0xFF00) != 0xFF00) {
-                    break;
-                  } else {
-                    offset += view.getUint16(offset, false);
-                  }
-                }
-                return callback(-1);
-              };
-              reader.readAsArrayBuffer(file);
-            }
-
-            functiongetOrientation(file, res => {
-              const orientation = res
-              const errMsg = "getImageInfo:ok"
-              const height = pic_res.naturalHeight
-              const width = pic_res.naturalWidth
-              const type = file.type
-
-              const _res = {
-                errMsg,
-                height,
-                orientation,
-                path: vue_src,
-                type,
-                width
-              }
-              SUCCESS(_res)
-            })
-            /////////////////////
-          }
-
+          eImage.setAttribute('src', vue_src)    
+          pic_res.onload = () => own_fn()
           pic_res.src = vue_src
         })
 
       } else if (vue_src.startsWith("http")) {
         console.warn('网络路径')
       } else {
-        console.warn('本地路径')
+        eImage.setAttribute('src', vue_src)
+        pic_res.onload = () => own_fn()
+        pic_res.src = vue_src
       }
-
     }, wx_success, wx_fail, wx_complete)
   }
 
@@ -1015,7 +997,6 @@ export default class TT {
     const wx_complete = wx_object.complete
     PROMISE((SUCCESS) => {
       const vue_src = wx_src
-
       const res = {
         errMsg: 'compressImage:ok',
         tempFilePath: vue_src
