@@ -1140,42 +1140,52 @@ export default class TT {
     const wx_fail = wx_object.fail
     const wx_complete = wx_object.complete
     PROMISE((SUCCESS) => {
-      const blobs = []
-      for (let i in wx_urls) {
-        blobs.push(this.fn_global().TEMP[wx_urls[i]])
-      }
-      const vue_current = this.fn_global().TEMP[wx_current]
-      if(vue_current === undefined) {
-        let urls = []
-        for (let i in blobs) {
-          TheKit.blobToBase64(blobs[i], res => {
-            urls.push(res)
-            const obj = {
-              urls: urls,
-              current: urls[0]
-            }
-            // eslint-disable-next-line no-undef
-            _preview_.start(obj)
-          })
+      if (wx_urls[0].startsWith("ttfile://tmp_onekit_")) {
+        const blobs = []
+        for (let i in wx_urls) {
+          blobs.push(this.fn_global().TEMP[wx_urls[i]])
         }
-      }
+        const vue_current = this.fn_global().TEMP[wx_current]
+        if (vue_current === undefined) {
+          let urls = []
+          for (let i in blobs) {
+            TheKit.blobToBase64(blobs[i], res => {
+              urls.push(res)
+              const obj = {
+                urls: urls,
+                current: urls[0]
+              }
+              // eslint-disable-next-line no-undef
+              _preview_.start(obj)
+            })
+          }
+        }
 
-      TheKit.blobToBase64(vue_current, res => {
-        console.log('inininininin')
-        let url = res
-        let urls = []
-        for (let i in blobs) {
-          TheKit.blobToBase64(blobs[i], res => {
-            urls.push(res)
-            const obj = {
-              urls: urls,
-              current: url
-            }
-            // eslint-disable-next-line no-undef
-            _preview_.start(obj)
-          })
+        TheKit.blobToBase64(vue_current, res => {
+          let url = res
+          let urls = []
+          for (let i in blobs) {
+            TheKit.blobToBase64(blobs[i], res => {
+              urls.push(res)
+              const obj = {
+                urls: urls,
+                current: url
+              }
+              // eslint-disable-next-line no-undef
+              _preview_.start(obj)
+            })
+          }
+        })
+      }else {
+        const obj = {
+          urls: wx_urls,
+          current: wx_current
         }
-      })
+        _preview_.start(obj)
+      }
+     
+      // eslint-disable-next-line no-undef
+     
       const res = {
         errMsg: 'previewImage: ok'
       }
