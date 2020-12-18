@@ -248,4 +248,17 @@ export default class TheKit {
       @create by wangyewei 
     */
   }
+
+  static getBase64Image(img) {
+    let canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+    const ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
+    const dataURL = canvas.toDataURL("image/" + ext);
+
+    return dataURL;
+  }
+  
 }

@@ -901,18 +901,6 @@ export default class TT {
     const wx_fail = wx_object.fail
     const wx_complete = wx_object.complete
 
-    function getBase64Image(img) {
-      let canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      let ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, img.width, img.height);
-      const ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
-      const dataURL = canvas.toDataURL("image/" + ext);
-
-      return dataURL;
-    }
-
     function btof(data, fileName) {
       const dataArr = data.split(",");
       const byteString = atob(dataArr[1]);
@@ -930,82 +918,92 @@ export default class TT {
 
     PROMISE((SUCCESS) => {
       let vue_src = wx_src
-      const eImage = document.createElement('img')
-      eImage.setAttribute('src', vue_src)
-      eImage.setAttribute("crossOrigin", "Anonymous");
-      document.body.append(eImage)
-      let pic_res = new Image()
 
-      pic_res.onload = () => {
-        /////////////////////
-        const base64 = getBase64Image(pic_res)
-        eImage.src = base64
-        const formData = new FormData()
+      if (vue_src.startsWith("ttfile://tmp_onekit_")) {
 
-        const file = btof(base64, 'text')
-        formData.append('filenaem', file)
+        console.warn('临时路径')
+        let blob = this.fn_global().TEMP[vue_src]
+        vue_src = TheKit.blobToBase64(blob, res => {
+          vue_src = res
+          const eImage = document.createElement('img')
+          eImage.setAttribute('src', vue_src)
+          eImage.setAttribute("crossOrigin", "Anonymous");
+          let pic_res = new Image()
+          pic_res.onload = () => {
+            const base64 = TheKit.getBase64Image(pic_res)
+            eImage.src = base64
+            const formData = new FormData()
 
-        /////////////////////
-        function functiongetOrientation(file, callback) {
-          var reader = new window.FileReader();
-          reader.onload = function (e) {
+            const file = btof(base64, 'text')
+            formData.append('filenaem', file)
 
-            var view = new window.DataView(e.target.result);
-            if (view.getUint16(0, false) != 0xFFD8) {
-              return callback(-2);
-            }
-            var length = view.byteLength,
-              offset = 2;
-            while (offset < length) {
-              var marker = view.getUint16(offset, false);
-              offset += 2;
-              if (marker == 0xFFE1) {
-                if (view.getUint32(offset += 2, false) != 0x45786966) {
-                  return callback(-1);
+            /////////////////////
+            function functiongetOrientation(file, callback) {
+              var reader = new window.FileReader();
+              reader.onload = function (e) {
+                var view = new window.DataView(e.target.result);
+                if (view.getUint16(0, false) != 0xFFD8) {
+                  return callback(-2);
                 }
-                var little = view.getUint16(offset += 6, false) == 0x4949;
-                offset += view.getUint32(offset + 4, little);
-                var tags = view.getUint16(offset, little);
-                offset += 2;
-                for (var i = 0; i < tags; i++) {
-                  if (view.getUint16(offset + (i * 12), little) == 0x0112) {
-                    return callback(view.getUint16(offset + (i * 12) + 8, little));
+                var length = view.byteLength,
+                  offset = 2;
+                while (offset < length) {
+                  var marker = view.getUint16(offset, false);
+                  offset += 2;
+                  if (marker == 0xFFE1) {
+                    if (view.getUint32(offset += 2, false) != 0x45786966) {
+                      return callback(-1);
+                    }
+                    var little = view.getUint16(offset += 6, false) == 0x4949;
+                    offset += view.getUint32(offset + 4, little);
+                    var tags = view.getUint16(offset, little);
+                    offset += 2;
+                    for (var i = 0; i < tags; i++) {
+                      if (view.getUint16(offset + (i * 12), little) == 0x0112) {
+                        return callback(view.getUint16(offset + (i * 12) + 8, little));
+                      }
+
+                    }
+                  } else if ((marker & 0xFF00) != 0xFF00) {
+                    break;
+                  } else {
+                    offset += view.getUint16(offset, false);
                   }
-
                 }
-              } else if ((marker & 0xFF00) != 0xFF00) {
-                break;
-              } else {
-                offset += view.getUint16(offset, false);
-              }
+                return callback(-1);
+              };
+              reader.readAsArrayBuffer(file);
             }
-            return callback(-1);
-          };
-          reader.readAsArrayBuffer(file);
-        }
 
-        functiongetOrientation(file, res => {
-          const orientation = res
-          const errMsg = "getImageInfo:ok"
-          const height = pic_res.naturalHeight
-          const width = pic_res.naturalWidth
-          const type = file.type
+            functiongetOrientation(file, res => {
+              const orientation = res
+              const errMsg = "getImageInfo:ok"
+              const height = pic_res.naturalHeight
+              const width = pic_res.naturalWidth
+              const type = file.type
 
-          const _res = {
-            errMsg,
-            height,
-            orientation,
-            path: vue_src,
-            type,
-            width
+              const _res = {
+                errMsg,
+                height,
+                orientation,
+                path: vue_src,
+                type,
+                width
+              }
+              SUCCESS(_res)
+            })
+            /////////////////////
           }
-          SUCCESS(_res)
+
+          pic_res.src = vue_src
         })
-        /////////////////////
+
+      } else if (vue_src.startsWith("http")) {
+        console.warn('网络路径')
+      } else {
+        console.warn('本地路径')
       }
 
-      pic_res.src = vue_src
-      document.remove(eImage)
     }, wx_success, wx_fail, wx_complete)
   }
 
@@ -1176,16 +1174,16 @@ export default class TT {
             })
           }
         })
-      }else {
+      } else {
         const obj = {
           urls: wx_urls,
           current: wx_current
         }
         _preview_.start(obj)
       }
-     
+
       // eslint-disable-next-line no-undef
-     
+
       const res = {
         errMsg: 'previewImage: ok'
       }
