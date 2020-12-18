@@ -1145,8 +1145,24 @@ export default class TT {
         blobs.push(this.fn_global().TEMP[wx_urls[i]])
       }
       const vue_current = this.fn_global().TEMP[wx_current]
+      if(vue_current === undefined) {
+        let urls = []
+        for (let i in blobs) {
+          TheKit.blobToBase64(blobs[i], res => {
+            urls.push(res)
+            const obj = {
+              urls: urls,
+              current: urls[0]
+            }
+            // eslint-disable-next-line no-undef
+            _preview_.start(obj)
+          })
+        }
+      }
+
       TheKit.blobToBase64(vue_current, res => {
-        const url = res
+        console.log('inininininin')
+        let url = res
         let urls = []
         for (let i in blobs) {
           TheKit.blobToBase64(blobs[i], res => {
