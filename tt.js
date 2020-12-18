@@ -1146,38 +1146,32 @@ export default class TT {
     }
 
     function blobToBase64(blob, callback) {
-
       let a = new FileReader();
-      for (let i in blob) {
-        a.onload = function (e) {
-          callback(e.target.result)
-        }
-        for (let i in blob) {
-          a.readAsDataURL(blob[i])
-        }
+      a.onload = function (e) {
+        callback(e.target.result)
       }
+      a.readAsDataURL(blob)
     }
 
-
-    blobToBase64(blobs, res => {
-      const url = res
-      PROMISE((SUCCESS) => {
-        const vue_current = wx_current
-        const obj = {
-          urls: [url],
-          current: vue_current
-        };
-        // eslint-disable-next-line no-undef
-        _preview_.start(obj)
-        const res = {
-          errMsg: 'previewImage: ok'
-        }
-        SUCCESS(res)
-      }, wx_success, wx_complete, wx_fail)
-
-    })
-
-
+    let urls = []
+    for (let i in blobs) {
+      blobToBase64(blobs[i], res => {
+        urls.push(res)
+        PROMISE((SUCCESS) => {
+          const vue_current = wx_current
+          const obj = {
+            urls: urls,
+            current: vue_current
+          };
+          // eslint-disable-next-line no-undef
+          _preview_.start(obj)
+          const res = {
+            errMsg: 'previewImage: ok'
+          }
+          SUCCESS(res)
+        }, wx_success, wx_complete, wx_fail)
+      })
+    }
   }
 
   getVideoInfo(wx_object) {
