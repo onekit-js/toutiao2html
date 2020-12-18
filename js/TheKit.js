@@ -209,7 +209,7 @@ export default class TheKit {
         resolve(blob)
       }, type || 'image/png')
     })
-     /*
+    /*
       @create by wangyewei 
     */
   }
@@ -244,7 +244,7 @@ export default class TheKit {
     }
     a.readAsDataURL(blob)
 
-     /*
+    /*
       @create by wangyewei 
     */
   }
@@ -274,5 +274,36 @@ export default class TheKit {
       u8Arr[i] = byteString.charCodeAt(i);
     }
     return new File([u8Arr], fileName + ".jpg", options);
+  }
+
+
+
+  static async dealImage(base64, w, quality, callback) {
+    var newImage = new Image();
+    newImage.src = base64;
+    newImage.setAttribute("crossOrigin", 'Anonymous'); //url为外域时需要
+    var imgWidth, imgHeight;
+    newImage.onload = function () {
+      imgWidth = this.width;
+      imgHeight = this.height;
+      var canvas = document.createElement("canvas");
+      var ctx = canvas.getContext("2d");
+      if (Math.max(imgWidth, imgHeight) > w) {
+        if (imgWidth > imgHeight) {
+          canvas.width = w
+          canvas.height = w * imgHeight / imgWidth
+        } else {
+          canvas.height = w
+          canvas.width = w * imgWidth / imgHeight
+        }
+      } else {
+        canvas.width = imgWidth
+        canvas.height = imgHeight
+      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(this, 0, 0, canvas.width, canvas.height)
+      var base64 = canvas.toDataURL("image/jpeg", quality)
+      callback(base64)
+    }
   }
 }

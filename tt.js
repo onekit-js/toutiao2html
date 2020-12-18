@@ -903,10 +903,10 @@ export default class TT {
 
     PROMISE((SUCCESS) => {
       let vue_src = wx_src
+
       function functiongetOrientation(file, callback) {
         var reader = new window.FileReader();
         reader.onload = function (e) {
-
           var view = new window.DataView(e.target.result);
           if (view.getUint16(0, false) != 0xFFD8) {
             return callback(-2);
@@ -940,45 +940,41 @@ export default class TT {
         };
         reader.readAsArrayBuffer(file);
       }
-      function own_fn() {
-        {
-          const base64 = TheKit.getBase64Image(pic_res)
-          eImage.src = base64
-          const formData = new FormData()
-          const file = TheKit.fileBtof(base64, 'text')
-          formData.append('filenaem', file)
-          functiongetOrientation(file, res => {
-            const orientation = res
-            const errMsg = "getImageInfo:ok"
-            const height = pic_res.naturalHeight
-            const width = pic_res.naturalWidth
-            const type = file.type
-            const _res = {
-              errMsg,
-              height,
-              orientation,
-              path: vue_src,
-              type,
-              width
-            }
-            SUCCESS(_res)
-          })
-        }
-      }
 
+      function own_fn() {
+        const base64 = TheKit.getBase64Image(pic_res)
+        eImage.src = base64
+        const formData = new FormData()
+        const file = TheKit.fileBtof(base64, 'text')
+        formData.append('filenaem', file)
+        functiongetOrientation(file, res => {
+          const orientation = res
+          const errMsg = "getImageInfo:ok"
+          const height = pic_res.naturalHeight
+          const width = pic_res.naturalWidth
+          const type = file.type
+          const _res = {
+            errMsg,
+            height,
+            orientation,
+            path: vue_src,
+            type,
+            width
+          }
+          SUCCESS(_res)
+        })
+      }
       const eImage = document.createElement('img')
       eImage.setAttribute("crossOrigin", "Anonymous")
       let pic_res = new Image()
-
       if (vue_src.startsWith("ttfile://tmp_onekit_")) {
         let blob = this.fn_global().TEMP[vue_src]
         TheKit.blobToBase64(blob, res => {
           vue_src = res
-          eImage.setAttribute('src', vue_src)    
+          eImage.setAttribute('src', vue_src)
           pic_res.onload = () => own_fn()
           pic_res.src = vue_src
         })
-
       } else if (vue_src.startsWith("http")) {
         console.warn('网络路径')
       } else {
@@ -991,12 +987,30 @@ export default class TT {
 
   compressImage(wx_object) {
     const wx_src = wx_object.src
-    // const wx_quality = wx_object.wx_quality
+    const wx_quality = wx_object.wx_quality || 0.6
     const wx_success = wx_object.success
     const wx_fail = wx_object.fail
     const wx_complete = wx_object.complete
     PROMISE((SUCCESS) => {
       const vue_src = wx_src
+      if(vue_src.startsWith('ttfile://tmp_onekit')) {
+        console.log('临时路径')
+        const blob = this.fn_global().TEMP[vue_src]
+         TheKit.blobToBase64(blob, res => {
+          console.log(res)
+          const eimge = new Image()
+          eimge.src = res
+          document.body.appendChild(eimge)
+          TheKit.dealImage(res, 500, wx_quality, data => {
+            console.log(data)
+            const eimge1 = new Image()
+            eimge1.src = data
+            document.body.appendChild(eimge1)
+          })
+        })
+      }
+     
+
       const res = {
         errMsg: 'compressImage:ok',
         tempFilePath: vue_src
@@ -1160,11 +1174,9 @@ export default class TT {
           urls: wx_urls,
           current: wx_current
         }
+        // eslint-disable-next-line no-undef
         _preview_.start(obj)
       }
-
-      // eslint-disable-next-line no-undef
-
       const res = {
         errMsg: 'previewImage: ok'
       }
