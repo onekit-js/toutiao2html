@@ -1,0 +1,13 @@
+{
+  "git.ignoreMissingGitWarning": true,
+  "diffEditor.renderSideBySide": false,
+  "git.enabled": false,
+  "explorer.confirmDelete": false,
+  "eslint.workingDirectories": [
+    ".eslintrc.js",
+    {
+      "mode": "auto"
+    }
+  ],
+  "files.autoSave": "afterDelay",
+}
