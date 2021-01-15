@@ -1,7 +1,7 @@
 export default class RecorderManager {
 
   constructor() {
-    this.recorder = null
+    this.recorder = undefined
   }
 
 
@@ -19,7 +19,6 @@ export default class RecorderManager {
     //     tt_encodeBitRate,
     //     tt_frameSize,
     //   }
-
     if (navigator.mediaDevices.getUserMedia) {
       const constraints = {
         audio: true
@@ -39,38 +38,53 @@ export default class RecorderManager {
   }
 
   pause() {
-
+    if(this.recorder) {
+      this.recorder.pause()
+    }
   }
 
   resume() {
-
+    if(this.recorder) {
+      this.recorder.resume()
+    }
   }
 
   stop() {
-    this.recorder.stop()
+    if (this.recorder) {
+      this.recorder.stop()
+    }
   }
 
-  onStart() {
-
+  onStart(callback) {
+   if(this.recorder) {
+    this.recorder.onstart = callback
+   }
+  }
+  onPause(callback) {
+    if(this.recorder) {
+      this.recorder.onpause = callback
+    }
   }
 
-  onPause() {
-
+  onResume(callback) {
+    if(this.recorder) {
+      this.recorder.onresume = callback
+    }
   }
 
-  onResume() {
-
+  onStop(callback) {
+    if (this.recorder) {
+      this.recorder.onstop = callback
+    }
   }
 
-  onStop() {
-
+  onFrameRecorded(callback) {
+   if(this.recorder) {
+    this.recorder.onFrameRecorded = callback
+   }
   }
 
-  onFrameRecorded() {
-
-  }
-
-  onError() {
-
+  onError(callback) {
+    this.recorder.onerror = callback
   }
 }
