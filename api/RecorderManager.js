@@ -1,7 +1,35 @@
 export default class RecorderManager {
 
   constructor() {
+    this.state = null
+    if (navigator.mediaDevices.getUserMedia) {
+      const constraints = {
+        audio: true
+      }
+      navigator.mediaDevices.getUserMedia(constraints).then(
+        stream => {
+          const mediaRecorder = new MediaRecorder(stream)
+          this._start(mediaRecorder)
+          // this.start(mediaRecorder)
+          // if (this.state === 'recording') {
+          //   mediaRecorder.start()
+          //   console.log(mediaRecorder.state)
+          // } else if (this.state === 'stop') {
+          //   mediaRecorder.stop()
+          //   console.log(mediaRecorder.state)
+          // }
+        },
+        () => {
+          console.error("授权失败！");
+        }
+      );
+    } else {
+      console.error("Your browser version is too low");
+    }
+  }
 
+  _start(mediaRecorder) {
+    console.log(mediaRecorder)
   }
 
   start(tt_options) {
@@ -18,28 +46,9 @@ export default class RecorderManager {
       tt_encodeBitRate,
       tt_frameSize,
     }
-
-    if (navigator.mediaDevices.getUserMedia) {
-      const constraints = {
-        audio: true
-      };
-      navigator.mediaDevices.getUserMedia(constraints).then(
-        stream => {
-          console.log("授权成功！");
-          const mediaRecorder = new MediaRecorder(stream)
-          mediaRecorder.start()
-          console.log('开始录音....', options)
-          console.log(mediaRecorder)          
-        },
-        () => {
-          console.error("授权失败！");
-        }
-      );
-    } else {
-      console.error("浏览器不支持 getUserMedia");
-    }
-
-
+    // this.state = 'recording'
+    // this.mediaRecorder.start()
+    console.log(mediaRecorder)
   }
 
   pause() {
@@ -51,7 +60,7 @@ export default class RecorderManager {
   }
 
   stop() {
-
+    this.state = 'stop'
   }
 
   onStart() {

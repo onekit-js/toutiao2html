@@ -14,6 +14,7 @@ import axios from 'axios'
 import $ from 'jquery'
 import STRING from 'oneutil/STRING'
 import RecorderManager from "./api/RecorderManager"
+import Vue from 'vue'
 
 import 'jquery-confirm'
 
@@ -1430,7 +1431,13 @@ export default class TT {
   getRecorderManager() {
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
     if (navigator.getUserMedia) {
-      return new RecorderManager()
+      if (this.fn_global().recorderManager) {
+        return this.fn_global().recorderManager;
+      } else {
+        const recorderManager = new RecorderManager()
+        this.fn_global().recorderManager = recorderManager
+        return recorderManager
+      }
     }
     throw 'getRecorderManager: Your browser version is too low!'
   }
