@@ -276,8 +276,6 @@ export default class TheKit {
     return new File([u8Arr], fileName + ".jpg", options);
   }
 
-
-
   static async dealImage(base64, w, quality, callback) {
     var newImage = new Image();
     newImage.src = base64;
@@ -305,5 +303,9 @@ export default class TheKit {
       var base64 = canvas.toDataURL("image/jpeg", quality)
       callback(base64)
     }
+  }
+
+  static integer(min, max) {
+    return Math.floor(Math.random() * (max - min  + 1)) + min 
   }
 }
