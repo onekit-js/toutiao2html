@@ -14,14 +14,11 @@ import axios from 'axios'
 import $ from 'jquery'
 import STRING from 'oneutil/STRING'
 import RecorderManager from "./api/RecorderManager"
-import Vue from 'vue'
-
+import MobileDetect from 'mobile-detect'
 import 'jquery-confirm'
-
 import 'jquery-confirm/css/jquery-confirm.css'
 import './js/PrevewImage'
 
-const MobileDetect = require('mobile-detect')
 
 export default class TT {
   constructor(fn_global) {
