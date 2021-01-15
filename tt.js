@@ -15,6 +15,7 @@ import $ from 'jquery'
 import STRING from 'oneutil/STRING'
 import RecorderManager from "./api/RecorderManager"
 import MobileDetect from 'mobile-detect'
+import BackgroundManager from './api/BackgroundAudioManager'
 import 'jquery-confirm'
 import 'jquery-confirm/css/jquery-confirm.css'
 import './js/PrevewImage'
@@ -1439,6 +1440,21 @@ export default class TT {
     throw 'getRecorderManager: Your browser version is too low!'
   }
 
+  //////////////////// 音频 /////////////////////////
+
+  getBackgroundAudioManager() {
+    const bgAudiocontext = new Audio()
+    
+    if(this.fn_global().backgroundManager) {
+      return this.fn_global().backgroundManager
+    }else {
+      const backgroundManager = new BackgroundManager(bgAudiocontext)
+      this.fn_global().backgroundManager = backgroundManager
+      return backgroundManager
+    }
+  }
+
+
 
   ////////////////////////////////////////////////
   setInnerAudioOption() {}
@@ -1886,115 +1902,115 @@ export default class TT {
   //     return xsw_audio
   //   }
 
-  getBackgroundAudioManager() {
-    const audio = document.createElement('audio')
-    audio.setAttribute('id', 'backgroundAudio')
-    const firstChild = document.body.firstChild
-    document.body.insertBefore(audio, firstChild)
-    const bgm = document.getElementById('backgroundAudio')
-    bgm.autoplay = true
-    bgm.controls = true
+  // getBackgroundAudioManager() {
+  //   const audio = document.createElement('audio')
+  //   audio.setAttribute('id', 'backgroundAudio')
+  //   const firstChild = document.body.firstChild
+  //   document.body.insertBefore(audio, firstChild)
+  //   const bgm = document.getElementById('backgroundAudio')
+  //   bgm.autoplay = true
+  //   bgm.controls = true
 
-    // bgm.play = function() {
-    //   bgm.play()
-    // }
+  //   // bgm.play = function() {
+  //   //   bgm.play()
+  //   // }
 
-    // bgm.pause = function() {
-    //   bgm.pause()
-    // }
+  //   // bgm.pause = function() {
+  //   //   bgm.pause()
+  //   // }
 
-    // bgm.seek = function() {
-    //   bgm.currentTime = seek
-    // }
+  //   // bgm.seek = function() {
+  //   //   bgm.currentTime = seek
+  //   // }
 
-    bgm.stop = function () {
-      bgm.pause()
-      bgm.currentTime = 0
-    }
+  //   bgm.stop = function () {
+  //     bgm.pause()
+  //     bgm.currentTime = 0
+  //   }
 
-    bgm.onCanPlay = function (callback) {
-      bgm.oncanplay = function () {
-        console.log(bgm.duration)
-        if (callback) {
-          callback()
-        }
-        // （必填）音频标题，用于原生音频播放器音频标题。
-        if (!bgm.title) {
-          throw new Error('setBackgroundAudioState:fail')
-        }
-      }
-    }
+  //   bgm.onCanPlay = function (callback) {
+  //     bgm.oncanplay = function () {
+  //       console.log(bgm.duration)
+  //       if (callback) {
+  //         callback()
+  //       }
+  //       // （必填）音频标题，用于原生音频播放器音频标题。
+  //       if (!bgm.title) {
+  //         throw new Error('setBackgroundAudioState:fail')
+  //       }
+  //     }
+  //   }
 
-    bgm.onWaiting = function (callback) {
-      bgm.onwaiting = function () {
-        if (callback) {
-          callback()
-        }
-      }
-    }
+  //   bgm.onWaiting = function (callback) {
+  //     bgm.onwaiting = function () {
+  //       if (callback) {
+  //         callback()
+  //       }
+  //     }
+  //   }
 
-    bgm.onPlay = function (callback) {
-      bgm.onplay = function () {
-        if (callback) {
-          callback()
-        }
-      }
-    }
+  //   bgm.onPlay = function (callback) {
+  //     bgm.onplay = function () {
+  //       if (callback) {
+  //         callback()
+  //       }
+  //     }
+  //   }
 
-    bgm.onPause = function (callback) {
-      bgm.onpause = function () {
-        if (callback) {
-          callback()
-        }
-      }
-    }
+  //   bgm.onPause = function (callback) {
+  //     bgm.onpause = function () {
+  //       if (callback) {
+  //         callback()
+  //       }
+  //     }
+  //   }
 
-    bgm.onSeeking = function (callback) {
-      bgm.onseeking = function () {
-        if (callback) {
-          callback()
-        }
-      }
-    }
+  //   bgm.onSeeking = function (callback) {
+  //     bgm.onseeking = function () {
+  //       if (callback) {
+  //         callback()
+  //       }
+  //     }
+  //   }
 
-    bgm.onSeeked = function (callback) {
-      bgm.onseeked = function () {
-        if (callback) {
-          callback()
-        }
-      }
-    }
+  //   bgm.onSeeked = function (callback) {
+  //     bgm.onseeked = function () {
+  //       if (callback) {
+  //         callback()
+  //       }
+  //     }
+  //   }
 
-    bgm.onEnded = function (callback) {
-      bgm.onended = function () {
-        if (callback) {
-          callback()
-        }
-      }
-    }
+  //   bgm.onEnded = function (callback) {
+  //     bgm.onended = function () {
+  //       if (callback) {
+  //         callback()
+  //       }
+  //     }
+  //   }
 
-    // INFO: 停止播放时调用，在小程序中播放背景音乐时通知栏有控制器，但是HTML5无法实现，所以这里也调用onended事件
-    bgm.onStop = function (callback) {
-      bgm.onended = function () {
-        if (callback) {
-          callback()
-        }
-      }
-    }
+  //   // INFO: 停止播放时调用，在小程序中播放背景音乐时通知栏有控制器，但是HTML5无法实现，所以这里也调用onended事件
+  //   bgm.onStop = function (callback) {
+  //     bgm.onended = function () {
+  //       if (callback) {
+  //         callback()
+  //       }
+  //     }
+  //   }
 
-    bgm.onTimeUpdate = function (callback) {
-      bgm.ontimeupdate = function () {
-        if (callback) {
-          callback()
-        }
-      }
-    }
+  //   bgm.onTimeUpdate = function (callback) {
+  //     bgm.ontimeupdate = function () {
+  //       if (callback) {
+  //         callback()
+  //       }
+  //     }
+  //   }
 
-    bgm.onNext = function () {}
-    bgm.onPrev = function () {}
+  //   bgm.onNext = function () {}
+  //   bgm.onPrev = function () {}
 
-    return bgm
-  }
+  //   return bgm
+  // }
 
   // BackgroundAudioManager
 
