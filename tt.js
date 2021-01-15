@@ -1444,6 +1444,7 @@ export default class TT {
 
   getBackgroundAudioManager() {
     const bgAudiocontext = new Audio()
+    bgAudiocontext.crossOrigin = 'anonymous'
     if(this.fn_global().backgroundManager) {
       return this.fn_global().backgroundManager
     }else {

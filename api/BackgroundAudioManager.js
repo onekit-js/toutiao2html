@@ -2,7 +2,7 @@ export default class BackgroundAudioManager {
   constructor(bgAudiocontext) {
     this.bgAudiocontext = bgAudiocontext
   }
-  play(){
+  play() {
     this.bgAudiocontext.src = this.src
     this.bgAudiocontext.play()
   }
@@ -15,7 +15,15 @@ export default class BackgroundAudioManager {
     this.bgAudiocontext.currentTime = options
   }
 
-  onCanplay() {}
+  onCanplay(callback) {
+    this.bgAudiocontext.onloadedmetadata = res => {
+      const src = res.path.map(item => item.currentSrc)
+      const result = {
+        src,
+      }
+      callback(result)
+    }
+  }
 
   onPlay() {}
 
@@ -23,7 +31,9 @@ export default class BackgroundAudioManager {
 
   onStop() {}
 
-  onEnded() {}
+  onEnded(callback) {
+    this.bgAudiocontext.addEventListener('ended', callback, false)
+  }
 
   onTimeUpdate() {}
 
