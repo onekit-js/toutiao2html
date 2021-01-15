@@ -4,8 +4,6 @@ export default class BackgroundAudioManager {
   }
   play(){
     this.bgAudiocontext.src = this.src
-    console.log(this.src)
-    // console.log(this.bgAudiocontext)
     this.bgAudiocontext.play()
   }
 
@@ -13,7 +11,9 @@ export default class BackgroundAudioManager {
 
   stop() {}
 
-  seek() {}
+  seek(options) {
+    this.bgAudiocontext.currentTime = options
+  }
 
   onCanplay() {}
 
