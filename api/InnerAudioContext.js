@@ -157,4 +157,10 @@ export default class InnerAudioContext {
       callback()
     })
   }
+
+  onError(callback) {
+    this.bgAudiocontext.addEventListener('error', () => {
+      callback()
+    })
+  }
 }
