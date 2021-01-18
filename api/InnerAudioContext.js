@@ -35,4 +35,9 @@ export default class InnerAudioContext{
     this.innerAudioContext.pause()
   }
 
+  stop() {
+    this.innerAudioContext.pause()
+    this.innerAudioContext.currentTime = 0
+  }
+
 }
