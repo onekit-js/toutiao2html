@@ -58,4 +58,14 @@ export default class InnerAudioContext {
       this.innerAudioContext = null
     } catch {}
   }
+
+  onCanplay(callback) {
+    this.bgAudiocontext.onloadedmetadata = res => {
+      const src = res.path.map(item => item.currentSrc)
+      const result = {
+        src,
+      }
+      callback(result)
+    }
+  }
 }
