@@ -2,6 +2,7 @@ export default class BackgroundAudioManager {
   constructor(bgAudiocontext) {
     this.bgAudiocontext = bgAudiocontext
     this.stopFlag = false
+    this.updateFlag = true
   }
 
   set src(src) {
@@ -20,7 +21,6 @@ export default class BackgroundAudioManager {
     this.stopFlag = true
     this.pause()
     this.bgAudiocontext.currentTime = 0
-    // this.stopFlag = false
   }
 
   seek(options) {
@@ -77,15 +77,37 @@ export default class BackgroundAudioManager {
     })
   }
 
-  offTimeUpdate() {}
+  offTimeUpdate() {
+    console.warn('In fact, toutiao is not support offTimeUpdate')
+  }
 
-  onError() {}
+  onError(callback) {
+    this.bgAudiocontext.addEventListener('error', () => {
+      callback()
+    })
+  }
 
-  onWaiting() {}
+  onWaiting(callback) {
+    this.bgAudiocontext.addEventListener('waiting', () => {
+      callback()
+    })
+  }
 
-  onSeeked() {}
+  onSeeked(callback) {
+    this.bgAudiocontext.addEventListener('seeked', () => {
+      callback()
+    })
+  }
 
-  onNext() {}
+  onNext() {
+    this.bgAudiocontext.addEventListener('seeked', () => {
+      callback()
+    })
+  }
 
-  onPrev() {}
+  onPrev() {
+    this.bgAudiocontext.addEventListener('seeked', () => {
+      callback()
+    })
+  }
 }
