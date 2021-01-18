@@ -169,4 +169,10 @@ export default class InnerAudioContext {
       callback()
     })
   }
+
+  onSeeking(callback) {
+    this.bgAudiocontext.addEventListener('seeking', () => {
+      callback()
+    })
+  }
 }
