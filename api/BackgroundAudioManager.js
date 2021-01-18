@@ -9,7 +9,10 @@ export default class BackgroundAudioManager {
 
   pause() {}
 
-  stop() {}
+  stop() {
+    this.bgAudiocontext.currentTime = 0
+    this.bgAudiocontext.pause()
+  }
 
   seek(options) {
     this.bgAudiocontext.currentTime = options
@@ -25,7 +28,14 @@ export default class BackgroundAudioManager {
     }
   }
 
-  onPlay() {}
+  onPlay(callback) {
+    this.bgAudiocontext.addEventListener('play', e => {
+      const res = {
+        src: e.path.map(src => src.currentSrc)
+      }
+      callback(res)
+    })
+  }
 
   onPause() {}
 
