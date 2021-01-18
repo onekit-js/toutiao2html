@@ -16,6 +16,7 @@ import STRING from 'oneutil/STRING'
 import RecorderManager from "./api/RecorderManager"
 import MobileDetect from 'mobile-detect'
 import BackgroundManager from './api/BackgroundAudioManager'
+import InnerAudioContext from './api/InnerAudioContext'
 import 'jquery-confirm'
 import 'jquery-confirm/css/jquery-confirm.css'
 import './js/PrevewImage'
@@ -1454,7 +1455,18 @@ export default class TT {
     }
   }
 
+  createInnerAudioContext() {
+    const innerAudiocontext = new Audio()
+    innerAudiocontext.crossOrigin = 'anonymous'
 
+    if(this.fn_global().innerAudiocontext) {
+      return this.fn_global().innerAudiocontext
+    }else {
+      const innerAudioManager = new InnerAudioContext(innerAudiocontext)
+      this.fn_global().innerAudioManager = innerAudioManager
+      return innerAudioManager
+    }
+  }
 
   ////////////////////////////////////////////////
   setInnerAudioOption() {}
@@ -1476,10 +1488,7 @@ export default class TT {
     return ac
   }
 
-  // InnerAudioContext
-  createInnerAudioContext() {
-    return {} // new IAC()
-  }
+
 
   getBackgroundAudioPlayerState(wx_object) {
     const wx_success = wx_object.success
