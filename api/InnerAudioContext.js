@@ -130,4 +130,25 @@ export default class InnerAudioContext {
       this.stopFlag = false
     })
   }
+
+  onEnded(callback) {
+    this.innerAudioContext.addEventListener('ended', e => {
+      const result = e.path[0]
+      const res = {
+        autoplay: result.autoplay,
+        buffered: result.buffered.length,
+        currentTime: result.currentTime,
+        duration: result.duration,
+        errMsg: 'getAudioState: ok',
+        isInPkg: false,
+        loop: result.loop,
+        obeyMuteSwitch: result.muted,
+        paused: e.type === 'paused',
+        realativeSrc: result.currentSrc,
+        src:result.currentSrc,
+        volume: e.path.length
+      }
+      callback(res)
+    })
+  }
 }
