@@ -31,4 +31,8 @@ export default class InnerAudioContext{
     this.innerAudioContext.play()
   }
 
+  pause() {
+    this.innerAudioContext.pause()
+  }
+
 }
