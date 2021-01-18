@@ -71,7 +71,9 @@ export default class BackgroundAudioManager {
     this.bgAudiocontext.addEventListener('ended', callback, false)
   }
 
-  onTimeUpdate() {}
+  onTimeUpdate(callback) {
+    this.bgAudiocontext.addEventListener('timeupdate', callback)
+  }
 
   offTimeUpdate() {}
 
