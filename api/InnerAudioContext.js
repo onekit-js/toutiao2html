@@ -175,4 +175,15 @@ export default class InnerAudioContext {
       callback()
     })
   }
+
+  onSeeked(callback) {
+    this.bgAudiocontext.addEventListener('seeked', () => {
+      callback()
+    })
+  }
+
+  offPlay(callback) {
+    this.onPlay = null
+    callback()
+  }
 }
