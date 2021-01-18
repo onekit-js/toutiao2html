@@ -43,8 +43,13 @@ export default class BackgroundAudioManager {
     })
   }
 
-  onPause() {
-    
+  onPause(callback) {
+    this.bgAudiocontext.addEventListener('pause', e => {
+      const res = {
+        src: e.path.map(src => src.currentSrc)
+      }
+      callback(res)
+    })
   }
 
   onStop() {}
