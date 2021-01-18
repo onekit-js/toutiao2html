@@ -60,15 +60,26 @@ export default class InnerAudioContext {
   }
 
   onCanplay(callback) {
-    this.innerAudioContext.addEventListener('canplay', res => {
-      // console.log(res)
-      callback(res)
+    this.innerAudioContext.addEventListener('canplay', () => {
+      callback()
     })
   }
   onPlay(callback) {
     this.innerAudioContext.addEventListener('play', e => {
+      const result = e.path[0]
       const res = {
-        src: e.path.map(src => src.currentSrc)
+        autoplay: result.autoplay,
+        buffered: result.buffered.length,
+        currentTime: result.currentTime,
+        duration: result.duration,
+        errMsg: 'getAudioState: ok',
+        isInPkg: '',
+        loop: result.loop,
+        obeyMuteSwitch: result.muted,
+        paused: e.type === 'paused',
+        realativeSrc: result.currentSrc,
+        src:result.currentSrc,
+        volume: e.path.length
       }
       callback(res)
     })
