@@ -60,12 +60,17 @@ export default class InnerAudioContext {
   }
 
   onCanplay(callback) {
-    this.bgAudiocontext.onloadedmetadata = res => {
-      const src = res.path.map(item => item.currentSrc)
-      const result = {
-        src,
+    this.innerAudioContext.addEventListener('canplay', res => {
+      // console.log(res)
+      callback(res)
+    })
+  }
+  onPlay(callback) {
+    this.innerAudioContext.addEventListener('play', e => {
+      const res = {
+        src: e.path.map(src => src.currentSrc)
       }
-      callback(result)
-    }
+      callback(res)
+    })
   }
 }
