@@ -5,6 +5,8 @@ export default class InnerAudioContext {
     this.innerAudioContext.autoplay = true
     this.innerAudioContext.loop = true
     this.innerAudioContext.muted = true
+
+    this.stopFlag = false
   }
 
   set src(src) {
@@ -41,6 +43,7 @@ export default class InnerAudioContext {
 
   stop() {
     try {
+      this.stopFlag = true
       this.innerAudioContext.pause()
       this.innerAudioContext.currentTime = 0
     } catch {}
@@ -73,7 +76,7 @@ export default class InnerAudioContext {
         currentTime: result.currentTime,
         duration: result.duration,
         errMsg: 'getAudioState: ok',
-        isInPkg: '',
+        isInPkg: false,
         loop: result.loop,
         obeyMuteSwitch: result.muted,
         paused: e.type === 'paused',
@@ -82,6 +85,49 @@ export default class InnerAudioContext {
         volume: e.path.length
       }
       callback(res)
+    })
+  }
+
+  onPause(callback) {
+    this.innerAudioContext.addEventListener('pause', e => {
+      const result = e.path[0]
+      const res = {
+        autoplay: result.autoplay,
+        buffered: result.buffered.length,
+        currentTime: result.currentTime,
+        duration: result.duration,
+        errMsg: 'getAudioState: ok',
+        isInPkg: false,
+        loop: result.loop,
+        obeyMuteSwitch: result.muted,
+        paused: e.type === 'paused',
+        realativeSrc: result.currentSrc,
+        src:result.currentSrc,
+        volume: e.path.length
+      }
+      callback(res)
+    })
+  }
+
+  onStop(callback) {
+    this.innerAudioContext.addEventListener('pause', e => {
+      const result = e.path[0]
+      const res = {
+        autoplay: result.autoplay,
+        buffered: result.buffered.length,
+        currentTime: result.currentTime,
+        duration: result.duration,
+        errMsg: 'getAudioState: ok',
+        isInPkg: false,
+        loop: result.loop,
+        obeyMuteSwitch: result.muted,
+        paused: e.type === 'paused',
+        realativeSrc: result.currentSrc,
+        src:result.currentSrc,
+        volume: e.path.length
+      }
+      callback(res)
+      this.stopFlag = false
     })
   }
 }
