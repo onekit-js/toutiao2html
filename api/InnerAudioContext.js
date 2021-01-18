@@ -163,4 +163,10 @@ export default class InnerAudioContext {
       callback()
     })
   }
+
+  onWaiting(callback) {
+    this.bgAudiocontext.addEventListener('waiting', () => {
+      callback()
+    })
+  }
 }
