@@ -1,6 +1,7 @@
 export default class BackgroundAudioManager {
   constructor(bgAudiocontext) {
     this.bgAudiocontext = bgAudiocontext
+    this.stopFlag = false
   }
 
   set src(src) {
@@ -16,8 +17,10 @@ export default class BackgroundAudioManager {
   }
 
   stop() {
-    this.bgAudiocontext.currentTime = 0
+    this.stopFlag = true
     this.pause()
+    this.bgAudiocontext.currentTime = 0
+    // this.stopFlag = false
   }
 
   seek(options) {
@@ -52,7 +55,17 @@ export default class BackgroundAudioManager {
     })
   }
 
-  onStop() {}
+  onStop(callback) {
+    this.bgAudiocontext.addEventListener('pause', e => {
+      if(this.stopFlag) {
+        const res = {
+          src: e.path.map(src => src.currentSrc)
+        }
+        callback(res)
+        this.stopFlag = false
+      }
+    })
+  }
 
   onEnded(callback) {
     this.bgAudiocontext.addEventListener('ended', callback, false)
