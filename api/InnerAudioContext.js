@@ -151,4 +151,10 @@ export default class InnerAudioContext {
       callback(res)
     })
   }
+
+  onTimeUpdate(callback) {
+    this.innerAudioContext.addEventListener('timeupdate', () => {
+      callback()
+    })
+  }
 }
