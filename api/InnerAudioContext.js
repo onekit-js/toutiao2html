@@ -40,4 +40,7 @@ export default class InnerAudioContext{
     this.innerAudioContext.currentTime = 0
   }
 
+  seek(position) {
+    this.innerAudioContext.currentTime = position
+  }
 }
