@@ -1,4 +1,4 @@
-export default class InnerAudioContext{
+export default class InnerAudioContext {
   constructor(innerAudioContext) {
     this.innerAudioContext = innerAudioContext
     this.innerAudioContext.currentTime = 0
@@ -24,23 +24,38 @@ export default class InnerAudioContext{
   }
 
   set obeyMuteSwitch(boolean) {
-    this.innerAudioContext.muted =  boolean
+    this.innerAudioContext.muted = boolean
   }
 
   play() {
-    this.innerAudioContext.play()
+    try {
+      this.innerAudioContext.play()
+    } catch {}
   }
 
   pause() {
-    this.innerAudioContext.pause()
+    try {
+      this.innerAudioContext.pause()
+    } catch {}
   }
 
   stop() {
-    this.innerAudioContext.pause()
-    this.innerAudioContext.currentTime = 0
+    try {
+      this.innerAudioContext.pause()
+      this.innerAudioContext.currentTime = 0
+    } catch {}
   }
 
   seek(position) {
-    this.innerAudioContext.currentTime = position
+    try {
+      this.innerAudioContext.currentTime = position
+    } catch {}
+  }
+
+  destroy() {
+    try {
+      this.innerAudioContext.pause()
+      this.innerAudioContext = null
+    } catch {}
   }
 }
