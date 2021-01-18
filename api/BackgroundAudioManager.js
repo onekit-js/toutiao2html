@@ -2,16 +2,22 @@ export default class BackgroundAudioManager {
   constructor(bgAudiocontext) {
     this.bgAudiocontext = bgAudiocontext
   }
+
+  set src(src) {
+    this.bgAudiocontext.src = src
+  } 
+
   play() {
-    this.bgAudiocontext.src = this.src
     this.bgAudiocontext.play()
   }
 
-  pause() {}
+  pause() {
+    this.bgAudiocontext.pause()
+  }
 
   stop() {
     this.bgAudiocontext.currentTime = 0
-    this.bgAudiocontext.pause()
+    this.pause()
   }
 
   seek(options) {
@@ -37,7 +43,9 @@ export default class BackgroundAudioManager {
     })
   }
 
-  onPause() {}
+  onPause() {
+    
+  }
 
   onStop() {}
 
