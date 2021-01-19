@@ -17,6 +17,7 @@ import RecorderManager from "./api/RecorderManager"
 import MobileDetect from 'mobile-detect'
 import BackgroundManager from './api/BackgroundAudioManager'
 import InnerAudioContext from './api/InnerAudioContext'
+import VideoContext from './api/VideoContext'
 import 'jquery-confirm'
 import 'jquery-confirm/css/jquery-confirm.css'
 import './js/PrevewImage'
@@ -832,7 +833,6 @@ export default class TT {
     }, wx_success, wx_fail, wx_complete)
   }
 
-
   getImageInfo(wx_object) {
     const wx_src = wx_object.src
     const wx_success = wx_object.success
@@ -1370,7 +1370,6 @@ export default class TT {
     })
   }
 
-
   //////////////////// 录音 //////////////////////////
 
   getRecorderManager() {
@@ -1444,7 +1443,7 @@ export default class TT {
       const xsw_A = document.createElement('a')
       xsw_A.innerHTML = '<button>保存</button>'
       xsw_A.setAttribute('id', 'xswAH')
-      xsw_A.setAttribute('download', '下载')
+      xsw_A.setAttribute('download', 'download')
       xsw_A.setAttribute('href', filePath)
       xsw_A.setAttribute('target', "view-window")
       xsw_A.click()
@@ -1455,6 +1454,16 @@ export default class TT {
     },success, fail, complete)
   }
 
+  createVideoContext(id, component) {
+    const videoDom = document.getElementById(id)
+    if(this.fn_global().videoContext) {
+      return this.fn_global().videoContext
+    }else {
+      const videoContext = new VideoContext(videoDom)
+      this.fn_global().VideoContext = videoContext
+      return videoContext
+    }
+  }
   ////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
