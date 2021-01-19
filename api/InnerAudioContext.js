@@ -190,9 +190,10 @@ export default class InnerAudioContext {
   }
 
   onSeeked(callback) {
-    this.innerAudioContext.addEventListener('seeked', () => {
+    this._seekedListenner = function _eventListener() {
       callback()
-    })
+    }
+    this.innerAudioContext.addEventListener('seeked', this._seekedListenner)
   }
 
   offPlay() {
@@ -221,5 +222,9 @@ export default class InnerAudioContext {
 
   offWaiting() {
     this.innerAudioContext.removeEventListener('waiting', this._waitingListenner)
+  }
+
+  offSeeking() {
+    this.innerAudioContext.removeEventListener('seeking', this._seekingListenner)
   }
 }
