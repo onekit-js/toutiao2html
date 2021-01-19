@@ -8,4 +8,8 @@ export default class VideoContext {
     this.videoManager.play()
   }
 
+  pause() {
+    this.videoManager.pause()
+  }
+
 }
