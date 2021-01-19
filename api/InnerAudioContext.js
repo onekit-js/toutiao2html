@@ -214,6 +214,6 @@ export default class InnerAudioContext {
   }
 
   offError() {
-
+    this.innerAudioContext.removeEventListener('error', this._errorListenner)
   }
 }
