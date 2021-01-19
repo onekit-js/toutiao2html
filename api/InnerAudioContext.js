@@ -209,6 +209,6 @@ export default class InnerAudioContext {
   }
 
   offTimeUpdate() {
-
+    this.innerAudioContext.removeEventListener('timeupdate', this._timeupdateListenner)
   }
 }
