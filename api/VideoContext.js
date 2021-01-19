@@ -22,10 +22,22 @@ export default class VideoContext {
   }
 
   requestFullScreen() {
-    this.videoManager.webkitRequestFullScreen()
+    if (this.videoManager.requestFullscreen) {
+      this.videoManager.requestFullscreen()
+    } else if (this.videoManager.mozRequestFullScreen) {
+      this.videoManager.mozRequestFullScreen()
+    } else if (this.videoManager.webkitRequestFullScreen) {
+      this.videoManager.webkitRequestFullScreen()
+    }
   }
 
   exitFullScreen() {
-    this.videoManager.exitFullScreen()
+    if (document.exitFullscreen) {
+      document.exitFullscreen()
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen()
+    } else if (document.webkitCancelFullScreen) {
+      document.webkitCancelFullScreen()
+    }
   }
 }
