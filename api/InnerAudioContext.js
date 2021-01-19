@@ -219,6 +219,6 @@ export default class InnerAudioContext {
   }
 
   offWaiting() {
-
+    this.innerAudioContext.removeEventListener('waiting', this._waitingListenner)
   }
 }
