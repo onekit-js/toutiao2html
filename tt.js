@@ -1370,45 +1370,8 @@ export default class TT {
     })
   }
 
-  saveVideoToPhotosAlbum(wx_object) {
-    const filePath = wx_object.filePath
-    const wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-    let wx_res
-    try {
-      const xsw_A = document.createElement('a')
-      xsw_A.innerHTML = '<button>保存</button>'
-      xsw_A.setAttribute('id', 'xswAH')
-      xsw_A.setAttribute('download', '下载')
-      xsw_A.setAttribute('style', 'font-size: 12px')
-      const firstA = document.body.firstChild
-      document.body.insertBefore(xsw_A, firstA)
-      const xswAH = document.getElementById('xswAH')
-      xswAH.setAttribute('href', filePath)
-      wx_res = {
-        errMsg: 'saveVideoToPhotosAlbum:ok',
-      }
-      if (wx_success) {
-        wx_success(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    } catch (e) {
-      wx_res = {
-        errMsg: 'saveVideoToPhotosAlbum:fail',
-      }
-      if (wx_fail) {
-        wx_fail(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    }
-  }
 
-  ///////////////// 录音 //////////////////////////
+  //////////////////// 录音 //////////////////////////
 
   getRecorderManager() {
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
@@ -1451,7 +1414,7 @@ export default class TT {
     
   }
 
-  ////////////////////// 视频  ///////////////////////
+  //////////////////// 视频  ///////////////////////
 
   chooseVideo(options) {
     const sourceType = options.sourceType || ['album', 'camara']
@@ -1470,6 +1433,27 @@ export default class TT {
     }, success, fail, complete)
   }
 
+  saveVideoToPhotosAlbum(options) {
+    
+    const filePath = options.filePath
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+
+    PROMISE((SUCCESS) => {
+      const xsw_A = document.createElement('a')
+      xsw_A.innerHTML = '<button>保存</button>'
+      xsw_A.setAttribute('id', 'xswAH')
+      xsw_A.setAttribute('download', '下载')
+      xsw_A.setAttribute('href', filePath)
+      xsw_A.setAttribute('target', "view-window")
+      xsw_A.click()
+      const res = {
+        errMsg: 'saveVideoToPhotosAlbum:ok'
+      }
+      SUCCESS(res)
+    },success, fail, complete)
+  }
 
   ////////////////////////////////////////////////
   setInnerAudioOption() {}
@@ -1490,8 +1474,6 @@ export default class TT {
 
     return ac
   }
-
-
 
   getBackgroundAudioPlayerState(wx_object) {
     const wx_success = wx_object.success
