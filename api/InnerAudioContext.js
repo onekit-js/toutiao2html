@@ -162,9 +162,10 @@ export default class InnerAudioContext {
   }
 
   onTimeUpdate(callback) {
-    this.innerAudioContext.addEventListener('timeupdate', () => {
+    this._timeupdateListenner = function _eventListener() {
       callback()
-    })
+    }
+    this.innerAudioContext.addEventListener('timeupdate', this._timeupdateListenner)
   }
 
   onError(callback) {
@@ -205,5 +206,9 @@ export default class InnerAudioContext {
 
   offEnded() {
     this.innerAudioContext.removeEventListener('ended', this._endedListenner)
+  }
+
+  offTimeUpdate() {
+
   }
 }
