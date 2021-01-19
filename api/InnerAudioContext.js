@@ -176,9 +176,10 @@ export default class InnerAudioContext {
   }
 
   onWaiting(callback) {
-    this.innerAudioContext.addEventListener('waiting', () => {
+    this._waitingListenner = function _eventListener() {
       callback()
-    })
+    }
+    this.innerAudioContext.addEventListener('waiting', this._waitingListenner)
   }
 
   onSeeking(callback) {
@@ -215,5 +216,9 @@ export default class InnerAudioContext {
 
   offError() {
     this.innerAudioContext.removeEventListener('error', this._errorListenner)
+  }
+
+  offWaiting() {
+
   }
 }
