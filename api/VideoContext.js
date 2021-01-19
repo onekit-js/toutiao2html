@@ -12,4 +12,9 @@ export default class VideoContext {
     this.videoManager.pause()
   }
 
+  stop() {
+    this.videoManager.pause()
+    this.videoManager.currentTime = 0
+  }
+
 }
