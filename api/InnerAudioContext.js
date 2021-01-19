@@ -7,6 +7,9 @@ export default class InnerAudioContext {
     this.innerAudioContext.muted = true
 
     this.stopFlag = false
+
+    ///////////////////
+    this.onPlayfn = ''
   }
 
   set src(src) {
@@ -32,12 +35,14 @@ export default class InnerAudioContext {
   play() {
     try {
       this.innerAudioContext.play()
+      this.onPlay = () => false
     } catch {}
   }
 
   pause() {
     try {
       this.innerAudioContext.pause()
+      this.onPause = () => false
     } catch {}
   }
 
@@ -68,7 +73,7 @@ export default class InnerAudioContext {
     })
   }
   onPlay(callback) {
-    this.innerAudioContext.addEventListener('play', e => {
+    this.onPlayfn = this.innerAudioContext.addEventListener('play', e => {
       const result = e.path[0]
       const res = {
         autoplay: result.autoplay,
@@ -81,7 +86,7 @@ export default class InnerAudioContext {
         obeyMuteSwitch: result.muted,
         paused: e.type === 'paused',
         realativeSrc: result.currentSrc,
-        src:result.currentSrc,
+        src: result.currentSrc,
         volume: e.path.length
       }
       callback(res)
@@ -102,7 +107,7 @@ export default class InnerAudioContext {
         obeyMuteSwitch: result.muted,
         paused: e.type === 'paused',
         realativeSrc: result.currentSrc,
-        src:result.currentSrc,
+        src: result.currentSrc,
         volume: e.path.length
       }
       callback(res)
@@ -123,7 +128,7 @@ export default class InnerAudioContext {
         obeyMuteSwitch: result.muted,
         paused: e.type === 'paused',
         realativeSrc: result.currentSrc,
-        src:result.currentSrc,
+        src: result.currentSrc,
         volume: e.path.length
       }
       callback(res)
@@ -145,7 +150,7 @@ export default class InnerAudioContext {
         obeyMuteSwitch: result.muted,
         paused: e.type === 'paused',
         realativeSrc: result.currentSrc,
-        src:result.currentSrc,
+        src: result.currentSrc,
         volume: e.path.length
       }
       callback(res)
@@ -159,31 +164,39 @@ export default class InnerAudioContext {
   }
 
   onError(callback) {
-    this.bgAudiocontext.addEventListener('error', () => {
+    this.innerAudioContext.addEventListener('error', () => {
       callback()
     })
   }
 
   onWaiting(callback) {
-    this.bgAudiocontext.addEventListener('waiting', () => {
+    this.innerAudioContext.addEventListener('waiting', () => {
       callback()
     })
   }
 
   onSeeking(callback) {
-    this.bgAudiocontext.addEventListener('seeking', () => {
+    this.innerAudioContext.addEventListener('seeking', () => {
       callback()
     })
   }
 
   onSeeked(callback) {
-    this.bgAudiocontext.addEventListener('seeked', () => {
+    this.innerAudioContext.addEventListener('seeked', () => {
       callback()
     })
   }
 
-  offPlay(callback) {
-    this.onPlay = null
-    callback()
+  offPlay() {
+   
+    // this.onPlay = () => false
+  }
+
+  offPause() {
+
+  }
+
+  offStop(callback) {
+
   }
 }

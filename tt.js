@@ -1458,7 +1458,6 @@ export default class TT {
   createInnerAudioContext() {
     const innerAudiocontext = new Audio()
     innerAudiocontext.crossOrigin = 'anonymous'
-   
     if(this.fn_global().innerAudiocontext) {
       return this.fn_global().innerAudiocontext
     }else {
