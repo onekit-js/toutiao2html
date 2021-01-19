@@ -95,8 +95,6 @@ export default class InnerAudioContext {
     this.innerAudioContext.addEventListener('play', this._playListenner)
   }
 
- 
-
   onPause(callback) {
     this._pauseListenner = function _eventListener() {
       const result = arguments[0].path[0]
@@ -120,8 +118,8 @@ export default class InnerAudioContext {
   }
 
   onStop(callback) {
-    this.innerAudioContext.addEventListener('pause', e => {
-      const result = e.path[0]
+    this._stopListenner = function _eventListener() {
+      const result = arguments[0].path[0]
       const res = {
         autoplay: result.autoplay,
         buffered: result.buffered.length,
@@ -131,19 +129,19 @@ export default class InnerAudioContext {
         isInPkg: false,
         loop: result.loop,
         obeyMuteSwitch: result.muted,
-        paused: e.type === 'paused',
+        paused: arguments[0].type === 'paused',
         realativeSrc: result.currentSrc,
         src: result.currentSrc,
-        volume: e.path.length
+        volume: arguments[0].path.length
       }
       callback(res)
-      this.stopFlag = false
-    })
+    }
+    this.innerAudioContext.addEventListener('stop', this._stopListenner)
   }
 
   onEnded(callback) {
-    this.innerAudioContext.addEventListener('ended', e => {
-      const result = e.path[0]
+    this._endedListenner = function _eventListener() {
+      const result = arguments[0].path[0]
       const res = {
         autoplay: result.autoplay,
         buffered: result.buffered.length,
@@ -153,13 +151,14 @@ export default class InnerAudioContext {
         isInPkg: false,
         loop: result.loop,
         obeyMuteSwitch: result.muted,
-        paused: e.type === 'paused',
+        paused: arguments[0].type === 'paused',
         realativeSrc: result.currentSrc,
         src: result.currentSrc,
-        volume: e.path.length
+        volume: arguments[0].path.length
       }
       callback(res)
-    })
+    }
+    this.innerAudioContext.addEventListener('ended', this._endedListenner)
   }
 
   onTimeUpdate(callback) {
@@ -200,7 +199,11 @@ export default class InnerAudioContext {
     this.innerAudioContext.removeEventListener('pause', this._pauseListenner)
   }
 
-  offStop(callback) {
+  offStop() {
+    this.innerAudioContext.removeEventListener('stop', this._stopListenner)
+  }
 
+  offEnded() {
+    this.innerAudioContext.removeEventListener('ended', this._endedListenner)
   }
 }
