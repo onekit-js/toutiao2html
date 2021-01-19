@@ -7,7 +7,6 @@ export default class InnerAudioContext {
     this.innerAudioContext.muted = true
 
     this.stopFlag = false
-    this.playFlag = true
     ///////////////////
   }
 
@@ -226,5 +225,9 @@ export default class InnerAudioContext {
 
   offSeeking() {
     this.innerAudioContext.removeEventListener('seeking', this._seekingListenner)
+  }
+
+  offSeeked() {
+    this.innerAudioContext.removeEventListener('seeked', this._seekedListenner)
   }
 }
