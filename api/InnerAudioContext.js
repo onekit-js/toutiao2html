@@ -72,28 +72,30 @@ export default class InnerAudioContext {
     })
   }
 
-
-
   onPlay(callback) {
-    this.eve = function _eventListener() {
-      const errMsg = 'ok'
-      callback(errMsg)
-    }
-    if(this.playFlag) {
-      this.innerAudioContext.addEventListener('play', this.eve)
-    }else {
-     
+    this._playListenner = function _eventListener() {
+      const result = arguments[0].path[0]
+      const res = {
+        autoplay: result.autoplay,
+        buffered: result.buffered.length,
+        currentTime: result.currentTime,
+        duration: result.duration,
+        errMsg: 'getAudioState: ok',
+        isInPkg: false,
+        loop: result.loop,
+        obeyMuteSwitch: result.muted,
+        paused: arguments[0].type === 'paused',
+        realativeSrc: result.currentSrc,
+        src: result.currentSrc,
+        volume: arguments[0].path.length
+      }
+      callback(res)
     }
 
+    this.innerAudioContext.addEventListener('play', this._playListenner)
   }
 
-  offPlay(callback) {
-    function _eventListener() {
-      const errMsg = 'ok'
-      callback(errMsg)
-    }
-    this.innerAudioContext.removeEventListener('play', this.eve)
-  }
+ 
 
   onPause(callback) {
     this.innerAudioContext.addEventListener('pause', e => {
@@ -189,12 +191,12 @@ export default class InnerAudioContext {
     })
   }
 
-  // offPlay() {
-  //   this.innerAudioContext.removeEventListener('play', PlayeListener)
-  // }
+  offPlay() {
+    this.innerAudioContext.removeEventListener('play', this._playListenner)
+  }
 
   offPause() {
-
+    this.innerAudioContext.removeEventListener('play', this._pauseListenner)
   }
 
   offStop(callback) {
