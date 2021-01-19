@@ -1173,23 +1173,6 @@ export default class TT {
     console.error('html5 is not support!')
   }
 
-  chooseVideo(wx_object) {
-    const wx_sourceType = wx_object.sourceType || ['album', 'camara']
-    // const wx_compressed = wx_Object.compressed || true  // HTML5 is not support
-    // const wx_maxDuration = wx_object.maxDuration || 60  // HTML5 is not support
-    const wx_camera = wx_object.camera || 'back'
-    const wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-
-    wx_object = null
-    PROMISE((SUCCESS) => {
-      const vue_sourceType = wx_sourceType
-      const Vue_sorts = 'vedio'
-      this._chooseMedia(SUCCESS, vue_sourceType, Vue_sorts, wx_camera)
-    }, wx_success, wx_fail, wx_complete)
-  }
-
   chooseMedia(wx_object) {
     // const wx_count = wx_object.count || 9                                   //
     const wx_mediaType = wx_object.mediaType || ['image', 'video'] //
@@ -1467,6 +1450,26 @@ export default class TT {
     }
     
   }
+
+  ////////////////////// 视频  ///////////////////////
+
+  chooseVideo(options) {
+    const sourceType = options.sourceType || ['album', 'camara']
+    // const wx_compressed = wx_Object.compressed || true  // HTML5 is not support
+    // const wx_maxDuration = wx_object.maxDuration || 60  // HTML5 is not support
+    const camera = options.camera || 'back'
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+
+    options = null
+    PROMISE((SUCCESS) => {
+      const html_sourceType = sourceType
+      const html_sorts = 'vedio'
+      this._chooseMedia(SUCCESS, html_sourceType, html_sorts, camera)
+    }, success, fail, complete)
+  }
+
 
   ////////////////////////////////////////////////
   setInnerAudioOption() {}
