@@ -7,9 +7,8 @@ export default class InnerAudioContext {
     this.innerAudioContext.muted = true
 
     this.stopFlag = false
-
+    this.playFlag = true
     ///////////////////
-    this.onPlayfn = ''
   }
 
   set src(src) {
@@ -72,25 +71,28 @@ export default class InnerAudioContext {
       callback()
     })
   }
+
+
+
   onPlay(callback) {
-    this.onPlayfn = this.innerAudioContext.addEventListener('play', e => {
-      const result = e.path[0]
-      const res = {
-        autoplay: result.autoplay,
-        buffered: result.buffered.length,
-        currentTime: result.currentTime,
-        duration: result.duration,
-        errMsg: 'getAudioState: ok',
-        isInPkg: false,
-        loop: result.loop,
-        obeyMuteSwitch: result.muted,
-        paused: e.type === 'paused',
-        realativeSrc: result.currentSrc,
-        src: result.currentSrc,
-        volume: e.path.length
-      }
-      callback(res)
-    })
+    this.eve = function _eventListener() {
+      const errMsg = 'ok'
+      callback(errMsg)
+    }
+    if(this.playFlag) {
+      this.innerAudioContext.addEventListener('play', this.eve)
+    }else {
+     
+    }
+
+  }
+
+  offPlay(callback) {
+    function _eventListener() {
+      const errMsg = 'ok'
+      callback(errMsg)
+    }
+    this.innerAudioContext.removeEventListener('play', this.eve)
   }
 
   onPause(callback) {
@@ -187,10 +189,9 @@ export default class InnerAudioContext {
     })
   }
 
-  offPlay() {
-   
-    // this.onPlay = () => false
-  }
+  // offPlay() {
+  //   this.innerAudioContext.removeEventListener('play', PlayeListener)
+  // }
 
   offPause() {
 
