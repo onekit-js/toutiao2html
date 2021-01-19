@@ -169,9 +169,10 @@ export default class InnerAudioContext {
   }
 
   onError(callback) {
-    this.innerAudioContext.addEventListener('error', () => {
+    this._errorListenner = function _eventListener() {
       callback()
-    })
+    }
+    this.innerAudioContext.addEventListener('error', this._errorListenner)
   }
 
   onWaiting(callback) {
@@ -210,5 +211,9 @@ export default class InnerAudioContext {
 
   offTimeUpdate() {
     this.innerAudioContext.removeEventListener('timeupdate', this._timeupdateListenner)
+  }
+
+  offError() {
+
   }
 }
