@@ -16,7 +16,16 @@ export default class VideoContext {
     this.videoManager.pause()
     this.videoManager.currentTime = 0
   }
+
   seek(position) {
     this.videoManager.currentTime = position
+  }
+
+  requestFullScreen() {
+    this.videoManager.webkitRequestFullScreen()
+  }
+
+  exitFullScreen() {
+    this.videoManager.exitFullScreen()
   }
 }
