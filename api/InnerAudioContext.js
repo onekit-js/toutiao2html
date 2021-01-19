@@ -183,9 +183,10 @@ export default class InnerAudioContext {
   }
 
   onSeeking(callback) {
-    this.innerAudioContext.addEventListener('seeking', () => {
+    this._seekingListenner = function _eventListener() {
       callback()
-    })
+    }
+    this.innerAudioContext.addEventListener('seeking', this._seekingListenner)
   }
 
   onSeeked(callback) {
