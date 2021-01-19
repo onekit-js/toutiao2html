@@ -18,6 +18,9 @@ import MobileDetect from 'mobile-detect'
 import BackgroundManager from './api/BackgroundAudioManager'
 import InnerAudioContext from './api/InnerAudioContext'
 import VideoContext from './api/VideoContext'
+import LivePlayerContext from './api/LivePlayerContext'
+import CameraContext from './api/CameraContext'
+import MapContext from './api/MapContext'
 import 'jquery-confirm'
 import 'jquery-confirm/css/jquery-confirm.css'
 import './js/PrevewImage'
@@ -1339,6 +1342,9 @@ export default class TT {
 
                         const path = TheKit.createTempPath(file.name)
                         that.fn_global().TEMP[path] = blob
+                        console.log(path)
+                        console.log('+++++++++', that.fn_global().TEMP[path])
+
                         itemCallback({
                           path,
                           size,
@@ -1464,7 +1470,50 @@ export default class TT {
       return videoContext
     }
   }
-  ////////////////////////////////////////////////
+
+  createLivePlayerContext(id, component) {
+    return new LivePlayerContext(id, component)
+  }
+
+  ////////////////// 相机 //////////////////////////
+
+  createCameraContext() {
+    return new CameraContext()
+  }
+
+  /////////////////// 地图 /////////////////////////
+
+  createMapContext(id, component) {
+    return new MapContext(id, component)
+  }
+
+  ///////////////////// 文件  //////////////////////
+
+  saveFile(options) {
+    const tempFilePath = options.tempFilePath
+    const filePath = options.filePath || tempFilePath
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+    const blob = this.fn_global().TEMP[tempFilePath]
+    console.log(blob)
+
+    PROMISE(SUCCESS => {
+      TheKit.blobToBase64(blob, res => {
+        const resu = {
+          errMsg: 'saveFile:ok',
+          savedFilePath: res,
+        }
+  
+        // console.log(tempFilePath)
+        // console.log('+++++++++', )
+        SUCCESS(resu)
+      })
+      
+    }, success, fail, complete)
+  }
+
+  /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
   // AudioContext
@@ -2517,7 +2566,7 @@ export default class TT {
         })*/
   }
 
-  saveFile() {}
+
 
   getFileInfo() {}
 
