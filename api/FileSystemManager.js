@@ -69,6 +69,12 @@ export default class FileSystemManager {
       this.fso.FSO[savedFilePath] = blob
       this.fso.FSO[`${savedFilePath}_current_time`] = new Date().getTime()
       this.fso.FSO[`${savedFilePath}_size`] = blob.size
+      const saveFile = {
+        currentTime: this.fso.FSO[`${savedFilePath}_current_time`],
+        filePath: savedFilePath,
+        size: this.fso.FSO[`${savedFilePath}_size`]
+      }
+      this.fso.FSO_LIST_.push(saveFile)
       const res = {
         errMsg: 'saveFile: ok',
         savedFilePath,
@@ -83,8 +89,7 @@ export default class FileSystemManager {
     const complete = options.complete
 
     PROMISE(SUCCESS => {
-      console.log(this.fso.FSO)
-      const fileList = []
+      const fileList = this.fso.FSO_LIST_
       const res = {
         errMsg: 'getSavedFile: ok',
         fileList,
