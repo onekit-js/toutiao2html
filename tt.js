@@ -21,6 +21,7 @@ import VideoContext from './api/VideoContext'
 import LivePlayerContext from './api/LivePlayerContext'
 import CameraContext from './api/CameraContext'
 import MapContext from './api/MapContext'
+import FileSystemManager from './api/FileSystemManager'
 import 'jquery-confirm'
 import 'jquery-confirm/css/jquery-confirm.css'
 import './js/PrevewImage'
@@ -1505,7 +1506,11 @@ export default class TT {
       }
       SUCCESS(res)
     }, success, complete, fail)
-  } 
+  }
+
+  getFileSystemManager() {
+    return new FileSystemManager(this.fn_global())
+  }
 
   /////////////////////////////////////////////////
   setInnerAudioOption() {}
