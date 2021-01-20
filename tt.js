@@ -1498,14 +1498,16 @@ export default class TT {
     PROMISE(SUCCESS => {
       const blob = this.fn_global().TEMP[tempFilePath]
       const filename = blob.type
-      const savedFilePath = TheKit.createTempPath(filename)
+      const savedFilePath = TheKit.createUserPath(filename)
       this.fn_global().FSO[savedFilePath] = blob
+      this.fso.FSO[`${savedFilePath}_current_time`] = new Date().getTime()
+      this.fso.FSO[`${savedFilePath}_size`] = blob.size
       const res = {
         errMsg: 'saveFile: ok',
         savedFilePath: savedFilePath || filePath
       }
       SUCCESS(res)
-    }, success, complete, fail)
+    }, success, fail, complete)
   }
 
   getFileSystemManager() {

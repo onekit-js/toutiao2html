@@ -1,4 +1,5 @@
 import PROMISE from 'oneutil/PROMISE'
+import TheKit from '../js/OneKit'
 
 export default class FileSystemManager {
   constructor(FSO_OBJ) {
@@ -36,17 +37,59 @@ export default class FileSystemManager {
         }
         throw Error(res)
       }
-    }, success, complete, fail)
+    }, success, fail, complete)
   }
 
   saveFileSync(tempFilePath, filePath) {
     try {
-      const blob = this.fn_global().TEMP[tempFilePath]
+      const blob = this.fso.TEMP[tempFilePath]
       const filename = blob.type
-      const savedFilePath = filePath || TheKit.createTempPath(filename)
-      this.fn_global().FSO[savedFilePath] = blob
+      const savedFilePath = filePath || TheKit.createUserPath(filename)
+      this.fso.FSO[savedFilePath] = blob
+      this.fso.FSO[`${savedFilePath}_current_time`] = new Date().getTime()
+      this.fso.FSO[`${savedFilePath}_size`] = blob.size
+      return savedFilePath
     } catch (e) {
       throw new Error(e)
     }
+  }
+
+  saveFile(options) {
+    const tempFilePath = options.tempFilePath
+    const filePath = options.filePath
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+    options=null
+    //
+    PROMISE((SUCCESS) => {
+      const blob = this.fso.TEMP[tempFilePath]
+      const filename = blob.type
+      const savedFilePath = filePath || TheKit.createUserPath(filename)
+      this.fso.FSO[savedFilePath] = blob
+      this.fso.FSO[`${savedFilePath}_current_time`] = new Date().getTime()
+      this.fso.FSO[`${savedFilePath}_size`] = blob.size
+      const res = {
+        errMsg: 'saveFile: ok',
+        savedFilePath,
+      }
+      SUCCESS(res)
+    }, success, fail, complete)
+  }
+
+  getSavedFileList(options) {
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+
+    PROMISE(SUCCESS => {
+      const fileList = []
+      const res = {
+        errMsg: 'getSavedFile: ok',
+        fileList,
+      }
+
+      SUCCESS(res)
+    },success, fail, complete)
   }
 }

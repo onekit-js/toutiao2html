@@ -70,6 +70,11 @@ export default class TheKit {
     return `ttfile://temp__onekit__${uuid}`;
   }
 
+  static createUserPath(fileName) {
+    let uuid = TheKit.createUUIDfileName(fileName);
+    return `ttfile://user__onekit__${uuid}`;
+  }
+
   static createStorePath(fileName) {
     let uuid = createUUIDfileName(fileName);
     return `ttfile://store/onekit_${uuid}`;
