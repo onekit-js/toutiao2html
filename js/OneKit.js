@@ -67,7 +67,7 @@ export default class TheKit {
 
   static createTempPath(fileName) {
     let uuid = TheKit.createUUIDfileName(fileName);
-    return `ttfile://tmp__onekit__${uuid}`;
+    return `ttfile://temp__onekit__${uuid}`;
   }
 
   static createStorePath(fileName) {
