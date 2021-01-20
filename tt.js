@@ -1500,8 +1500,8 @@ export default class TT {
       const filename = blob.type
       const savedFilePath = TheKit.createUserPath(filename)
       this.fn_global().FSO[savedFilePath] = blob
-      this.fso.FSO[`${savedFilePath}_current_time`] = new Date().getTime()
-      this.fso.FSO[`${savedFilePath}_size`] = blob.size
+      this.fn_global().FSO[`${savedFilePath}_current_time`] = new Date().getTime()
+      this.fn_global().FSO[`${savedFilePath}_size`] = blob.size
       const res = {
         errMsg: 'saveFile: ok',
         savedFilePath: savedFilePath || filePath

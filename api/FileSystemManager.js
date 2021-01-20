@@ -83,6 +83,7 @@ export default class FileSystemManager {
     const complete = options.complete
 
     PROMISE(SUCCESS => {
+      console.log(this.fso.FSO)
       const fileList = []
       const res = {
         errMsg: 'getSavedFile: ok',
