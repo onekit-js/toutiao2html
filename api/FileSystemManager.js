@@ -66,8 +66,8 @@ export default class FileSystemManager {
     const success = options.success
     const fail = options.fail
     const complete = options.complete
-    options=null
-    //
+    options = null
+
     PROMISE((SUCCESS) => {
       const blob = this.fso.TEMP[tempFilePath]
       const filename = blob.type
@@ -102,7 +102,7 @@ export default class FileSystemManager {
       }
 
       SUCCESS(res)
-    },success, fail, complete)
+    }, success, fail, complete)
   }
 
   removeSavedFile(options) {
@@ -110,15 +110,61 @@ export default class FileSystemManager {
     const success = options.success
     const complete = options.complete
     const fail = options.fail
-
+    options = null
     PROMISE(SUCCESS => {
+      if (!filePath) return
       const index = this.fso.FSO_LIST_.findIndex(item => item.filePath === filePath)
-      this.fso.FSO_LIST_.splice(index-1, 1)
+      this.fso.FSO_LIST_.splice(index - 1, 1)
       const res = {
         errMsg: 'removeSavedFile: ok'
       }
 
       SUCCESS(res)
-    },success, fail, complete)
+    }, success, fail, complete)
+  }
+
+  copyFileSync(srcPath, destPath) {
+    try {
+      if (destPath.substr(0, 13) === 'ttfile://user') {
+        const blob = this.fso.FSO[srcPath]
+        const currentTime = new Date.getTime()
+        this.fso.FSO[destPath] = blob
+        const saveFile = {
+          currentTime: currentTime,
+          filePath: destPath,
+          size: blob.size
+        }
+        this.fso.FSO_LIST_.push(saveFile)
+      }
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+
+  copyFile(options) {
+    const srcPath = options.srcPath
+    const destPath = options.destPath
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+
+    PROMISE(SUCCESS => {
+      if (destPath.substr(0, 13) !== 'ttfile://user') throw new Error('fail no such file or directory')
+
+      const blob = this.fso.FSO[srcPath]
+      const currentTime = new Date.getTime()
+      this.fso.FSO[destPath] = blob
+      const saveFile = {
+        currentTime: currentTime,
+        filePath: destPath,
+        size: blob.size
+      }
+      this.fso.FSO_LIST_.push(saveFile)
+      const res = {
+        errMsg: 'copyFile: ok'
+      }
+      SUCCESS(res)
+
+    }, success, fail, complete)
   }
 }
