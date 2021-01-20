@@ -95,10 +95,27 @@ export default class FileSystemManager {
     const complete = options.complete
 
     PROMISE(SUCCESS => {
-      const fileList = this.fso.FSO_LIST_.concat()
+      const fileList = this.fso.FSO_LIST_
       const res = {
         errMsg: 'getSavedFile: ok',
         fileList,
+      }
+
+      SUCCESS(res)
+    },success, fail, complete)
+  }
+
+  removeSavedFile(options) {
+    const filePath = options.filePath
+    const success = options.success
+    const complete = options.complete
+    const fail = options.fail
+
+    PROMISE(SUCCESS => {
+      const index = this.fso.FSO_LIST_.findIndex(item => item.filePath === filePath)
+      this.fso.FSO_LIST_.splice(index-1, 1)
+      const res = {
+        errMsg: 'removeSavedFile: ok'
       }
 
       SUCCESS(res)
