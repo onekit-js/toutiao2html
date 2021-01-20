@@ -29,6 +29,7 @@ import './js/PrevewImage'
 export default class TT {
   constructor(fn_global) {
     this.fn_global = fn_global
+    this.FSO = {}
   }
   /** 基础 */
   canIUse() {
@@ -1498,7 +1499,7 @@ export default class TT {
       const blob = this.fn_global().TEMP[tempFilePath]
       const filename = blob.type
       const savedFilePath = TheKit.createTempPath(filename)
-      this.fn_global().FSO.savedFilePath = blob
+      this.FSO[savedFilePath] = blob
       const res = {
         errMsg: 'saveFile: ok',
         savedFilePath: savedFilePath || filePath
