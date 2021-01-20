@@ -1,4 +1,4 @@
-import PATH from "oneutil/PATH"
+import PROMISE from 'oneutil/PROMISE'
 
 export default class FileSystemManager {
   constructor(FSO_OBJ) {
@@ -6,12 +6,36 @@ export default class FileSystemManager {
   }
 
   accessSync(path) {
-    if(!path) return
+    if(!path) throw new Error('path is invalid')
     if(path.substr(0, 6) !== 'ttfile') throw new Error('Browser is not support read the user disk')
     if(Object.keys(this.fso.TEMP).indexOf(path) !== -1) {
       return true
     }else {
       throw new Error(`accessSync:fail no such file or directory, accessSync ${path}`)
     }
+  }
+
+  access(options) {
+    const path = options.path
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+    options = null
+
+    PROMISE(SUCCESS => {
+      if(!path) throw new Error('path is invalid')
+      if(path.substr(0, 6) !== 'ttfile') throw new Error('Browser is not support read the user disk')
+      if(Object.keys(this.fso.TEMP).indexOf(path) !== -1) {
+        const res = {
+          errMsg: 'access: ok'
+        }
+       SUCCESS(res)
+      } else {
+        const res = {
+          errMsg: `access:fail no such file or directory, access ${path}`
+        }
+       throw Error(res)
+      }
+    }, success, complete, fail)
   }
 }
