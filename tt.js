@@ -1502,6 +1502,12 @@ export default class TT {
       this.fn_global().FSO[savedFilePath] = blob
       this.fn_global().FSO[`${savedFilePath}_current_time`] = new Date().getTime()
       this.fn_global().FSO[`${savedFilePath}_size`] = blob.size
+      const saveFile = {
+        currentTime:  this.fn_global().FSO[`${savedFilePath}_current_time`],
+        filePath: savedFilePath,
+        size: this.fn_global().FSO[`${savedFilePath}_size`]
+      }
+      this.fn_global().FSO_LIST_.push(saveFile)
       const res = {
         errMsg: 'saveFile: ok',
         savedFilePath: savedFilePath || filePath

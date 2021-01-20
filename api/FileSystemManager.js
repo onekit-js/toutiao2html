@@ -48,6 +48,12 @@ export default class FileSystemManager {
       this.fso.FSO[savedFilePath] = blob
       this.fso.FSO[`${savedFilePath}_current_time`] = new Date().getTime()
       this.fso.FSO[`${savedFilePath}_size`] = blob.size
+      const saveFile = {
+        currentTime: this.fso.FSO[`${savedFilePath}_current_time`],
+        filePath: savedFilePath,
+        size: this.fso.FSO[`${savedFilePath}_size`]
+      }
+      this.fso.FSO_LIST_.push(saveFile)
       return savedFilePath
     } catch (e) {
       throw new Error(e)
@@ -89,7 +95,7 @@ export default class FileSystemManager {
     const complete = options.complete
 
     PROMISE(SUCCESS => {
-      const fileList = this.fso.FSO_LIST_
+      const fileList = this.fso.FSO_LIST_.concat()
       const res = {
         errMsg: 'getSavedFile: ok',
         fileList,
