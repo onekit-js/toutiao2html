@@ -1,4 +1,4 @@
-import TheKit from '../js/TheKit'
+import TheKit from '../js/OneKit'
 export default class RecorderManager {
 
   constructor() {

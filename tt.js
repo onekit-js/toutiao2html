@@ -5,7 +5,7 @@ import LogManager from './api/LogManager'
 import RequestTask from './api/RequestTask'
 import SocketTask from './api/SocketTask'
 import UpdateManager from './api/UpdateManager'
-import TheKit from './js/TheKit'
+import TheKit from './js/OneKit'
 import DownloadTask from './api/DownloadTask'
 import UploadTask from './api/UploadTask'
 import PROMISE from 'oneutil/PROMISE'
@@ -1342,9 +1342,6 @@ export default class TT {
 
                         const path = TheKit.createTempPath(file.name)
                         that.fn_global().TEMP[path] = blob
-                        console.log(path)
-                        console.log('+++++++++', that.fn_global().TEMP[path])
-
                         itemCallback({
                           path,
                           size,
@@ -1491,27 +1488,24 @@ export default class TT {
 
   saveFile(options) {
     const tempFilePath = options.tempFilePath
-    const filePath = options.filePath || tempFilePath
+    const filePath = options.filePath
     const success = options.success
     const fail = options.fail
     const complete = options.complete
-    const blob = this.fn_global().TEMP[tempFilePath]
-    console.log(blob)
-
+    options = null
+    //
     PROMISE(SUCCESS => {
-      TheKit.blobToBase64(blob, res => {
-        const resu = {
-          errMsg: 'saveFile:ok',
-          savedFilePath: res,
-        }
-  
-        // console.log(tempFilePath)
-        // console.log('+++++++++', )
-        SUCCESS(resu)
-      })
-      
-    }, success, fail, complete)
-  }
+      const blob = this.fn_global().TEMP[tempFilePath]
+      const filename = blob.type
+      const savedFilePath = TheKit.createTempPath(filename)
+      this.fn_global().FSO.savedFilePath = blob
+      const res = {
+        errMsg: 'saveFile: ok',
+        savedFilePath: savedFilePath || filePath
+      }
+      SUCCESS(res)
+    }, success, complete, fail)
+  } 
 
   /////////////////////////////////////////////////
   setInnerAudioOption() {}

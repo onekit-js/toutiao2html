@@ -67,7 +67,7 @@ export default class TheKit {
 
   static createTempPath(fileName) {
     let uuid = TheKit.createUUIDfileName(fileName);
-    return `ttfile://tmp_onekit_${uuid}`;
+    return `ttfile://tmp__onekit__${uuid}`;
   }
 
   static createStorePath(fileName) {
@@ -308,4 +308,30 @@ export default class TheKit {
   static integer(min, max) {
     return Math.floor(Math.random() * (max - min  + 1)) + min 
   }
+
+  static deepCopy(obj, cache = []) {
+    if(obj == null || typeof obj !== 'object') {
+      return obj
+    }
+
+    const hit = find(cache, c => c.original === obj)
+    if(hit) {
+      return hit.copy
+    }
+
+    const copy = Array.isArray(obj) ? [] : {}
+
+    cache.push({
+      original: obj,
+      copy
+    })
+
+    Object.keys(obj).forEach(key => {
+      copy[key] = this.deepCopy(obj[key], cache)
+    })
+
+    return copy
+  }
+
+ 
 }
