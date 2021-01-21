@@ -338,5 +338,15 @@ export default class TheKit {
     return copy
   }
 
- 
+  static tempFilepath2digest(tempFilePath) {
+   const left_flag = '__onekit__'
+   const index_left = tempFilePath.indexOf(left_flag)
+   const substr_left = tempFilePath.substring(index_left + left_flag.length, tempFilePath.length)
+
+   const substr_right = substr_left.substring(substr_left.length + -10, 0)
+   
+   const reg = new RegExp('-', 'g')
+   const digest = substr_right.replace(reg, '')
+    return digest
+  }
 }

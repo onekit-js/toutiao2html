@@ -175,12 +175,22 @@ export default class FileSystemManager {
     const complete = options.complete
 
     PROMISE(SUCCESS => {
+      if (!filePath) return
+      if (filePath.substr(0, 13) === 'ttfile://user' || filePath.substr(0, 13) === 'ttfile://temp') {
+        if(!this.fso.FSO[filePath]) return false
+        const blob = this.fso.FSO[filePath]
+        const digest = TheKit.tempFilepath2digest(filePath)
+        const res = {
+          digest,
+          errMsg: 'getFileInfo: ok',
+          size: blob.size
+        }
 
-      const res = {
-        errMsg: 'getFileInfo: ok'
+        SUCCESS(res)
+      } else {
+        throw new Error('fail no such file or directory')
       }
 
-      SUCCESS(res)
-    },success, fail, complete)
+    }, success, fail, complete)
   }
 }
