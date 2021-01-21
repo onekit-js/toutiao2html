@@ -167,4 +167,20 @@ export default class FileSystemManager {
 
     }, success, fail, complete)
   }
+
+  getFileInfo(options) {
+    const filePath = options.filePath
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+
+    PROMISE(SUCCESS => {
+
+      const res = {
+        errMsg: 'getFileInfo: ok'
+      }
+
+      SUCCESS(res)
+    },success, fail, complete)
+  }
 }
