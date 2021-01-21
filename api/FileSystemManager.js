@@ -196,14 +196,16 @@ export default class FileSystemManager {
 
   mkdirSync(dirPath) {
     try {
-      if(dirPath.substr(0, 13) !== 'ttfile://user') {
-        if(this.fso.FSO[dirPath]) {
-          throw new Error(`mkdirSync:fail file already exists, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)  
-        }
-        this.fso.FSO[dirPath] = dirPath
-      }
+      if(dirPath.substr(0, 13) !== 'ttfile://user') throw new Error
+      if(this.fso.FSO[dirPath]) throw new Error(`mkdirSync:fail file already exists, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)  
+      
+      this.fso.FSO[dirPath] = dirPath
     }catch (e) {
       throw new Error(`mkdirSync:fail permission denied, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
     }
+  }
+
+  mkdir(options) {
+
   }
 }
