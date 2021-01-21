@@ -243,4 +243,44 @@ export default class FileSystemManager {
       throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
     }
   }
+
+  readdir(options) {
+    const dirPath = options.dirPath
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+
+    PROMISE(SUCCESS => {
+      if(dirPath.substr(0, 13) !== 'ttfile://user') throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+      let list_index = [],
+      DIR_ARRAY = []
+      this.fso.FSO_LIST_.forEach((item, index) => {
+        if(item.filePath.indexOf(dirPath) !== -1) {
+          list_index.push(index)
+        }
+      })
+      for(const i of list_index) {
+        DIR_ARRAY.push(this.fso.FSO_LIST_[i])
+      }
+      const res = {
+        errMsg: 'readdir: ok',
+        files: DIR_ARRAY
+      }
+      SUCCESS(res)
+    },success, fail, complete)
+  }
+
+  readFileSync(filePath, encoding) {
+    encoding = null
+    if(filePath.substr(0, 13) !== 'ttfile://user' && filePath.substr(0, 13) !== 'ttfile://temp') throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+    try{
+      let blob
+      if(filePath.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
+      if(filePath.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
+      else throw Error (`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+      return blob
+    }catch (e) {
+      throw (e)
+    }
+  }
 }
