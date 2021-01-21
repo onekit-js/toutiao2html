@@ -349,4 +349,23 @@ export default class TheKit {
    const digest = substr_right.replace(reg, '')
     return digest
   }
+
+   static async blob2string(blob) {
+    function foo() {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          resolve(reader.result)
+        }
+        reader.readAsText(blob)
+      })
+    }
+
+    async function getVal() {
+      return await foo()
+    }
+
+   
+    return getVal()
+  }
 }

@@ -271,13 +271,19 @@ export default class FileSystemManager {
   }
 
   readFileSync(filePath, encoding) {
-    encoding = null
     if(filePath.substr(0, 13) !== 'ttfile://user' && filePath.substr(0, 13) !== 'ttfile://temp') throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
     try{
       let blob
       if(filePath.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
       if(filePath.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
       else throw Error (`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+      switch(encoding) {
+        case 'string':
+         // do sth ....
+        break;
+        default:
+          throw new Error()
+      }
       return blob
     }catch (e) {
       throw (e)
