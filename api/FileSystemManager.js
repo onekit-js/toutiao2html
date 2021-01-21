@@ -197,11 +197,14 @@ export default class FileSystemManager {
   mkdirSync(dirPath) {
     try {
       if(dirPath.substr(0, 13) !== 'ttfile://user') throw Error
-      if(this.fso.FSO[dirPath]) throw new Error(`mkdirSync:fail file already exists, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)  
-      
-      this.fso.FSO[dirPath] = dirPath
     }catch (e) {
       throw Error(`mkdirSync:fail permission denied, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+    }
+    try{
+      if(this.fso.FSO[dirPath]) throw new Error  
+      this.fso.FSO[dirPath] = dirPath
+    }catch (e) {
+      throw new Error(`mkdirSync:fail file already exists, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
     }
   }
 
@@ -212,13 +215,32 @@ export default class FileSystemManager {
     const complete = options.complete
 
     PROMISE(SUCCESS => {
-      if(dirPath.substr(0, 13) !== 'ttfile://user') return false
-      if(this.fso.FSO[dirPath]) return false
+      if(dirPath.substr(0, 13) !== 'ttfile://user') throw Error(`mkdirSync:fail permission denied, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+      if(this.fso.FSO[dirPath]) throw Error(`mkdirSync:fail file already exists, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
       this.fso.FSO[dirPath] = dirPath
       const res = {
         errMsg: 'mkdir: ok'
       }
       SUCCESS(res)
     },success, fail, complete)
+  }
+
+  readdirSync(dirPath) {
+    try {
+      if(dirPath.substr(0, 13) !== 'ttfile://user') throw Error
+      let list_index = [],
+      DIR_ARRAY = []
+      this.fso.FSO_LIST_.forEach((item, index) => {
+        if(item.filePath.indexOf(dirPath) !== -1) {
+          list_index.push(index)
+        }
+      })
+      for(const i of list_index) {
+        DIR_ARRAY.push(this.fso.FSO_LIST_[i])
+      }
+      return DIR_ARRAY
+    }catch (e) {
+      throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+    }
   }
 }
