@@ -311,16 +311,16 @@ export default class TheKit {
   }
 
   static integer(min, max) {
-    return Math.floor(Math.random() * (max - min  + 1)) + min 
+    return Math.floor(Math.random() * (max - min + 1)) + min
   }
 
   static deepCopy(obj, cache = []) {
-    if(obj == null || typeof obj !== 'object') {
+    if (obj == null || typeof obj !== 'object') {
       return obj
     }
 
     const hit = find(cache, c => c.original === obj)
-    if(hit) {
+    if (hit) {
       return hit.copy
     }
 
@@ -339,38 +339,28 @@ export default class TheKit {
   }
 
   static tempFilepath2digest(tempFilePath) {
-   const left_flag = '__onekit__'
-   const index_left = tempFilePath.indexOf(left_flag)
-   const substr_left = tempFilePath.substring(index_left + left_flag.length, tempFilePath.length)
+    const left_flag = '__onekit__'
+    const index_left = tempFilePath.indexOf(left_flag)
+    const substr_left = tempFilePath.substring(index_left + left_flag.length, tempFilePath.length)
 
-   const substr_right = substr_left.substring(substr_left.length + -10, 0)
-   
-   const reg = new RegExp('-', 'g')
-   const digest = substr_right.replace(reg, '')
+    const substr_right = substr_left.substring(substr_left.length + -10, 0)
+
+    const reg = new RegExp('-', 'g')
+    const digest = substr_right.replace(reg, '')
     return digest
   }
 
-   static async blob2string(blob, callbak) {
-     const reader = new FileReader()
-     reader.onload = () => {
-       callbak(reader.result)
-     }
-     reader.readAsText(blob)
-    // function foo() {
-    //   return new Promise((resolve, reject) => {
-    //     const reader = new FileReader()
-    //     reader.onload = () => {
-    //       resolve(reader.result)
-    //     }
-    //     reader.readAsText(blob)
-    //   })
-    // }
+  static blob2string(blob, callbak) {
+    const reader = new FileReader()
+    reader.onload = () => {
+      callbak(reader.result)
+    }
+    reader.readAsText(blob)
+  }
 
-    // async function getVal() {
-    //   return await foo()
-    // }
-
-   
-    // return getVal()
+  static string2ascii(string, callbak) {
+    const ascii = string.charCodeAt(0)
+    console.log(ascii)
+    callbak(string.charCodeAt())
   }
 }

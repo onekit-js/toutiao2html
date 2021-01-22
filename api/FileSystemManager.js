@@ -295,7 +295,7 @@ export default class FileSystemManager {
   }
 
   readFile(options) {
-    const path = options.path
+    const filePath = options.filePath
     const encoding = options.encoding
     const success = options.success
     const fail = options.fail
@@ -305,22 +305,32 @@ export default class FileSystemManager {
       let blob
       if(filePath.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
       if(filePath.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
-      else throw Error (`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+      else throw Error (`readdirSync:fail permission denied, readdirSync ${filePath} at Object.eval [as mkdirSync]`)
+      let result = {
+        errMsg: 'readFile: ok',
+        data: ''
+      }
       switch(encoding) {
         case 'ascii':
           TheKit.blob2string(blob, res => {
-            const result = {
-              errMsg: 'readFile: ok',
-              data: res
-            }
+            result.data = res
             SUCCESS(result)
           })
         break
-
+        case 'base64':
+          TheKit.blobToBase64(blob, res => {
+            result.data = res
+            SUCCESS(result)
+          })
+        break
         default:
+          TheKit.blob2string(blob, res => {
+            TheKit.string2ascii(res, result => {
+              SUCCESS(result)
+            })
+          })
       }
 
-      SUCCESS(res)
     },success, fail, complete)
   }
 }
