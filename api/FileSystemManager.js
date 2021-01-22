@@ -1,5 +1,6 @@
 import PROMISE from 'oneutil/PROMISE'
 import TheKit from '../js/TheKit'
+import State from './State'
 
 export default class FileSystemManager {
   constructor(FSO_OBJ) {
@@ -381,11 +382,48 @@ export default class FileSystemManager {
       if(newPath.substr(0, 13) !== 'ttfile://user') throw Error(`renameSync:fail permission denied, readdirSync ${newPath} at Object.eval [as mkdirSync]`)
       if(this.fso.FSO[newPath]) throw Error(`renameSync:fail filename already exists, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
       const res = {
-        errMsg: 'reanem: ok'
+        errMsg: 'rename: ok'
       }
       this.fso.FSO[newPath] = this.fso.FSO[oldPath]
-      this.fso.FSO[oldPath] = null
+      delete this.fso.FSO[oldPath]
       SUCCESS(res)
     },success, fail, complete)
+  }
+
+  rmdirSync(dirPath) {
+    if(!filePath) throw new Error('invoke error: Error: path is invalid }')
+    try {
+      if(dirPath.substr(0, 13) !== 'ttfile://user') throw Error(`mkdirSync:fail permission denied, mkdirSync ${dirPath}`)
+      delete this.fso.FSO[dirPath]
+    }catch(e) {
+      throw new Error(e)
+    }
+  }
+
+  rmdir(options) {
+    const filePath = options.filePath
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+    options = null
+    if(!filePath) throw new Error('invoke error: Error: path is invalid }')
+    PROMISE(SUCCESS => {
+      if(dirPath.substr(0, 13) !== 'ttfile://user') throw Error(`mkdirSync:fail permission denied, mkdirSync ${dirPath}`)
+      delete this.fso.FSO[dirPath]
+      const res = {
+        errMsg: 'rmdir: ok'
+      }
+      SUCCESS(res)
+    },success, fail, complete)
+  }
+
+  statSync(path) {
+    if(!path) throw new Error('invoke error: Error: path is invalid }')
+    if(!this.fso.FSO[path] || !this.fso.TEMP[path]) throw new Error(`mkdirSync:fail permission denied, mkdirSync ${path}`) 
+    let blob
+    if(path.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
+    if(path.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
+
+    return new State(blob, this.fso)
   }
 }
