@@ -1015,7 +1015,6 @@ export default class TT {
                   } else {
                     blob = e.target.result
                   }
-                  console.log(fileFactory)
                   const size = blob.size
                   const path = this.fn_global().TEMP[path] = fileFactory
                   this.fn_global().TEMP[path] = fileFactory
