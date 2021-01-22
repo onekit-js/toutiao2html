@@ -335,14 +335,22 @@ export default class FileSystemManager {
             SUCCESS(result)
           })
         break
+        case 'latin1':
+          TheKit.blob2hex(blob, res => {
+            result.data = res
+            SUCCESS(result)
+          })
+        break
         case 'utf-8' || 'utf8' :
-          
+          TheKit.blob2string(blob, res => {
+            result.data = res
+            SUCCESS(result)
+          })
         break
         default:
-          TheKit.blob2string(blob, res => {
-            TheKit.string2ascii(res, result => {
-              SUCCESS(result)
-            })
+          TheKit.blob2arrbuffer(blob, res => {
+            result.data = res
+            SUCCESS(result)
           })
       }
 

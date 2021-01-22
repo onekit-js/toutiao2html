@@ -414,4 +414,12 @@ export default class TheKit {
       callback(hex.join(''))
     })
   }
+
+  static blob2arrbuffer(blob, callback) {
+    const reader = new FileReader()
+    reader.onload = () => {
+      callback(reader.result)
+    }
+    reader.readAsArrayBuffer(blob)
+  }
 }
