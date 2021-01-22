@@ -1,5 +1,5 @@
 import PROMISE from 'oneutil/PROMISE'
-import TheKit from '../js/OneKit'
+import TheKit from '../js/TheKit'
 
 export default class FileSystemManager {
   constructor(FSO_OBJ) {
@@ -334,6 +334,9 @@ export default class FileSystemManager {
             result.data = res
             SUCCESS(result)
           })
+        break
+        case 'utf-8' || 'utf8' :
+          
         break
         default:
           TheKit.blob2string(blob, res => {
