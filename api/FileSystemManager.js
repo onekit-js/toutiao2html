@@ -419,11 +419,18 @@ export default class FileSystemManager {
 
   statSync(path) {
     if(!path) throw new Error('invoke error: Error: path is invalid }')
-    if(!this.fso.FSO[path] || !this.fso.TEMP[path]) throw new Error(`mkdirSync:fail permission denied, mkdirSync ${path}`) 
+    if(!this.fso.FSO[path] && !this.fso.TEMP[path]) throw new Error(`mkdirSync:fail permission denied, mkdirSync ${path}`) 
     let blob
-    if(path.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
-    if(path.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
+    if(path.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[path]
+    if(path.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[path]
 
-    return new State(blob, this.fso)
+    const e = {
+      mode: 33206,
+      size: blob.size,
+      lastAccessedTime: this.fso.FSO[`${path}_current_time`] || this.fso.TEMP[`${path}_current_time`] || new Date().getTime(),
+      lastModifiedTime: this.fso.FSO[`${path}_current_time`] || this.fso.TEMP[`${path}_current_time`] || new Date().getTime(),
+      path
+    }
+    return new State(e)
   }
 }
