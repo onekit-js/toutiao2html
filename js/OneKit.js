@@ -350,22 +350,27 @@ export default class TheKit {
     return digest
   }
 
-   static async blob2string(blob) {
-    function foo() {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => {
-          resolve(reader.result)
-        }
-        reader.readAsText(blob)
-      })
-    }
+   static async blob2string(blob, callbak) {
+     const reader = new FileReader()
+     reader.onload = () => {
+       callbak(reader.result)
+     }
+     reader.readAsText(blob)
+    // function foo() {
+    //   return new Promise((resolve, reject) => {
+    //     const reader = new FileReader()
+    //     reader.onload = () => {
+    //       resolve(reader.result)
+    //     }
+    //     reader.readAsText(blob)
+    //   })
+    // }
 
-    async function getVal() {
-      return await foo()
-    }
+    // async function getVal() {
+    //   return await foo()
+    // }
 
    
-    return getVal()
+    // return getVal()
   }
 }
