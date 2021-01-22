@@ -324,7 +324,16 @@ export default class FileSystemManager {
           })
         break
         case 'binary':
-
+          TheKit.blob2binary(blob, res => {
+            result.data = res
+            SUCCESS(result)
+          })
+        break
+        case 'hex':
+          TheKit.blob2hex(blob, res => {
+            result.data = res
+            SUCCESS(result)
+          })
         break
         default:
           TheKit.blob2string(blob, res => {
