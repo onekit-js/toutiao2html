@@ -312,7 +312,7 @@ export default class FileSystemManager {
       }
       switch(encoding) {
         case 'ascii':
-          TheKit.blob2string(blob, res => {
+          TheKit.blob2ascii(blob, res => {
             result.data = res
             SUCCESS(result)
           })
@@ -322,6 +322,9 @@ export default class FileSystemManager {
             result.data = res
             SUCCESS(result)
           })
+        break
+        case 'binary':
+
         break
         default:
           TheKit.blob2string(blob, res => {

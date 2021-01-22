@@ -358,9 +358,11 @@ export default class TheKit {
     reader.readAsText(blob)
   }
 
-  static string2ascii(string, callbak) {
-    const ascii = string.charCodeAt(0)
-    console.log(ascii)
-    callbak(string.charCodeAt())
+  static blob2ascii(blob, callbak) {
+    const reader = new FileReader()
+    reader.onload = () => {
+      callbak(reader.result)
+    }
+    reader.readAsText(blob, 'ascii')
   }
 }
