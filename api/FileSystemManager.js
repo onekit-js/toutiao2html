@@ -356,4 +356,36 @@ export default class FileSystemManager {
 
     },success, fail, complete)
   }
+
+  renameSync(oldPath, newPath) {
+    if(oldPath.substr(0, 13) !== 'ttfile://user') throw Error(`renameSync:fail permission denied, readdirSync ${oldPath} at Object.eval [as mkdirSync]`)
+    if(newPath.substr(0, 13) !== 'ttfile://user') throw Error(`renameSync:fail permission denied, readdirSync ${newPath} at Object.eval [as mkdirSync]`)
+    try{
+      if(this.fso.FSO[newPath]) throw Error(`renameSync:fail filename already exists, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+      this.fso.FSO[newPath] = this.fso.FSO[oldPath]
+      this.fso.FSO[oldPath] = null
+    }catch(e) {
+      throw new Error(e)
+    }
+  }
+
+  rename(options) {
+    const oldPath = options.oldPath
+    const newPath = options.newPath
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+
+    PROMISE(SUCCESS => {
+      if(oldPath.substr(0, 13) !== 'ttfile://user') throw Error(`renameSync:fail permission denied, readdirSync ${oldPath} at Object.eval [as mkdirSync]`)
+      if(newPath.substr(0, 13) !== 'ttfile://user') throw Error(`renameSync:fail permission denied, readdirSync ${newPath} at Object.eval [as mkdirSync]`)
+      if(this.fso.FSO[newPath]) throw Error(`renameSync:fail filename already exists, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+      const res = {
+        errMsg: 'reanem: ok'
+      }
+      this.fso.FSO[newPath] = this.fso.FSO[oldPath]
+      this.fso.FSO[oldPath] = null
+      SUCCESS(res)
+    },success, fail, complete)
+  }
 }
