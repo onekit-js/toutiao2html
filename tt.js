@@ -5,7 +5,7 @@ import LogManager from './api/LogManager'
 import RequestTask from './api/RequestTask'
 import SocketTask from './api/SocketTask'
 import UpdateManager from './api/UpdateManager'
-import TheKit from './js/OneKit'
+import TheKit from './js/TheKit'
 import DownloadTask from './api/DownloadTask'
 import UploadTask from './api/UploadTask'
 import PROMISE from 'oneutil/PROMISE'
@@ -1395,9 +1395,9 @@ export default class TT {
   getBackgroundAudioManager() {
     const bgAudiocontext = new Audio()
     bgAudiocontext.crossOrigin = 'anonymous'
-    if(this.fn_global().backgroundManager) {
+    if (this.fn_global().backgroundManager) {
       return this.fn_global().backgroundManager
-    }else {
+    } else {
       const backgroundManager = new BackgroundManager(bgAudiocontext)
       this.fn_global().backgroundManager = backgroundManager
       return backgroundManager
@@ -1407,14 +1407,14 @@ export default class TT {
   createInnerAudioContext() {
     const innerAudiocontext = new Audio()
     innerAudiocontext.crossOrigin = 'anonymous'
-    if(this.fn_global().innerAudiocontext) {
+    if (this.fn_global().innerAudiocontext) {
       return this.fn_global().innerAudiocontext
-    }else {
+    } else {
       const innerAudioManager = new InnerAudioContext(innerAudiocontext)
       this.fn_global().innerAudioManager = innerAudioManager
       return innerAudioManager
     }
-    
+
   }
 
   //////////////////// 视频  ///////////////////////
@@ -1437,7 +1437,7 @@ export default class TT {
   }
 
   saveVideoToPhotosAlbum(options) {
-    
+
     const filePath = options.filePath
     const success = options.success
     const fail = options.fail
@@ -1455,14 +1455,14 @@ export default class TT {
         errMsg: 'saveVideoToPhotosAlbum:ok'
       }
       SUCCESS(res)
-    },success, fail, complete)
+    }, success, fail, complete)
   }
 
   createVideoContext(id, component) {
     const videoDom = document.getElementById(id)
-    if(this.fn_global().videoContext) {
+    if (this.fn_global().videoContext) {
       return this.fn_global().videoContext
-    }else {
+    } else {
       const videoContext = new VideoContext(videoDom)
       this.fn_global().VideoContext = videoContext
       return videoContext
@@ -1503,7 +1503,7 @@ export default class TT {
       this.fn_global().FSO[`${savedFilePath}_current_time`] = new Date().getTime()
       this.fn_global().FSO[`${savedFilePath}_size`] = blob.size
       const saveFile = {
-        currentTime:  this.fn_global().FSO[`${savedFilePath}_current_time`],
+        currentTime: this.fn_global().FSO[`${savedFilePath}_current_time`],
         filePath: savedFilePath,
         size: this.fn_global().FSO[`${savedFilePath}_size`]
       }
