@@ -365,4 +365,18 @@ export default class TheKit {
     }
     reader.readAsText(blob, 'ascii')
   }
+
+  static blob2binary(blob, callback) {
+    const reader = new FileReader()
+    reader.onload = () => {
+      callback(reader.result)
+    }
+    reader.readAsBinaryString(blob)
+  }
+
+  static blob2hex(blob, callback) {
+   this.blobToBase64(blob, res => {
+    console.log(res.toString(16))
+   })
+  }
 }

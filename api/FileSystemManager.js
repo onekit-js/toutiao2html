@@ -1,5 +1,5 @@
 import PROMISE from 'oneutil/PROMISE'
-import TheKit from '../js/TheKit'
+import TheKit from '../js/OneKit'
 
 export default class FileSystemManager {
   constructor(FSO_OBJ) {
@@ -177,7 +177,7 @@ export default class FileSystemManager {
     PROMISE(SUCCESS => {
       if (!filePath) return
       if (filePath.substr(0, 13) === 'ttfile://user' || filePath.substr(0, 13) === 'ttfile://temp') {
-        if (!this.fso.FSO[filePath]) return false
+        if(!this.fso.FSO[filePath]) return false
         const blob = this.fso.FSO[filePath]
         const digest = TheKit.tempFilepath2digest(filePath)
         const res = {
@@ -196,14 +196,14 @@ export default class FileSystemManager {
 
   mkdirSync(dirPath) {
     try {
-      if (dirPath.substr(0, 13) !== 'ttfile://user') throw Error
-    } catch (e) {
+      if(dirPath.substr(0, 13) !== 'ttfile://user') throw Error
+    }catch (e) {
       throw Error(`mkdirSync:fail permission denied, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
     }
-    try {
-      if (this.fso.FSO[dirPath]) throw new Error
+    try{
+      if(this.fso.FSO[dirPath]) throw new Error  
       this.fso.FSO[dirPath] = dirPath
-    } catch (e) {
+    }catch (e) {
       throw new Error(`mkdirSync:fail file already exists, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
     }
   }
@@ -215,31 +215,31 @@ export default class FileSystemManager {
     const complete = options.complete
 
     PROMISE(SUCCESS => {
-      if (dirPath.substr(0, 13) !== 'ttfile://user') throw Error(`mkdirSync:fail permission denied, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
-      if (this.fso.FSO[dirPath]) throw Error(`mkdirSync:fail file already exists, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+      if(dirPath.substr(0, 13) !== 'ttfile://user') throw Error(`mkdirSync:fail permission denied, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+      if(this.fso.FSO[dirPath]) throw Error(`mkdirSync:fail file already exists, mkdirSync ${dirPath} at Object.eval [as mkdirSync]`)
       this.fso.FSO[dirPath] = dirPath
       const res = {
         errMsg: 'mkdir: ok'
       }
       SUCCESS(res)
-    }, success, fail, complete)
+    },success, fail, complete)
   }
 
   readdirSync(dirPath) {
     try {
-      if (dirPath.substr(0, 13) !== 'ttfile://user') throw Error
+      if(dirPath.substr(0, 13) !== 'ttfile://user') throw Error
       let list_index = [],
-        DIR_ARRAY = []
+      DIR_ARRAY = []
       this.fso.FSO_LIST_.forEach((item, index) => {
-        if (item.filePath.indexOf(dirPath) !== -1) {
+        if(item.filePath.indexOf(dirPath) !== -1) {
           list_index.push(index)
         }
       })
-      for (const i of list_index) {
+      for(const i of list_index) {
         DIR_ARRAY.push(this.fso.FSO_LIST_[i])
       }
       return DIR_ARRAY
-    } catch (e) {
+    }catch (e) {
       throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
     }
   }
@@ -251,15 +251,15 @@ export default class FileSystemManager {
     const complete = options.complete
 
     PROMISE(SUCCESS => {
-      if (dirPath.substr(0, 13) !== 'ttfile://user') throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+      if(dirPath.substr(0, 13) !== 'ttfile://user') throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
       let list_index = [],
-        DIR_ARRAY = []
+      DIR_ARRAY = []
       this.fso.FSO_LIST_.forEach((item, index) => {
-        if (item.filePath.indexOf(dirPath) !== -1) {
+        if(item.filePath.indexOf(dirPath) !== -1) {
           list_index.push(index)
         }
       })
-      for (const i of list_index) {
+      for(const i of list_index) {
         DIR_ARRAY.push(this.fso.FSO_LIST_[i])
       }
       const res = {
@@ -267,29 +267,29 @@ export default class FileSystemManager {
         files: DIR_ARRAY
       }
       SUCCESS(res)
-    }, success, fail, complete)
+    },success, fail, complete)
   }
 
   readFileSync(filePath, encoding) {
-    if (filePath.substr(0, 13) !== 'ttfile://user' && filePath.substr(0, 13) !== 'ttfile://temp') throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+    if(filePath.substr(0, 13) !== 'ttfile://user' && filePath.substr(0, 13) !== 'ttfile://temp') throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
 
-    try {
+    try{
       let blob
-      if (filePath.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
-      if (filePath.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
-      else throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
-      switch (encoding) {
+      if(filePath.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
+      if(filePath.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
+      else throw Error (`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+      switch(encoding) {
         case 'ascii':
-          TheKit.blob2string(blob, res => {
-            console.log(res)
-          })
-          break;
+         TheKit.blob2string(blob, res => {
+           console.log(res)
+         })
+        break;
         default:
           blob = blob
       }
       console.warn(`[warn]readFileSync: it's not support, you can use the [readFile] instead.`)
       return res
-    } catch (e) {
+    }catch (e) {
       throw (e)
     }
   }
@@ -303,29 +303,38 @@ export default class FileSystemManager {
 
     PROMISE(SUCCESS => {
       let blob
-      if (filePath.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
-      if (filePath.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
-      else throw Error(`readdirSync:fail permission denied, readdirSync ${filePath} at Object.eval [as mkdirSync]`)
+      if(filePath.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
+      if(filePath.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
+      else throw Error (`readdirSync:fail permission denied, readdirSync ${filePath} at Object.eval [as mkdirSync]`)
       let result = {
         errMsg: 'readFile: ok',
         data: ''
       }
-      switch (encoding) {
+      switch(encoding) {
         case 'ascii':
           TheKit.blob2ascii(blob, res => {
             result.data = res
             SUCCESS(result)
           })
-          break
+        break
         case 'base64':
           TheKit.blobToBase64(blob, res => {
             result.data = res
             SUCCESS(result)
           })
-          break
+        break
         case 'binary':
-
-          break
+          TheKit.blob2binary(blob, res => {
+            result.data = res
+            SUCCESS(result)
+          })
+        break
+        case 'hex':
+          TheKit.blob2hex(blob, res => {
+            result.data = res
+            SUCCESS(result)
+          })
+        break
         default:
           TheKit.blob2string(blob, res => {
             TheKit.string2ascii(res, result => {
@@ -334,6 +343,6 @@ export default class FileSystemManager {
           })
       }
 
-    }, success, fail, complete)
+    },success, fail, complete)
   }
 }
