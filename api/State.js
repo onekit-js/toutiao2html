@@ -20,10 +20,10 @@ export default class State {
   }
 
   isDirectory() {
-
+    return this.obj.path.substr(this.obj.path.length-2) === '/'
   }
 
   isFile() {
-
+    return !this.obj.path.substr(this.obj.path.length-2) === '/'
   }
 }
