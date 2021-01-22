@@ -438,7 +438,7 @@ export default class FileSystemManager {
     if(!filePath) throw new Error(`invoke error: Error: path is invalid }`)
     try {
       if(!this.fso.FSO[filePath]) throw new Error(`unlinkSync:fail no such file or directory, unlinkSync ${filePath}`)
-      delete this.fso.FSO
+      delete this.fso.FSO[filePath]
     }catch(e) {
       throw Error(e)
     }
@@ -449,8 +449,10 @@ export default class FileSystemManager {
     const success = options.success
     const fail = options.fail
     const complete = options.complete
-
+    if(!filePath) throw new Error(`invoke error: Error: path is invalid }`)
     PROMISE(SUCCESS => {
+      if(!this.fso.FSO[filePath]) throw new Error(`unlinkSync:fail no such file or directory, unlinkSync ${filePath}`)
+      delete this.fso.FSO[filePath]
       const res = {
         errMsg: 'unlink: ok'
       }
