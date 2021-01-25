@@ -1524,13 +1524,46 @@ export default class TT {
     const success = options.success
     const fail = options.fail
     const complete = options.complete
-
+    options = null
     this.getFileSystemManager(this.fn_global()).getFileInfo({
       filePath,
       success,
       fail,
       complete
     })
+  }
+
+  getSavedFileList(options) {
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+    options = null
+    this.getFileSystemManager(this.fn_global()).getSavedFileList({
+      success,
+      fail,
+      complete
+    })
+  }
+
+  openDocument(options) {
+    const filePath = options.filePath
+    const fileType = options.fileType
+    const fileName = options.fileName
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+    options = null
+    PROMISE(SUCCESS => {
+      const docContainer = document.createElement('a')
+      docContainer.setAttribute('href', filePath)
+      docContainer.setAttribute('download', fileName)
+      docContainer.setAttribute('type', fileType)
+      docContainer.click()
+      const res = {
+        errMsg: 'openDocument: ok'
+      }
+      SUCCESS(res)
+    }, success, fail, complete)
   }
 
   /////////////////////////////////////////////////
@@ -2345,7 +2378,6 @@ export default class TT {
 
   removeSavedFile() {}
 
-  openDocument() {}
 
   createCameraContext() {}
 
