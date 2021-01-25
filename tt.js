@@ -1566,6 +1566,20 @@ export default class TT {
     }, success, fail, complete)
   }
 
+  removeSavedFile(options) {
+    const filePath = options.filePath
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+    options = null
+    this.getFileSystemManager(this.fn_global()).removeSavedFile({
+      filePath,
+      success,
+      fail,
+      complete
+    })
+  }
+
   /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
