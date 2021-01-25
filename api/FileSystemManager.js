@@ -275,25 +275,25 @@ export default class FileSystemManager {
   readFileSync(filePath, encoding) {
     if(filePath.substr(0, 13) !== 'ttfile://user' && filePath.substr(0, 13) !== 'ttfile://temp') throw Error(`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
 
-    try{
-      let blob
-      if(filePath.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
-      if(filePath.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
-      else throw Error (`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
-      switch(encoding) {
-        case 'ascii':
-         TheKit.blob2string(blob, res => {
-           console.log(res)
-         })
-        break;
-        default:
-          blob = blob
-      }
+    // try{
+    //   let blob
+    //   if(filePath.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
+    //   if(filePath.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
+    //   else throw Error (`readdirSync:fail permission denied, readdirSync ${dirPath} at Object.eval [as mkdirSync]`)
+    //   switch(encoding) {
+    //     case 'ascii':
+    //      TheKit.blob2string(blob, res => {
+    //        console.log(res)
+    //      })
+    //     break;
+    //     default:
+    //       blob = blob
+    //   }
       console.warn(`[warn]readFileSync: it's not support, you can use the [readFile] instead.`)
-      return res
-    }catch (e) {
-      throw (e)
-    }
+    //   return res
+    // }catch (e) {
+    //   throw (e)
+    // }
   }
 
   readFile(options) {
@@ -307,7 +307,7 @@ export default class FileSystemManager {
       let blob
       if(filePath.substr(0, 13) === 'ttfile://user') blob = this.fso.FSO[filePath]
       if(filePath.substr(0, 13) === 'ttfile://temp') blob = this.fso.TEMP[filePath]
-      else throw Error (`readdirSync:fail permission denied, readdirSync ${filePath} at Object.eval [as mkdirSync]`)
+      // else throw Error (`readdirSync:fail permission denied, readdirSync ${filePath} at Object.eval [as mkdirSync]`)
       let result = {
         errMsg: 'readFile: ok',
         data: ''
@@ -493,6 +493,36 @@ export default class FileSystemManager {
     if(!filePath) throw new Error('invoke error: Error: path is invalid }')
     if(filePath.substr(0, 13) !== 'ttfile://user') throw Error(`renameSync:fail permission denied, readdirSync ${filePath} at Object.eval [as mkdirSync]`)
     if(!data) throw Error('invoke error: Error: data is invalid }')
-    if(typeof data !== 'string' && !data.byteLength) throw Error(``)
+    console.warn(`Please use [writeFile] instead`)
+  }
+
+  writeFile(options) {
+    const filePath = options.filePath
+    const data = options.data
+    const encoding = options.encoding
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+    if(encoding === 'ascii' || encoding === 'utf-8' || encoding === 'utf8') {
+      encoding = 'string'
+    }else if(encoding === 'binary' || encoding === 'hex'){
+      encoding === 'blob'
+    }else if(!encoding){
+      encoding = 'arraybuffer'
+    }
+    options = null
+    PROMISE(SUCCESS => {
+      if(!filePath) throw Error(`fail no such file or directory, open ${filePath}`)
+      const JSZIP = new JsZip()
+      const filename = filePath.substr(filePath.lastIndexOf('/') + 1)
+      JSZIP.file(filename, data)
+      JSZIP.file(filename).async(encoding).then(data => {
+        this.fso.FSO[filePath] = data
+        const res = {
+          errMsg: 'writeFile: ok'
+        }
+        SUCCESS(res)
+      })
+    }, success, fail, complete)
   }
 }

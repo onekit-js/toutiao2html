@@ -401,9 +401,6 @@ export default class TheKit {
 
   static blob2hex(blob, callback) {
     this.blobToBase64(blob, res => {
-      console.log(res.toString(16))
-    })
-    this.blobToBase64(blob, res => {
       let bin = this.base64decode(res.replace(/[ \r\n]+$/, ""))
       let hex = []
       for (let i = 0; i < bin.length; ++i) {
