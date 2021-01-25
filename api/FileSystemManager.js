@@ -179,7 +179,7 @@ export default class FileSystemManager {
     PROMISE(SUCCESS => {
       if (!filePath) return
       if (filePath.substr(0, 13) === 'ttfile://user' || filePath.substr(0, 13) === 'ttfile://temp') {
-        if(!this.fso.FSO[filePath]) return false
+        if(!this.fso.FSO[filePath]) throw Error(`getFileInfo:fail permission denied, mkdirSync ${filePath} at Object.eval [as mkdirSync]`)
         const blob = this.fso.FSO[filePath]
         const digest = TheKit.tempFilepath2digest(filePath)
         const res = {

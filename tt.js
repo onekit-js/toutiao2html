@@ -1522,16 +1522,14 @@ export default class TT {
   getFileInfo(options) {
     const filePath = options.filePath
     const success = options.success
-    const complete = options.complete
     const fail = options.fail
-    options = null
-    ////
+    const complete = options.complete
 
-    this.getFileSystemManager().getFileInfo({
+    this.getFileSystemManager(this.fn_global()).getFileInfo({
       filePath,
       success,
-      complete,
-      fail
+      fail,
+      complete
     })
   }
 
