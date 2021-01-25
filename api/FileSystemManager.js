@@ -1,7 +1,7 @@
 import PROMISE from 'oneutil/PROMISE'
 import TheKit from '../js/TheKit'
 import State from './State'
-import JsZip from 'jszip'
+import JsZip, { file } from 'jszip'
 
 export default class FileSystemManager {
   constructor(FSO_OBJ) {
@@ -471,19 +471,21 @@ export default class FileSystemManager {
 
     PROMISE(SUCCESS => {
       if(targetPath.substr(0, 13) !== 'ttfile://user') throw Error(`uzip: fail permission denied, mkdirSync ${targetPath}`)
+      if(!this.fso.TEMP[zipFilePath]) throw Error(`Your zip file is not defined`)
       const blob = this.fso.TEMP[zipFilePath]
       const JSZIP = new JsZip()
 
-      JSZIP.loadAsync(blob).then(zip => {
-        const files = zip.files
-        const blob = new Blob(files)
-        this.fso.FSO[targetPath] = blob
+      JSZIP.loadAsync(blob).then(ziplist => {
+        Object.keys(ziplist.files.forEach(filename => {
+          JSZIP.file(filename).async('blob').then(content => {
+            this.fso.FSO[targetPath] = content
+            const res = {
+              errMsg: 'unzip: ok',
+            }
+            SUCCESS(res)
+          })
+        }))
       })
-
-      const res = {
-        errMsg: 'unzip: ok'
-      }
-      SUCCESS(res)
     }, success, fail, complete)
   }
 }
