@@ -488,4 +488,11 @@ export default class FileSystemManager {
       })
     }, success, fail, complete)
   }
+
+  writeFileSync(filePath, data, encoding) {
+    if(!filePath) throw new Error('invoke error: Error: path is invalid }')
+    if(filePath.substr(0, 13) !== 'ttfile://user') throw Error(`renameSync:fail permission denied, readdirSync ${filePath} at Object.eval [as mkdirSync]`)
+    if(!data) throw Error('invoke error: Error: data is invalid }')
+    if(typeof data !== 'string' && !data.byteLength) throw Error(``)
+  }
 }
