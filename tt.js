@@ -1519,6 +1519,22 @@ export default class TT {
     return new FileSystemManager(this.fn_global())
   }
 
+  getFileInfo(options) {
+    const filePath = options.filePath
+    const success = options.success
+    const complete = options.complete
+    const fail = options.fail
+    options = null
+    ////
+
+    this.getFileSystemManager().getFileInfo({
+      filePath,
+      success,
+      complete,
+      fail
+    })
+  }
+
   /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
@@ -1819,257 +1835,6 @@ export default class TT {
       }
     }, 1000)
   }
-
-  // 获取全局唯一的背景音频管理器
-
-  //    getBackgroundAudioManager() {
-  //     let wrap = document.createElement('audio')
-  //     wrap.setAttribute('id', 'xsw_autoplayId')
-  //     wrap.setAttribute('autoplay', 'autoplay')
-  //     wrap.setAttribute('style', 'visibility: hidden')
-  //     let first = document.body.firstChild
-  //     document.body.insertBefore(wrap, first)
-  //     let xsw_audio = document.getElementById('xsw_autoplayId')
-  //     let wz_0 = setInterval(function() {
-  //       if (xsw_audio.title || xsw_audio.coverImgUrl || xsw_audio.singer) {
-  //         xsw_audio.setAttribute('controls', 'controls')
-  //         xsw_audio.style = 'width: 80%margin-left: 10%'
-  //         let div = document.createElement('div')
-  //         div.innerHTML =
-  //           '<div style="width: 80%background-color: #444padding-top: 5pxmargin-left: 10%"><img src="' +
-  //           xsw_audio.coverImgUrl +
-  //           '" style="width: 80pxheight: 80pxdisplay: inline-blockpadding-left: 20px"><div style="display: inline-blockpadding-left: 20pxcolor: #fff"><div>' +
-  //           xsw_audio.title +
-  //           '</div><div style="font-size: 14px">' +
-  //           xsw_audio.singer +
-  //           '</div><br></div></div>'
-  //         let first_0 = document.body.firstChild
-  //         document.body.insertBefore(div, first_0)
-  //         clearInterval(wz_0)
-  //       } else {
-  //         /*xsw_audio.startTime=xsw_audio.currentTime
-  // 				clearInterval(wz_0)*/
-  //       }
-  //     })
-  //     let wz_1 = setInterval(function() {
-  //       if (xsw_audio.startTime) {
-  //         xsw_audio.currentTime = xsw_audio.startTime
-  //         clearInterval(wz_1)
-  //       } else {
-  //         xsw_audio.startTime = xsw_audio.currentTime
-  //         clearInterval(wz_1)
-  //       }
-  //     })
-  //     xsw_audio.seek = function(position) {
-  //       xsw_audio.currentTime = position
-  //     }
-  //     xsw_audio.stop = function() {
-  //       xsw_audio.currentTime = 0
-  //       xsw_audio.pause()
-  //     }
-  //     xsw_audio.onCanplay = function(callback) {
-  //       let wx_res
-  //       wx_res = {}
-  //       setTimeout(function() {
-  //         xsw_audio.addEventListener('playing', function() {
-  //           callback(wx_res)
-  //         })
-  //       })
-  //     }
-  //     xsw_audio.onPlay = function(callback) {
-  //       let wx_res
-  //       wx_res = {}
-  //       setTimeout(function() {
-  //         xsw_audio.addEventListener('playing', function() {
-  //           callback(wx_res)
-  //         })
-  //       })
-  //     }
-  //     xsw_audio.onPause = function(callback) {
-  //       let wx_res
-  //       wx_res = {}
-  //       setTimeout(function() {
-  //         xsw_audio.addEventListener('pause', function() {
-  //           if (xsw_audio.currentTime == 0) {
-  //           } else {
-  //             callback(wx_res)
-  //           }
-  //         })
-  //       })
-  //     }
-  //     xsw_audio.onStop = function(callback) {
-  //       let wx_res
-  //       wx_res = {}
-  //       setTimeout(function() {
-  //         xsw_audio.addEventListener('pause', function() {
-  //           if (xsw_audio.currentTime == 0) {
-  //             callback(wx_res)
-  //           } else {
-  //           }
-  //         })
-  //       })
-  //     }
-  //     xsw_audio.onEnded = function(callback) {
-  //       let wx_res
-  //       wx_res = {}
-  //       setTimeout(function() {
-  //         let wz_2 = setInterval(function() {
-  //           if (xsw_audio.ended == true) {
-  //             callback(wx_res)
-  //             clearInterval(wz_2)
-  //           }
-  //         }, 1000)
-  //       })
-  //     }
-  //     xsw_audio.onTimeUpdate = function(callback) {
-  //       let wx_res
-  //       let currentTimeArray = []
-  //       wx_res = {}
-  //       setTimeout(function() {
-  //         let wz_3 = setInterval(function() {
-  //           currentTimeArray.push(xsw_audio.currentTime)
-  //           if (
-  //             parseInt(currentTimeArray[currentTimeArray.length - 1]) -
-  //               parseInt(currentTimeArray[currentTimeArray.length - 2]) >
-  //             1
-  //           ) {
-  //             callback(wx_res)
-  //             clearInterval(wz_3)
-  //           }
-  //         }, 500)
-  //       })
-  //     }
-  //     xsw_audio.onWaiting = function(callback) {
-  //       let wx_res
-  //       let currentTimeArray = []
-  //       wx_res = {}
-  //       setTimeout(function() {
-  //         let wz_4 = setInterval(function() {
-  //           xsw_audio.addEventListener('playing', function() {
-  //             if (
-  //               parseInt(currentTimeArray[currentTimeArray.length - 1]) ==
-  //               parseInt(currentTimeArray[currentTimeArray.length - 2])
-  //             ) {
-  //               callback('wx_res')
-  //               clearInterval(wz_4)
-  //             }
-  //           })
-  //         }, 1000)
-  //       })
-  //     }
-  //     return xsw_audio
-  //   }
-
-  // getBackgroundAudioManager() {
-  //   const audio = document.createElement('audio')
-  //   audio.setAttribute('id', 'backgroundAudio')
-  //   const firstChild = document.body.firstChild
-  //   document.body.insertBefore(audio, firstChild)
-  //   const bgm = document.getElementById('backgroundAudio')
-  //   bgm.autoplay = true
-  //   bgm.controls = true
-
-  //   // bgm.play = function() {
-  //   //   bgm.play()
-  //   // }
-
-  //   // bgm.pause = function() {
-  //   //   bgm.pause()
-  //   // }
-
-  //   // bgm.seek = function() {
-  //   //   bgm.currentTime = seek
-  //   // }
-
-  //   bgm.stop = function () {
-  //     bgm.pause()
-  //     bgm.currentTime = 0
-  //   }
-
-  //   bgm.onCanPlay = function (callback) {
-  //     bgm.oncanplay = function () {
-  //       console.log(bgm.duration)
-  //       if (callback) {
-  //         callback()
-  //       }
-  //       // （必填）音频标题，用于原生音频播放器音频标题。
-  //       if (!bgm.title) {
-  //         throw new Error('setBackgroundAudioState:fail')
-  //       }
-  //     }
-  //   }
-
-  //   bgm.onWaiting = function (callback) {
-  //     bgm.onwaiting = function () {
-  //       if (callback) {
-  //         callback()
-  //       }
-  //     }
-  //   }
-
-  //   bgm.onPlay = function (callback) {
-  //     bgm.onplay = function () {
-  //       if (callback) {
-  //         callback()
-  //       }
-  //     }
-  //   }
-
-  //   bgm.onPause = function (callback) {
-  //     bgm.onpause = function () {
-  //       if (callback) {
-  //         callback()
-  //       }
-  //     }
-  //   }
-
-  //   bgm.onSeeking = function (callback) {
-  //     bgm.onseeking = function () {
-  //       if (callback) {
-  //         callback()
-  //       }
-  //     }
-  //   }
-
-  //   bgm.onSeeked = function (callback) {
-  //     bgm.onseeked = function () {
-  //       if (callback) {
-  //         callback()
-  //       }
-  //     }
-  //   }
-
-  //   bgm.onEnded = function (callback) {
-  //     bgm.onended = function () {
-  //       if (callback) {
-  //         callback()
-  //       }
-  //     }
-  //   }
-
-  //   // INFO: 停止播放时调用，在小程序中播放背景音乐时通知栏有控制器，但是HTML5无法实现，所以这里也调用onended事件
-  //   bgm.onStop = function (callback) {
-  //     bgm.onended = function () {
-  //       if (callback) {
-  //         callback()
-  //       }
-  //     }
-  //   }
-
-  //   bgm.onTimeUpdate = function (callback) {
-  //     bgm.ontimeupdate = function () {
-  //       if (callback) {
-  //         callback()
-  //       }
-  //     }
-  //   }
-
-  //   bgm.onNext = function () {}
-  //   bgm.onPrev = function () {}
-
-  //   return bgm
-  // }
-
   // BackgroundAudioManager
 
   // LivePusher
@@ -2574,7 +2339,7 @@ export default class TT {
 
 
 
-  getFileInfo() {}
+
 
   getSavedFileList() {}
 
