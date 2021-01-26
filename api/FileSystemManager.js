@@ -2,7 +2,6 @@ import PROMISE from 'oneutil/PROMISE'
 import TheKit from '../js/TheKit'
 import State from './State'
 import JsZip from 'jszip'
-
 export default class FileSystemManager {
   constructor(FSO_OBJ) {
     this.fso = FSO_OBJ

@@ -25,7 +25,7 @@ import FileSystemManager from './api/FileSystemManager'
 import 'jquery-confirm'
 import 'jquery-confirm/css/jquery-confirm.css'
 import './js/PrevewImage'
-
+import config from './config'
 
 export default class TT {
   constructor(fn_global) {
@@ -1573,20 +1573,24 @@ export default class TT {
 
   //////////////////// 地理位置 ////////////////////
 
+  _mapinit() {
+    const map_sdk = `https://webapi.amap.com/maps?v=1.4.15&key=${config.map.key}`
+    const jsapi = document.createElement('script')
+    jsapi.src = map_sdk
+    document.head.appendChild(jsapi)
+    document.head.removeChild(jsapi)
+  }
+
   getLocation(options) {
     // const type = options.type
     const success = options.success
     const fail = options.fail
     const complete = options.complete
-    const map_key = '0c805d60efe6c4e05d13b93e4e48a129'
-    const map_sdk = `https://webapi.amap.com/maps?v=1.4.15&key=${map_key}`
-    const jsapi = document.createElement('script')
-    jsapi.src = map_sdk
-    document.head.appendChild(jsapi)
 
+    this._mapinit()
     PROMISE(SUCCESS => {
       
-    window.onload = () => {
+    window.addEventListener("load", () => {
       const mapObj = new AMap.Map('iCenter')
       mapObj.plugin('AMap.Geolocation', () => {
       const geolocation  = new AMap.Geolocation()
@@ -1605,18 +1609,29 @@ export default class TT {
           verticalAccuracy: onComplete.accuracy
         }
         SUCCESS(resu)
+        
       })
         AMap.event.addListener(geolocation, 'error', onError)
-    })
-    }
-      
+        })
+      }
+    ) 
     },success, fail, complete)
   }
 
   chooseLocation(options) {
     const {latitude, longitude, success, fail, complete} = options
-
     PROMISE(SUCCESS => {
+      this._mapinit()
+      const map_container = document.createElement('div')
+      map_container.setAttribute('style', 'height:100vh;width:100vw;')
+      map_container.setAttribute('id', 'onekitmap-container')
+      document.body.appendChild(map_container)
+      const map = new AMap.Map('onekitmap-container', {
+        resizeEnable: true,
+        zoom: 16,
+        center: [longitude, latitude]
+      })
+
       const res = {
 
       }
@@ -2027,8 +2042,6 @@ export default class TT {
       },
     })
   }
-
-  chooseLocation() {}
 
   // share
 
