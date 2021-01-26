@@ -1578,7 +1578,13 @@ export default class TT {
     const jsapi = document.createElement('script')
     jsapi.src = map_sdk
     document.head.appendChild(jsapi)
-    document.head.removeChild(jsapi)
+    window.addEventListener('load', () => {
+      const map_ui = '//webapi.amap.com/ui/1.1/main.js?v=1.1.1'
+      const jsuiapi = document.createElement('script')
+      jsuiapi.src = map_ui
+      document.head.appendChild(jsuiapi)
+    })
+    // document.head.removeChild(jsapi)
   }
 
   getLocation(options) {
@@ -1634,7 +1640,7 @@ export default class TT {
       const center_maker = new AMap.Marker({
         position: new AMap.LngLat(longitude, latitude)
       })
-      map.on('click', ev => {
+      map.on('mousemove', ev => {
         console.log(ev)
       })
       map.add(center_maker)
