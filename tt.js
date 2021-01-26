@@ -1163,15 +1163,6 @@ export default class TT {
     }, wx_success, wx_fail, wx_complete)
   }
 
-  createVideoContext() {
-    /*  try {
-
-        return new VC(id)
-      } catch (error) {
-        throw new Error(error)
-      }*/
-  }
-
   compressVideo() {
     console.error('html5 is not support!')
   }
@@ -1580,6 +1571,58 @@ export default class TT {
     })
   }
 
+  //////////////////// 地理位置 ////////////////////
+
+  getLocation(options) {
+    // const type = options.type
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+    const map_key = '0c805d60efe6c4e05d13b93e4e48a129'
+    const map_sdk = `https://webapi.amap.com/maps?v=1.4.15&key=${map_key}`
+    const jsapi = document.createElement('script')
+    jsapi.src = map_sdk
+    document.head.appendChild(jsapi)
+
+    PROMISE(SUCCESS => {
+      
+    window.onload = () => {
+      const mapObj = new AMap.Map('iCenter')
+      mapObj.plugin('AMap.Geolocation', () => {
+      const geolocation  = new AMap.Geolocation()
+      mapObj.addControl(geolocation)
+      geolocation.getCurrentPosition()
+      AMap.event.addListener(geolocation, 'complete', onComplete => {
+        const resu = {
+          accuracy: onComplete.accuracy,
+          altitude: onComplete.accuracy,
+          city: onComplete.addressComponent.city,
+          errMsg: 'getLocation: ok',
+          horizonralAccuracy: onComplete.accuracy,
+          latitude: onComplete.position.lat,
+          longitude: onComplete.position.lng,
+          speed: onComplete.status,
+          verticalAccuracy: onComplete.accuracy
+        }
+        SUCCESS(resu)
+      })
+        AMap.event.addListener(geolocation, 'error', onError)
+    })
+    }
+      
+    },success, fail, complete)
+  }
+
+  chooseLocation(options) {
+    const {latitude, longitude, success, fail, complete} = options
+
+    PROMISE(SUCCESS => {
+      const res = {
+
+      }
+      SUCCESS(res)
+    }, success, fail, complete)
+  }
   /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
@@ -1927,46 +1970,6 @@ export default class TT {
   // CameraFrameListener
 
   // EditorContext
-
-  getLocation() { // wx_object) {
-    // let type = wx_object.type || 'wgs84' // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入 'gcj02'
-    // let altitude = wx_object.altitude || 'false' //【小程序传入 true 会返回高度信息，由于获取高度需要较高精确度，会减慢接口返回速度】
-    // let wx_success = wx_object.success
-    // let wx_fail = wx_object.fail
-    // let wx_complete = wx_object.complete
-
-    // TODO: getLocation:模拟器无法返回speed、accuracy（手机上好像可以返回，还没试）
-    // HACK: getLocation:JS-SDK无法返回{ altitude高度，verticalAccuracy垂直精度（Android 无法获取，返回 0）, horizontalAccuracy水平精度 }
-    if (navigator.geolocation) {
-      const n = navigator.geolocation.getCurrentPosition(function (res) {
-        console.log(res) // 需要的坐标地址就在res中
-        console.log(n.verticalAccuracy)
-      })
-    } else {
-      alert('该浏览器不支持定位')
-    }
-    /* this.getLocation({
-      type: type,
-      success: function(res) {
-        if (res && success) {
-          res.altitude = 0
-          res.verticalAccuracy = 0
-          res.horizontalAccuracy = 0
-          wx_success(res)
-        }
-      },
-      fail: function(res) {
-        if (wx_fail) {
-          wx_fail(res)
-        }
-      },
-      complete: function(res) {
-        if (wx_complete) {
-          wx_complete(res)
-        }
-      }
-    })*/
-  }
 
   openLocation(wx_object) {
     const latitude = wx_object.latitude // （必填） 纬度，浮点数，范围为90 ~ -90
