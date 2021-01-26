@@ -1631,6 +1631,13 @@ export default class TT {
         zoom: 16,
         center: [longitude, latitude]
       })
+      const center_maker = new AMap.Marker({
+        position: new AMap.LngLat(longitude, latitude)
+      })
+      map.on('click', ev => {
+        console.log(ev)
+      })
+      map.add(center_maker)
 
       const res = {
 
