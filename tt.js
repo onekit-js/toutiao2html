@@ -1624,33 +1624,59 @@ export default class TT {
     },success, fail, complete)
   }
 
-  chooseLocation(options) {
-    const {latitude, longitude, success, fail, complete} = options
-    PROMISE(SUCCESS => {
-      this._mapinit()
-      const map_container = document.createElement('div')
-      map_container.setAttribute('style', 'height:100vh;width:100vw;')
-      map_container.setAttribute('id', 'onekitmap-container')
-      document.body.appendChild(map_container)
-      const map = new AMap.Map('onekitmap-container', {
-        resizeEnable: true,
-        zoom: 16,
-        center: [longitude, latitude]
-      })
-      const center_maker = new AMap.Marker({
-        position: new AMap.LngLat(longitude, latitude)
-      })
-      map.on('mousemove', ev => {
-        console.log(ev)
-      })
-      map.add(center_maker)
+  // chooseLocation(options) {
+  //   const {latitude, longitude, success, fail, complete} = options
+  //   PROMISE(SUCCESS => {
+  //     this._mapinit()
+  //     const map_container = document.createElement('div')
+  //     map_container.setAttribute('style', 'height:100vh;width:100vw;')
+  //     map_container.setAttribute('id', 'onekitmap-container')
+  //     document.body.appendChild(map_container)
+  //     const map = new AMap.Map('onekitmap-container', {
+  //       resizeEnable: true,
+  //       zoom: 16,
+  //       center: [longitude, latitude]
+  //     })
+  //     const center_maker = new AMap.Marker({
+  //       position: map.getCenter(),
+  //       draggable: true,
+  //       cursor: 'move',
+  //       // 设置拖拽效果
+  //       raiseOnDrag: true
+  //     })
 
-      const res = {
+  //     center_maker.setMap(map)
+  //     map.getCenter(res => {
+  //       console.log(res)
+  //     })
+  //     center_maker.on('dragend', res => {
+  //       const {lng, lat} = res.lnglat
+  //       map.setCenter([lng, lat])
+  //       // AMap.event.addListener(geolocation, 'complete', onComplete => {
+  //         const geoCoder = new AMap.geoCoder({
+  //           city: ''
+  //         })
 
-      }
-      SUCCESS(res)
-    }, success, fail, complete)
-  }
+  //        geoCoder.getAddress([lng, lat], (status, result) => {
+  //          console.log(status, result)
+  //        })
+  //         const resu = {
+  //           errMsg: 'getLocation: ok',
+  //           latitude: onComplete.position.lat,
+  //           longitude: onComplete.position.lng,
+  //           address: '',
+  //           address
+  //         }
+  //         SUCCESS(resu)
+          
+  //       // })
+  //     })
+  //     const res = {
+
+  //     }
+  //     SUCCESS(res)
+  //   }, success, fail, complete)
+  // }
   /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
