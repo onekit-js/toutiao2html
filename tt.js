@@ -1717,18 +1717,90 @@ export default class TT {
     console.warn('h5 is not support getConnectedWifi')    
   }
 
+  onAccelerometerChange(callback) {
+    this.accleration = function _eventListener(e) {
+      console.log(arguments[0])
+      const accelerationdata = arguments[0].accelerationIncludingGravity
+      let res = {
+        x: accelerationdata.x,
+        y: accelerationdata.y,
+        z: accelerationdata.z
+      }
+      callback(res)
+    }
+    window.addEventListener('devicemotion', this.accleration, false)
+  }
+
   startAccelerometer(options) {
     const {success, fail, complete} = options
+    options = null
     PROMISE(SUCCESS => {
       if(!window.DeviceMotionEvent) throw Error ('your browser is not support startAccelerometer')
+      window.addEventListener('devicemotion', this.accleration, false)
+      const res = {
+        errMsg: 'startAccelerometer: ok'
+      }
+      SUCCESS(res)
+    },success, fail, complete)
+    
+  }
 
-      window.addEventListener('devicemotion', e => {
-        const res = {
-          errMsg: 'startAccelerometer: ok'
-        }
-        SUCCESS(res)
-      })  
+  stopAccelerometer(options) {
+    const {success, fail, complete} = options
+    options = null
+    PROMISE(SUCCESS => {
+      window.removeEventListener('devicemotion', this.accleration, false)
+      const res = {
+        errMsg: 'stopAccelerometer: ok'
+      }
+      SUCCESS(res)
+    },success, fail, complete)
+  }
 
+  onCompassChange(callback) {
+    this.compasschange_callback = function compassevent_callbak() {
+      const duration = 360 - arguments[0].alpha
+      callback(duration)
+    }
+
+    window.addEventListener('deviceorientation', this.compasschange_callback, false)
+  }
+
+  startCompass(options) {
+    const {success, fail, complete} = options
+    options = null
+
+    PROMISE(SUCCESS => {
+      window.addEventListener('deviceorientation', this.compasschange_callback, false)
+      const res = {
+        errMsg: 'startCompass: ok'
+      }
+
+      SUCCESS(res)
+    },success, fail, complete)
+  }
+
+  stopCompass(options) {
+    const {success, fail, complete} = options
+    options = null
+    PROMISE(SUCCESS => {
+      window.removeEventListener('deviceorientation', this.compasschange_callback, false)
+      const res = {
+        errMsg: 'stopCompass: ok'
+      }
+      SUCCESS(res)
+    }, success, fail, complete)
+  }
+
+  makePhoneCall(options) {
+    const {phoneNumber, success, fail, complete} = options
+
+    PROMISE(SUCCESS => {
+      location.href = 'tel:' + phoneNumber
+      const res = {
+        errMsg: 'makePhoneCall: ok'
+      }
+      SUCCESS(res)
     },success, fail, complete)
     
   }
@@ -2493,10 +2565,6 @@ export default class TT {
         })*/
   }
 
-
-
-
-
   getSavedFileList() {}
 
   getSavedFileInfo() {}
@@ -2714,34 +2782,6 @@ export default class TT {
 
   onBLECharacteristicValueChange() {}
 
-  makePhoneCall(wx_object) {
-    const phoneNumber = wx_object.phoneNumber
-    const wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-    let wx_res
-    try {
-      location.href = 'tel:' + phoneNumber
-      wx_res = {}
-      if (wx_success) {
-        wx_success(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    } catch (e) {
-      wx_res = {
-        errMsg: e.message,
-      }
-      if (wx_fail) {
-        wx_fail(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    }
-  }
-
   // TODO: 未改未测试
   // HACK: 应该不能通过web方式实现
   addPhoneContact(wx_object) {
@@ -2929,9 +2969,7 @@ export default class TT {
     this.fn_global().Screen_callback = callback
   }
 
-  onAccelerometerChange(callback) {
-    this.fn_global().Accelerometer_callback = callback
-  }
+
   
   _callback(event) {
     if (this.fn_global().Accelerometer_callback) {
@@ -2945,46 +2983,6 @@ export default class TT {
     }
   }
 
-  stopAccelerometer(wx_object) {
-    const wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-    let wx_res
-    try {
-      if (window.DeviceMotionEvent) {
-        window.removeEventListener('devicemotion', this.fn_global().Accelerometer__callback, false)
-        wx_res = {
-          errMsg: 'stopAccelerometer:ok',
-        }
-        if (wx_success) {
-          wx_success(wx_res)
-        }
-        if (wx_complete) {
-          wx_complete(wx_res)
-        }
-      } else {
-        wx_res = {
-          errMsg: 'stopAccelerometer:fail',
-        }
-        if (wx_success) {
-          wx_success(wx_res)
-        }
-        if (wx_complete) {
-          wx_complete(wx_res)
-        }
-      }
-    } catch (e) {
-      wx_res = {
-        errMsg: e.message,
-      }
-      if (wx_fail) {
-        wx_fail(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    }
-  }
 
   _deviceorientation(event) {
     if (this.fn_global().Compass_callback) {
@@ -2993,105 +2991,6 @@ export default class TT {
         accuracy: 'unknown',
       }
       this.fn_global().Compass_callback(wx_res)
-    }
-  }
-  onCompassChange(callback) {
-    this.fn_global().Compass_callback = callback
-  }
-  offCompassChange() {
-    this.fn_global().Compass_callback = null
-  }
-  startCompass(wx_object) {
-    if (!wx_object) {
-      wx_object = {}
-    }
-    const wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-    // /////////////////////////
-    let wx_res
-    try {
-      if (window.DeviceMotionEvent) {
-        if (this.fn_global().Compass_callback) {
-          window.addEventListener('deviceorientation', this.fn_global().Compass_deviceorientation, false)
-        }
-        //
-        wx_res = {
-          errMsg: 'startCompass:ok',
-        }
-        if (wx_success) {
-          wx_success(wx_res)
-        }
-        if (wx_complete) {
-          wx_complete(wx_res)
-        }
-      } else {
-        wx_res = {
-          errMsg: 'startDeviceMotionListening:fail',
-        }
-        if (wx_success) {
-          wx_success(wx_res)
-        }
-        if (wx_complete) {
-          wx_complete(wx_res)
-        }
-      }
-    } catch (e) {
-      wx_res = {
-        errMsg: e.message,
-      }
-      if (wx_fail) {
-        wx_fail(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    }
-  }
-
-  stopCompass(wx_object) {
-    if (!wx_object) {
-      wx_object = {}
-    }
-    const wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-    // /////////////////////////
-    let wx_res
-    try {
-      if (window.DeviceMotionEvent) {
-        window.removeEventListener('deviceorientation', this.fn_global().Compass_deviceorientation, false)
-        //
-        wx_res = {
-          errMsg: 'stopCompass:ok',
-        }
-        if (wx_success) {
-          wx_success(wx_res)
-        }
-        if (wx_complete) {
-          wx_complete(wx_res)
-        }
-      } else {
-        wx_res = {
-          errMsg: 'stopDeviceMotionListening:fail',
-        }
-        if (wx_success) {
-          wx_success(wx_res)
-        }
-        if (wx_complete) {
-          wx_complete(wx_res)
-        }
-      }
-    } catch (e) {
-      wx_res = {
-        errMsg: e.message,
-      }
-      if (wx_fail) {
-        wx_fail(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
     }
   }
 
