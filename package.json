@@ -21,7 +21,7 @@
     "jquery-confirm": "^3.3.4",
     "jszip": "latest",
     "mobile-detect": "^1.4.4",
-    "oneutil": "^2.0.2",
+    "oneutil": "^2.4.0",
     "vconsole": "^3.3.4"
   },
   "homepage": "https://github.com/onekit-js/toutiao2html#readme",

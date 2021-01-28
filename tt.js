@@ -1285,7 +1285,7 @@ export default class TT {
                 }
 
                 TASK(fileFactory, (file, itemCallback) => {
-                  if (COMPRESSPED == 'origin') {
+                  if (COMPRESSPED.includes( 'original')) {
                     const reader = new FileReader()
                     reader.onload = function (e) {
                       let blob
@@ -1294,6 +1294,7 @@ export default class TT {
                       } else {
                         blob = e.target.result
                       }
+
                       const path = TheKit.createTempPath(file.name)
                       that.fn_global().TEMP[path] = blob
                       const size = blob.size
@@ -1587,43 +1588,6 @@ export default class TT {
     // document.head.removeChild(jsapi)
   }
 
-  getLocation(options) {
-    // const type = options.type
-    const success = options.success
-    const fail = options.fail
-    const complete = options.complete
-
-    this._mapinit()
-    PROMISE(SUCCESS => {
-      
-    window.addEventListener("load", () => {
-      const mapObj = new AMap.Map('iCenter')
-      mapObj.plugin('AMap.Geolocation', () => {
-      const geolocation  = new AMap.Geolocation()
-      mapObj.addControl(geolocation)
-      geolocation.getCurrentPosition()
-      AMap.event.addListener(geolocation, 'complete', onComplete => {
-        const resu = {
-          accuracy: onComplete.accuracy,
-          altitude: onComplete.accuracy,
-          city: onComplete.addressComponent.city,
-          errMsg: 'getLocation: ok',
-          horizonralAccuracy: onComplete.accuracy,
-          latitude: onComplete.position.lat,
-          longitude: onComplete.position.lng,
-          speed: onComplete.status,
-          verticalAccuracy: onComplete.accuracy
-        }
-        SUCCESS(resu)
-        
-      })
-        AMap.event.addListener(geolocation, 'error', onError)
-        })
-      }
-    ) 
-    },success, fail, complete)
-  }
-
   // chooseLocation(options) {
   //   const {latitude, longitude, success, fail, complete} = options
   //   PROMISE(SUCCESS => {
@@ -1677,7 +1641,59 @@ export default class TT {
   //     SUCCESS(res)
   //   }, success, fail, complete)
   // }
-  /////////////////////////////////////////////////
+
+  getLocation(options) {
+    // const type = options.type
+    const success = options.success
+    const fail = options.fail
+    const complete = options.complete
+
+    this._mapinit()
+    PROMISE(SUCCESS => {
+      
+    window.addEventListener("load", () => {
+      const mapObj = new AMap.Map('iCenter')
+      mapObj.plugin('AMap.Geolocation', () => {
+      const geolocation  = new AMap.Geolocation()
+      mapObj.addControl(geolocation)
+      geolocation.getCurrentPosition()
+      AMap.event.addListener(geolocation, 'complete', onComplete => {
+        const resu = {
+          accuracy: onComplete.accuracy,
+          altitude: onComplete.accuracy,
+          city: onComplete.addressComponent.city,
+          errMsg: 'getLocation: ok',
+          horizonralAccuracy: onComplete.accuracy,
+          latitude: onComplete.position.lat,
+          longitude: onComplete.position.lng,
+          speed: onComplete.status,
+          verticalAccuracy: onComplete.accuracy
+        }
+        SUCCESS(resu)
+        
+      })
+        AMap.event.addListener(geolocation, 'error', onError)
+        })
+      }
+    ) 
+    },success, fail, complete)
+  }
+
+ //////////////////// 设备 ////////////////////////
+ getNetworkType(options) {
+   const {success, fail, complete} = options
+   options = null
+
+   PROMISE(SUCCESS => {
+    const connectionInfo = navigator.connection
+    const networkType = connectionInfo.effectiveType
+     const res = {
+      networkType
+     }
+     SUCCESS(res)
+   },success, fail, complete)
+ }
+ /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
   // AudioContext
@@ -2878,6 +2894,7 @@ export default class TT {
   onAccelerometerChange(callback) {
     this.fn_global().Accelerometer_callback = callback
   }
+  
   _callback(event) {
     if (this.fn_global().Accelerometer_callback) {
       const acceleration = event.accelerationIncludingGravity
@@ -3733,14 +3750,6 @@ export default class TT {
       callback(execArray)
     }
     return xsw_document
-  }
-
-  getNetworkType() {
-    //  let wx_success = wx_object.success
-    //  let wx_fail = wx_object.fail
-    //  let wx_complete = wx_object.complete
-    const connectionInfo = navigator.connection
-    alert(connectionInfo.effectiveType)
   }
 
   // TODO: 未测试
