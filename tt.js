@@ -1939,6 +1939,54 @@ export default class TT {
     },success, fail, complete)
   }
 
+  vibrateLong(options) {
+    const {success, fail, complete} = options
+    options = null
+    PROMISE(SUCCESS => {
+      navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate
+      if(!navigator.vibrate) throw Error('your browser is not support vibrateLong')
+      window.navigator.vibrate(400)
+      const res = {
+        errMsg: 'vibrateShort: ok'
+      }
+      SUCCESS(res)
+    },success, fail, complete)
+  }
+
+  onMemoryWarning(callback) {
+    const _callback = callback
+    // ////////////////////////////
+    const wx_res = {}
+    wx_res.level = 1
+    try {
+      const memoryInfo = window.performance.memory
+      console.log(memoryInfo)
+      const totalJSHeapSize = memoryInfo.totalJSHeapSize
+      const usedJSHeapSize = memoryInfo.usedJSHeapSize
+      const remainJsHeapSize = totalJSHeapSize - usedJSHeapSize
+      const MEMORY_MODERATE = totalJSHeapSize * 0.15
+      const MEMORY_LOW = totalJSHeapSize * 0.1
+      const MEMORY_CRITICAL = totalJSHeapSize * 0.05
+      if (MEMORY_LOW < remainJsHeapSize <= MEMORY_MODERATE) {
+        wx_res.level = 5
+      } else if (MEMORY_CRITICAL < remainJsHeapSize <= MEMORY_LOW) {
+        wx_res.level = 10
+      } else if (remainJsHeapSize <= MEMORY_CRITICAL) {
+        wx_res.level = 15
+      } else {
+        wx_res.level = ''
+      }
+      if (_callback) {
+        _callback(wx_res)
+      }
+    } catch (error) {
+      wx_res.errMsg = error.message
+      if (_callback) {
+        _callback(wx_res)
+      }
+    }
+  }
+
  /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
@@ -3226,39 +3274,6 @@ export default class TT {
 
   onGyroscopeChange(callback) {
     this.fn_global().Gyroscopecallback = callback
-  }
-
-  onMemoryWarning(callback) {
-    const _callback = callback
-    // ////////////////////////////
-    const wx_res = {}
-    wx_res.level = 1
-    try {
-      const memoryInfo = window.performance.memory
-      const totalJSHeapSize = memoryInfo.totalJSHeapSize
-      const usedJSHeapSize = memoryInfo.usedJSHeapSize
-      const remainJsHeapSize = totalJSHeapSize - usedJSHeapSize
-      const MEMORY_MODERATE = totalJSHeapSize * 0.15
-      const MEMORY_LOW = totalJSHeapSize * 0.1
-      const MEMORY_CRITICAL = totalJSHeapSize * 0.05
-      if (MEMORY_LOW < remainJsHeapSize <= MEMORY_MODERATE) {
-        wx_res.level = 5
-      } else if (MEMORY_CRITICAL < remainJsHeapSize <= MEMORY_LOW) {
-        wx_res.level = 10
-      } else if (remainJsHeapSize <= MEMORY_CRITICAL) {
-        wx_res.level = 15
-      } else {
-        wx_res.level = ''
-      }
-      if (_callback) {
-        _callback(wx_res)
-      }
-    } catch (error) {
-      wx_res.errMsg = error.message
-      if (_callback) {
-        _callback(wx_res)
-      }
-    }
   }
 
   scanItem() {}
