@@ -1805,6 +1805,39 @@ export default class TT {
     
   }
 
+  scanCode(options) {
+    const {success, fail, complete} = options
+    options = null
+
+    PROMISE(SUCCESS => {
+      const res = {
+        errMsg: 'scanCode is not support now'
+      }
+
+      SUCCESS(res)
+    },success, fail, complete)
+  }
+
+  getClipboardData(options) {
+    const {success, fail, complete} = options
+    options = null
+    PROMISE(SUCCESS => {
+      function handler(event) {
+        // event.clipboardData.setData('text/plain', "要进行复制的内容")
+        const data = event.clipboardData.getClipboardData('Text')
+        const res = {
+          errMsg: 'getClipboardData: ok',
+          data
+        }
+        SUCCESS(res)
+      }
+      document.addEventListener('copy', handler)
+      document.execCommand('copy')
+     
+
+    }, success, fail, complete)
+  }
+
  /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
@@ -2913,33 +2946,6 @@ export default class TT {
     }
   }
 
-  getClipboardData(wx_object) {
-    // let wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-    let wx_res = {}
-    try {
-      // let clipboardData = clipboardData.getData('Text') // 只能在 IE 浏览器中获取剪贴板内容
-      // wx_res.errMsg = 'getClipboardData:ok'
-      // wx_res.data = clipboardData
-      // if (wx_success) {
-      //   wx_success(wx_res)
-      // }
-      // if (wx_complete) {
-      //   wx_complete(wx_res)
-      // }
-    } catch (e) {
-      wx_res = {
-        errMsg: e.message,
-      }
-      if (wx_fail) {
-        wx_fail(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    }
-  }
   setScreenBrightness() {
     // 设置屏幕亮度
     // plus.screen.setBrightness(0.5)
@@ -3206,15 +3212,6 @@ export default class TT {
   }
 
   scanItem() {}
-  scanCode() {
-    // let onlyFromCamera = wx_object.onlyFromCamera || false // 是否只能从相机扫码，不允许从相册选择图片（JS-SDK不支持）
-    //  let scanType = wx_object.scanType || ['barCode', 'qrCode'] // 扫码类型
-    // let wx_success = wx_object.success
-    // let wx_fail = wx_object.success
-    // let wx_complete = wx_object.success
-    // //////////////////////////////
-
-  }
 
   vibrateLong(wx_object) {
     const wx_success = wx_object.success
