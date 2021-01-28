@@ -1892,6 +1892,53 @@ export default class TT {
     window.removeEventListener('keyup', this.captureScreen_callback)
     callback()
   }
+
+  getScreenBrightness(options) {
+    const {success, fail, complete} = options
+    options = null
+    PROMISE(SUCCESS => {
+      const userAgent = navigator.userAgent
+      if(!userAgent.indexOf('Firefox') > -1) throw Error('your browser is not suppport getScreenBrightness')
+      window.addEventListener('devicelight', e => {
+        const res = {
+          value: e.value / 1000,
+          errMsg: 'getScreenBrightness: ok'
+        }
+  
+        SUCCESS(res)
+      })
+      
+    },success, fail, complete)
+  }
+
+  setScreenBrightness() {
+    console.warn('h5 is not support setScreenBrightness')
+  }
+
+  vibrateShort(options) {
+    const {success, fail, complete} = options
+    options = null
+    PROMISE(SUCCESS => {
+      navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate
+      if(!navigator.vibrate) throw Error('your browser is not support vibrateShort')
+      const mobile = navigator.userAgent
+
+      if(mobile.indexOf('Android') > -1 || mobile.indexOf('Linux') > -1) {
+        window.navigator.vibrate(30)
+      }else if(!!mobile.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)) {
+        window.navigator.vibrate(15)
+      }else {
+        throw Error('Your phone is not smart phone')
+      }
+
+      const res = {
+        errMsg: 'vibrateShort: ok'
+      }
+
+      SUCCESS(res)
+    },success, fail, complete)
+  }
+
  /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
@@ -2966,16 +3013,6 @@ export default class TT {
     }
   }
 
-  setScreenBrightness() {
-    // 设置屏幕亮度
-    // plus.screen.setBrightness(0.5)
-  }
-
-  getScreenBrightness() {
-    // plus.screen.getBrightness()
-  }
-
-
   captureScreen() {
     html2canvas(document.body).then(function (canvas) {
       // let ctx = cas.getContext('2d')
@@ -3225,77 +3262,6 @@ export default class TT {
   }
 
   scanItem() {}
-
-  vibrateLong(wx_object) {
-    const wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-    // /////////////////////////
-    let wx_res = {}
-    try {
-      // let supportsVibrate = "vibrate" in navigator
-      if (navigator['vibrate']) {
-        navigator['vibrate'](400)
-      } else if (navigator['webkitVibrate']) {
-        navigator['webkitVibrate'](400)
-      } else if (navigator['oVibrate']) {
-        navigator['oVibrate'](400)
-      }
-      wx_res.errMsg = 'vibrateShort:ok'
-      if (wx_success) {
-        wx_success(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    } catch (e) {
-      wx_res = {
-        errMsg: e.message,
-      }
-      if (wx_fail) {
-        wx_fail(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    }
-  }
-
-  vibrateShort(wx_object) {
-    const wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-    // /////////////////////////
-    let wx_res = {}
-    try {
-      // let supportsVibrate = "vibrate" in navigator
-      if (navigator['vibrate']) {
-        navigator['vibrate'](15)
-      } else if (navigator['webkitVibrate']) {
-        navigator['webkitVibrate'](15)
-      } else if (navigator['oVibrate']) {
-        navigator['oVibrate'](15)
-      }
-      wx_res.errMsg = 'vibrateLong:ok'
-      if (wx_success) {
-        wx_success(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    } catch (e) {
-      alert(JSON.stringify(e))
-      wx_res = {
-        errMsg: e.message,
-      }
-      if (wx_fail) {
-        wx_fail(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    }
-  }
 
   createWorker() {}
 
