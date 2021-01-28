@@ -12,6 +12,7 @@ import PROMISE from 'oneutil/PROMISE'
 import TASK from 'oneutil/TASK'
 import axios from 'axios'
 import $ from 'jquery'
+import NoSleep from 'nosleep.js'
 import STRING from 'oneutil/STRING'
 import RecorderManager from "./api/RecorderManager"
 import MobileDetect from 'mobile-detect'
@@ -1856,6 +1857,41 @@ export default class TT {
     },success, fail, complete)
   }
 
+  setKeepScreenOn(options) {
+    const {keepScreenOn, success, fail, complete} = options
+    options = null
+    PROMISE(SUCCESS => {
+      const nosleep = new NoSleep()
+      if(keepScreenOn) {
+        nosleep.enable()
+      }else {
+        nosleep.disable()
+      }
+      const res = {
+        errMsg: 'setKeepScreenOn: ok'
+      }
+
+      SUCCESS(res)
+    },success, fail, complete)
+  }
+
+  onUserCaptureScreen(callback) {
+    this.captureScreen_callback = function event_captureScreen() {
+      const key = arguments[0]
+        if(key.altKey && key.key === 'a' ) {
+          callback()
+        }
+        if(key.key == 's' && key.shiftKey){
+          callback()
+        }
+      }
+    window.addEventListener('keyup', this.captureScreen_callback)  
+  }
+
+  offUserCaptureScreen(callback) {
+    window.removeEventListener('keyup', this.captureScreen_callback)
+    callback()
+  }
  /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
@@ -2930,40 +2966,6 @@ export default class TT {
     }
   }
 
-  setClipboardData(wx_object) {
-    //  let data = wx_object.data // 【必填】剪贴板的内容
-    //  let wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-    // ///////////////////////////
-    let wx_res = {}
-    try {
-      // let oDiv = document.createElement('div')
-      // oDiv.innerHTML = "<textarea  id='onekit_clipboard' style='opacity: 0'>" + data + '</textarea>'
-      // document.body.appendChild(oDiv)
-      // let Url2 = document.getElementById('onekit_clipboard')
-      // Url2.select() // 选择对象
-      // document.execCommand('copy') // 执行浏览器复制命令
-      // wx_res.errMsg = 'setClipboardData:ok'
-      // if (wx_success) {
-      //   wx_success(wx_res)
-      // }
-      // if (wx_complete) {
-      //   wx_complete(wx_res)
-      // }
-    } catch (e) {
-      wx_res = {
-        errMsg: e.message,
-      }
-      if (wx_fail) {
-        wx_fail(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    }
-  }
-
   setScreenBrightness() {
     // 设置屏幕亮度
     // plus.screen.setBrightness(0.5)
@@ -2973,7 +2975,6 @@ export default class TT {
     // plus.screen.getBrightness()
   }
 
-  setKeepScreenOn() {}
 
   captureScreen() {
     html2canvas(document.body).then(function (canvas) {
@@ -2988,12 +2989,6 @@ export default class TT {
       }
     })
   }
-
-  onUserCaptureScreen(callback) {
-    this.fn_global().Screen_callback = callback
-  }
-
-
   
   _callback(event) {
     if (this.fn_global().Accelerometer_callback) {
