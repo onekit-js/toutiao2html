@@ -1693,6 +1693,44 @@ export default class TT {
      SUCCESS(res)
    },success, fail, complete)
  }
+
+ onNetworkStatusChange(callback) {
+    const connection = navigator.connection
+    const connectionInfo = {}
+    connectionInfo.isOnline = true
+    connectionInfo.networkType = connection.type || 'unknown'
+    connection.addEventListener('change',  () => {
+      if (connection.type === 'cellular') {
+        if (connection.rtt < 270) {
+          connectionInfo.networkType = '4g'
+        } else if (270 <= connection.rtt < 1400) {
+          connectionInfo.networkType = '3g'
+        } else if (1400 <= connection.rtt) {
+          connectionInfo.networkType = '2g'
+        } else {
+          connectionInfo.networkType = 'unknown'
+        }
+      }
+      if (!navigator.onLine) {
+        connectionInfo.networkType = 'none'
+        connectionInfo.isOnline = false
+      }
+      callback(connectionInfo)
+    })
+ }
+
+ getWifiList(options) {
+  const {success, fail, complete} = options
+  options = null
+
+  PROMISE(SUCCESS => {
+ 
+    const res = {
+    
+    }
+    SUCCESS(res)
+  },success, fail, complete)
+ }
  /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
@@ -3754,31 +3792,6 @@ export default class TT {
 
   // TODO: 未测试
   // INFO: Network Information API 兼容性很差 (https://caniuse.com/#feat=netinfo) (https://developer.mozilla.org/zh-CN/docs/Web/API/Network_Information_API)
-  onNetworkStatusChange(callback) {
-    const connection = navigator.connection
-    const connectionInfo = {}
-    connectionInfo.isOnline = true
-    connectionInfo.networkType = connection.type || 'unknown'
-    connection.addEventListener('change', function () {
-      if (connection.type === 'cellular') {
-        if (connection.rtt < 270) {
-          connectionInfo.networkType = '4g'
-        } else if (270 <= connection.rtt < 1400) {
-          connectionInfo.networkType = '3g'
-        } else if (1400 <= connection.rtt) {
-          connectionInfo.networkType = '2g'
-        } else {
-          connectionInfo.networkType = 'unknown'
-        }
-      }
-      // INFO: navigator.onLine 兼容性很好
-      if (!navigator.onLine) {
-        connectionInfo.networkType = 'none'
-        connectionInfo.isOnline = false
-      }
-      callback(connectionInfo)
-    })
-  }
 
   createIntersectionObserver() {}
 
