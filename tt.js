@@ -1953,14 +1953,12 @@ export default class TT {
     },success, fail, complete)
   }
 
-  onMemoryWarning(callback) {
-    const _callback = callback
-    // ////////////////////////////
-    const wx_res = {}
-    wx_res.level = 1
-    try {
+  onMemoryWarning(callback) { 
+    function _sourceful() {
+      if(!window.performance.memory) throw Error('your browser is not support onMemoryWarning')
+      const res = {}
+      res.level = 1
       const memoryInfo = window.performance.memory
-      console.log(memoryInfo)
       const totalJSHeapSize = memoryInfo.totalJSHeapSize
       const usedJSHeapSize = memoryInfo.usedJSHeapSize
       const remainJsHeapSize = totalJSHeapSize - usedJSHeapSize
@@ -1968,23 +1966,18 @@ export default class TT {
       const MEMORY_LOW = totalJSHeapSize * 0.1
       const MEMORY_CRITICAL = totalJSHeapSize * 0.05
       if (MEMORY_LOW < remainJsHeapSize <= MEMORY_MODERATE) {
-        wx_res.level = 5
+        res.level = 5
       } else if (MEMORY_CRITICAL < remainJsHeapSize <= MEMORY_LOW) {
-        wx_res.level = 10
+        res.level = 10
       } else if (remainJsHeapSize <= MEMORY_CRITICAL) {
-        wx_res.level = 15
+        res.level = 15
       } else {
-        wx_res.level = ''
+        res.level = ''
       }
-      if (_callback) {
-        _callback(wx_res)
-      }
-    } catch (error) {
-      wx_res.errMsg = error.message
-      if (_callback) {
-        _callback(wx_res)
-      }
+      callback(res)
     }
+
+    performance.onresourcetimingbufferful = _sourceful
   }
 
  /////////////////////////////////////////////////
@@ -3723,38 +3716,3 @@ export default class TT {
 
   }
 }
-
-
-
-// import JSZip from 'jszip'
-// let saveAs = require('file-saver')
-
-// import { STRING } from 'oneutil'
-// import AudioContext from "./api/AudioContext"
-// import CameraContext from "./api/CameraContext"
-// import CanvasContext from "./api/CanvasContext"
-// import CanvasGradient from "./api/CanvasGradient"
-
-
-// import FileSystemManager from "./api/FileSystemManager"
-// import Gradient from "./api/Gradient"
-// import InnerAudioContext from "./api/InnerAudioContext"
-// import InterstitialAd from "./api/InterstitialAd"
-// import LivePlayerContext from "./api/LivePlayerContext"
-// import LivePusherContext from "./api/LivePusherContext"
-
-// import MapContext from "./api/MapContext"
-
-
-// import RewardedVideoAd from "./api/RewardedVideoAd"
-
-// import UDPSocket from "./api/UDPSocket"
-
-// import UploadTask from "./api/UploadTask"
-// import VideoContext from "./api/VideoContext"
-
-
-// /
-// import APP_JSON from '../src/app.json'
-// import { includes } from 'core-js/fn/array'
-// /
