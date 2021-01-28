@@ -1838,6 +1838,24 @@ export default class TT {
     }, success, fail, complete)
   }
 
+  setClipboardData(options) {
+    const {data, success, fail, complete} = options
+    options = null
+
+    PROMISE(SUCCESS => {
+      function handler(event) {
+        event.clipboardData.setData('text/plain', data)
+        const res = {
+          errMsg: 'setClipboardData: ok'
+        }
+        SUCCESS(res)
+      }
+      document.addEventListener('copy', handler)
+      document.execCommand('copy')
+      
+    },success, fail, complete)
+  }
+
  /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
