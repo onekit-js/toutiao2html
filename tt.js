@@ -42,81 +42,7 @@ export default class TT {
 
   arrayBufferToBase64(arrayBuffer) {
     return STRING.arrayBufferToBase64(arrayBuffer)
-  }
-
-  /** 系统 */
-  getSystemInfoSync() {
-    try {
-      const device_type = navigator.userAgent
-      const md = new MobileDetect(device_type)
-      const os = md.os()
-      let model
-      let system
-      let platform
-      switch (os) {
-        case 'iOS':
-          model = md.mobile()
-          system = 'ios' + md.version('iPhone'),
-            platform = 'ios'
-          break
-        case 'AndroidOS':
-          system = 'Android ' + md.version('Android')
-          model = md.mobile()
-          platform = 'android'
-          break
-      }
-      return {
-        brand: 'www.onekit.cn',
-        model: model,
-        pixelRatio: window.devicePixelRatio,
-        screenWidth: window.screen.width,
-        screenHeight: window.screen.height,
-        windowWidth: window.innerWidth,
-        windowHeight: window.innerHeight,
-        statusBarHeight: 20,
-        language: window.navigator.language,
-        version: '7.0',
-        system: system,
-        platform: platform,
-        fontSizeSetting: 20,
-        SDKVersion: '2.12.1',
-        benchmarkLevel: 1,
-        theme: 'light',
-      }
-    } catch (e) {
-      throw new Error('getSystemInfoSync:fail')
-    }
-  }
-
-  getSystemInfo(wx_object) {
-    const wx_success = wx_object ? wx_object.success : null
-    const wx_fail = wx_object ? wx_object.fail : null
-    const wx_complete = wx_object ? wx_object.complete : null
-    // ///////////////////////////
-
-
-    let wx_res
-    try {
-      wx_res = this.getSystemInfoSync()
-      if (wx_success) {
-        wx_success(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    } catch (e) {
-      wx_res = {
-        errMsg: e.message,
-      }
-      if (wx_fail) {
-        wx_fail(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
-    }
-  }
-
+  } 
   /** 更新 */
   updateWeChatApp(wx_object) {
     const wx_success = wx_object.success || ''
@@ -1720,17 +1646,93 @@ export default class TT {
  }
 
  getWifiList(options) {
-  const {success, fail, complete} = options
-  options = null
-
-  PROMISE(SUCCESS => {
- 
-    const res = {
-    
-    }
-    SUCCESS(res)
-  },success, fail, complete)
+   options = null
+   console.warn('h5 is not support getwifiList')
  }
+
+ onGetWifiList(callback) {
+   const errMsg = 'h5 is not support onGetWifiList'
+   callback(errMsg)
+ }
+
+ offGetWifiList(callback) {
+  const errMsg = 'h5 is not support offGetWifiList'
+  callback(errMsg)
+ }
+
+ getSystemInfoSync() {
+  try {
+    const device_type = navigator.userAgent
+    const md = new MobileDetect(device_type)
+    const os = md.os()
+    let model
+    let system
+    let platform
+    switch (os) {
+      case 'iOS':
+        model = md.mobile()
+        system = 'ios' + md.version('iPhone'),
+          platform = 'ios'
+        break
+      case 'AndroidOS':
+        system = 'Android ' + md.version('Android')
+        model = md.mobile()
+        platform = 'android'
+        break
+    }
+    return {
+      brand: 'www.onekit.cn',
+      model: model,
+      pixelRatio: window.devicePixelRatio,
+      screenWidth: window.screen.width,
+      screenHeight: window.screen.height,
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight,
+      statusBarHeight: 20,
+      language: window.navigator.language,
+      version: '7.0',
+      system: system,
+      platform: platform,
+      fontSizeSetting: 20,
+      SDKVersion: '2.12.1',
+      benchmarkLevel: 1,
+      theme: 'light',
+    }
+  } catch (e) {
+    throw new Error('getSystemInfoSync:fail')
+  }
+ }
+
+  getSystemInfo(options) {
+    const {success, fail, complete} = options
+    options = null
+    // ///////////////////////////
+    PROMISE(SUCCESS => {
+      const res = this.getSystemInfoSync()
+      SUCCESS(res)
+    }, success, fail, complete)
+  }
+
+  getConnectedWifi(options) {
+    console.warn('h5 is not support getConnectedWifi')    
+  }
+
+  startAccelerometer(options) {
+    const {success, fail, complete} = options
+    PROMISE(SUCCESS => {
+      if(!window.DeviceMotionEvent) throw Error ('your browser is not support startAccelerometer')
+
+      window.addEventListener('devicemotion', e => {
+        const res = {
+          errMsg: 'startAccelerometer: ok'
+        }
+        SUCCESS(res)
+      })  
+
+    },success, fail, complete)
+    
+  }
+
  /////////////////////////////////////////////////
   setInnerAudioOption() {}
   getAvailableAudioSources() {}
@@ -2676,8 +2678,6 @@ export default class TT {
 
   onWiFiConnected() {}
 
-  getConnectedWiFi() {}
-
   openBluetoothAdapter() {}
 
   closeBluetoothAdapter() {}
@@ -2942,48 +2942,6 @@ export default class TT {
         z: acceleration.z,
       }
       this.fn_global().Accelerometer_callback(wx_res)
-    }
-  }
-  startAccelerometer(wx_object) {
-    // let interval = wx_object.interval
-    const wx_success = wx_object.success
-    const wx_fail = wx_object.fail
-    const wx_complete = wx_object.complete
-    // /////////////////////////
-    let wx_res
-    try {
-      if (window.DeviceMotionEvent) {
-        window.addEventListener('devicemotion', this.fn_global().Accelerometer__callback, false)
-        wx_res = {
-          errMsg: 'startAccelerometer:ok',
-        }
-        if (wx_success) {
-          wx_success(wx_res)
-        }
-        if (wx_complete) {
-          wx_complete(wx_res)
-        }
-      } else {
-        wx_res = {
-          errMsg: 'startAccelerometer:fail',
-        }
-        if (wx_success) {
-          wx_success(wx_res)
-        }
-        if (wx_complete) {
-          wx_complete(wx_res)
-        }
-      }
-    } catch (e) {
-      wx_res = {
-        errMsg: e.message,
-      }
-      if (wx_fail) {
-        wx_fail(wx_res)
-      }
-      if (wx_complete) {
-        wx_complete(wx_res)
-      }
     }
   }
 
